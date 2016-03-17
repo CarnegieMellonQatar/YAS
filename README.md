@@ -16,8 +16,11 @@ On top of that we want to have a collaborative experience. The author could choo
 Lastly, we want to have a data analysis aspect that tells the authors of the stories which storyline was most appealing to the readers (and collaborative writers, if any). This likeness could be visualised by changing the colors of the nodes in the graph to indicate the more popular routes, or by generating a report for the authors and even possibly the readers after finishing the segment of the story. It will be interesting for the reader to see what other people have chosen for their stories. In addition, this will help authors better understand their readers and what they like the most. 
 
 This will be achieved by the following libraries. 
+
 1) d3.js - To achieve the visualisation of the graph. https://d3js.org/
+
 2) WebRTC - To achieve p2p collaborative support from different people. https://webrtc.org/
+
 3) Keen.io - To achieve data analysis of different storylines (not very certain yet). https://keen.io/product/
 
 3. Team Members
