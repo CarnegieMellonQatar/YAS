@@ -8,18 +8,25 @@ Project Proposal
 --------------------------
 
 ![Site Map](/proposal/Site_map.png?raw=true "Site Map")
+Site Map
 
 ![Main Page](/proposal/Main_page.png?raw=true "Main Page (Login will slide down rather than another page")
+Main Page (Login will slide down rather than another page)
 
 ![Profile Page](/proposal/Profile_page.png?raw=true "Profile Page")
+Profile Page
 
 ![Stories](/proposal/Stories.png?raw=true "Stories Page")
+Stories Page
 
 ![Writing Page](/proposal/Writing_page.png?raw=true "Writing Page")
+Writing Page
 
 ![Reading Page](/proposal/Reading_page.png?raw=true "Reading Page")
+Reading Page
 
 ![Analytics Page](/proposal/Analytics_page.png?raw=true "Analytics Page")
+Analytics Page
 
 3. Data
 --------------------------
