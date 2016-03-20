@@ -24,6 +24,8 @@ Project Proposal
 2. User Interface
 --------------------------
 
+This is a rough draft of how the site should look like. In the future, this should look much better.
+
 a) Site Map
 -------------
 ![Site Map](/proposal/Site_map.png?raw=true "Site Map")
