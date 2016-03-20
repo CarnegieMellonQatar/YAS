@@ -1,13 +1,22 @@
 Project Proposal
 =================
 
-1. Features
+1. Core Features
 --------------------------
+- Dynamic Storytelling
+	As said in the description of the project, the aim is to create a platform for the user to be able to write stories with multiple storylines. We will do so by giving the author of said story a graph-like interface where every child node represents a split in the storyline from the parent node. That way it will be easy to visualise the multiple stories that split and merge and form completely different storylines. This graph should be simple to use as the author will just have to click on a node and split the node to create the different storylines. 
 
+	This should be reflected on the reader side as well. The reader shouldn't see a graph interface but instead just see text and be prompted to choose his preferred storyline when viable.
 
+	The author view will be achieved using D3 visualisation library. We will use it to create the graph interface, and take input from the author to add and remove nodes as necessary.
 
-- Data Analytics:
-	We would enhance the user experience to help the author to understand what branch the audience liked the most by:	
+- Multiple peer storytelling
+	In addition to the above feature for a single author to write the story, we want to implement a feature that will give the users of our platform a unique experience. We want the users to be able to contribute to the stories as they're being written. We will implement a peer-to-peer system in which people can join a session and contribute by adding their own storylines that will either inspire the author or give him insight on what to do next. Maybe they'll be so good that the author will just use the contributer's storylines instead of their own.
+
+	This will be achieved through WebRTC.
+
+- Storyline Analytics:
+	We would enhance the user experience to help the author understand what branch the audience liked the most by:	
 		1) Displaying what the stories that are liked more often, 
 		2) Displaying what branch is the most popular among the readers. 
 	All the needed data will be stored in the database and will be processed at the front-end with the a data analysis API such as keen.io that allows us to display and process the data that is received form the back-end of our web application.    
