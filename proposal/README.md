@@ -7,26 +7,34 @@ Project Proposal
 2. User Interface
 --------------------------
 
+a) Site Map
+-------------
 ![Site Map](/proposal/Site_map.png?raw=true "Site Map")
-Site Map
 
+b) Main Page (Login will slide down rather than another page)
+------------
 ![Main Page](/proposal/Main_page.png?raw=true "Main Page (Login will slide down rather than another page")
-Main Page (Login will slide down rather than another page)
 
+c) Profile Page
+---------------
 ![Profile Page](/proposal/Profile_page.png?raw=true "Profile Page")
-Profile Page
 
+d) Stories Page
+----------------
 ![Stories](/proposal/Stories.png?raw=true "Stories Page")
-Stories Page
 
+e) Writing Page
+----------------
 ![Writing Page](/proposal/Writing_page.png?raw=true "Writing Page")
-Writing Page
 
+f) Reading Page
+---------------
 ![Reading Page](/proposal/Reading_page.png?raw=true "Reading Page")
-Reading Page
 
+g) Analytics Page
+-----------------
 ![Analytics Page](/proposal/Analytics_page.png?raw=true "Analytics Page")
-Analytics Page
+
 
 3. Data
 --------------------------
