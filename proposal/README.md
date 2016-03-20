@@ -7,6 +7,8 @@ Project Proposal
 2. User Interface
 --------------------------
 
+![Alt text](/Main_page.png?raw=true "Main Page (Login will slide down rather than another page")
+
 3. Data
 --------------------------
 
