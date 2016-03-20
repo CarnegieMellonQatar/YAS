@@ -4,12 +4,21 @@ Project Proposal
 1. Features
 --------------------------
 
+
+
+- Data Analytics:
+	We would enhance the user experience to help the author to understand what branch the audience liked the most by:	
+		1) Displaying what the stories that are liked more often, 
+		2) Displaying what branch is the most popular among the readers. 
+	All the needed data will be stored in the database and will be processed at the front-end with the a data analysis API such as keen.io that allows us to display and process the data that is received form the back-end of our web application.    
+
 2. User Interface
 --------------------------
 
 3. Data
 --------------------------
-Data Models:
+# Data Models
+
 	Users:
 		- username (charField)
 		- password (charField)
