@@ -7,7 +7,19 @@ Project Proposal
 2. User Interface
 --------------------------
 
-![Main Page](/sharjeel/proposal/Main_page.png?raw=true "Main Page (Login will slide down rather than another page")
+![Site Map](/proposal/Site_map.png?raw=true "Site Map")
+
+![Main Page](/proposal/Main_page.png?raw=true "Main Page (Login will slide down rather than another page")
+
+![Profile Page](/proposal/Profile_page.png?raw=true "Profile Page")
+
+![Stories](/proposal/Stories.png?raw=true "Stories Page")
+
+![Writing Page](/proposal/Writing_page.png?raw=true "Writing Page")
+
+![Reading Page](/proposal/Reading_page.png?raw=true "Reading Page")
+
+![Analytics Page](/proposal/Analytics_page.png?raw=true "Analytics Page")
 
 3. Data
 --------------------------
