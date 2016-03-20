@@ -16,9 +16,12 @@ Project Proposal
 	This will be achieved through WebRTC. WebRTC is done by creating a session room with a unique session id created by the author. The other contributors will join the session with the session id. We will send an receive the graph as a JSON where a user will send the JSON to the session room and everyone will receive. The other people will incorporate the received JSON into their graphs and update it to the newest one.
 
 - Storyline Analytics:
-	We would enhance the user experience to help the author understand what the audience liked about the story:	
-		1. Displaying how well-received the story was. 
-		2. Displaying what branch is the most popular among the readers. 
+	We would enhance the user experience to help the author understand what the audience liked about the story.
+
+		1. Displaying how well-received the story was.
+
+		2. Displaying what branch is the most popular among the readers.
+
 	All the needed data will be stored in the database and will be processed at the front-end with the a data analysis API such as keen.io that allows us to visualise it and process the data that is received from the back-end of our web application.    
 
     We are creating this feature to assist the authors by giving them an insight on what storylines would like to read. We will provide most visited storyline, number of reads, number of likes, and number of contributions. 
