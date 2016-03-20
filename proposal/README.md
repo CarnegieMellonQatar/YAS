@@ -13,7 +13,7 @@ Project Proposal
 - Multiple peer storytelling
 	In addition to the above feature for a single author to write the story, we want to implement a feature that will give the users of our platform a unique experience. We want the users to be able to contribute to the stories as they're being written. We will implement a peer-to-peer system in which people can join a session and contribute by adding their own storylines that will either inspire the author or give him insight on what to do next. Maybe they'll be so good that the author will just use the contributer's storylines instead of their own.
 
-	This will be achieved through WebRTC.
+	This will be achieved through WebRTC. WebRTC is done by creating a session room with a unique session id created by the author. The other contributors will join the session with the session id. We will send an receive the graph as a JSON where a user will send the JSON to the session room and everyone will receive. The other people will incorporate the received JSON into their graphs and update it to the newest one.
 
 - Storyline Analytics:
 	We would enhance the user experience to help the author understand what branch the audience liked the most by:	
