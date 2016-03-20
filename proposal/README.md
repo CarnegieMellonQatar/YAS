@@ -7,7 +7,7 @@ Project Proposal
 2. User Interface
 --------------------------
 
-![Alt text](/origin/sharjeel/proposal/Main_page.png?raw=true "Main Page (Login will slide down rather than another page")
+![Main Page](/sharjeel/proposal/Main_page.png?raw=true "Main Page (Login will slide down rather than another page")
 
 3. Data
 --------------------------
