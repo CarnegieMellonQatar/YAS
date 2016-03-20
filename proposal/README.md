@@ -17,7 +17,6 @@ Project Proposal
 
 3. Data
 --------------------------
-# Data Models
 
 	Users:
 		- username (charField)
