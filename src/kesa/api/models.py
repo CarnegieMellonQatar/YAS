@@ -17,8 +17,8 @@ class Graph(models.Model):
 
 
 class Story(models.Model):
-	user = models.ForeignKey(User)
-	graph = models.ForeignKey(Graph)
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	graph = models.ForeignKey(Graph, on_delete=models.CASCADE)
 	title = models.CharFeild(max_length=200)
 	roomID = models.CharFeild(max_length=10000)
 	read = models.IntegerField(default=0)
@@ -26,10 +26,10 @@ class Story(models.Model):
 	is_open = models.BooleanField(default=False)
 
 class Contributors(models.Model):
-	user = models.ForeignKey(User)
-	story = models.ForeignKey(story)
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	story = models.ForeignKey(story, on_delete=models.CASCADE)
 
 class Likes(models.Model):
-	user = models.ForeignKey(User)
-	story = models.ForeignKey(story)
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	story = models.ForeignKey(story, on_delete=models.CASCADE)
 

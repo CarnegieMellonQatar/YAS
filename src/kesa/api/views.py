@@ -16,6 +16,21 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 
+# ##### Helper Methods #####
+
+# code taken from: http://stackoverflow.com/questions/12556268/fastest-way-to-create-json-to-reflect-a-tree-structure-in-python-django-using
+
+def recursive_node_to_dict(node):
+    result = {
+        'id': node.pk,
+        'name': node.name,
+    }
+    children = [recursive_node_to_dict(c) for c in node.get_children()]
+    if children:
+        result['children'] = children
+    return result
+
+
 # ##### logout #####
 
 from django.contrib.auth import logout
@@ -31,7 +46,11 @@ def getInit(request):
 
 @login_required
 def getStory(request, sid):
-	pass
+	story = Story.objects.get(id=sid)
+	graph = story.graph
+	graphTree = recursive_node_to_dict(node);
+	return HttpResponse(json.dumps(graphTree), content_type = "application/json")
+
 
 @login_required	
 def getBranch(request, sid):
@@ -39,15 +58,31 @@ def getBranch(request, sid):
 
 @login_required
 def getContributors(request, sid):
-	pass
+	story = Story.objects.get(id=sid)
+	contributors = Contributors.objects.filter(sid=story)
+	data = serializers.serialize('json', contributors)
+	return HttpResponse(data, content_type = "application/json") 
 
 @login_required
 def getNumContributions(request, uid):
-	pass
+	user = User.objects.get(id=uid)
+	contributions = Contributors.objects.get(user=user)
+	count = len(contributions)
+	return HttpResponse(json.dumps(count), content_type = "application/json")
 
 @login_required
-def getUser(request, uid, cid):
-	pass
+def getUserLikesUser(request, uid):
+	user = User.objects.get(id=uid)
+	likes = Likes.objects.get(user=user)
+	data = serializers.serialize('json', contributors)
+	return HttpResponse(data, content_type = "application/json")
+
+@login_required
+def getLikesStory(request, sid):
+	story = Story.objects.get(id=sid)
+	likes = Likes.objects.get(story=story)
+	data = serializers.serialize('json', contributors)
+	return HttpResponse(data, content_type = "application/json")
 
 
 # ##### POST methods #####
@@ -70,17 +105,69 @@ def addToStory(request, uid, sid):
 @login_required
 @csrf_exempt
 def setOpen(request, uid, sid):
-	pass
+	data={}
+	if request.user == uid:
+		s = Story.objects.get(id=sid)
+		s.is_open = True
+		s.save()
+		data['result'] = 'true' 
+	else:
+		data['result'] = 'false'
+	return HttpResponse(json.dumps(data), content_type = "application/json")
 
 @login_required
 @csrf_exempt
 def setClosed(request, uid, sid):
-	pass
+	data={}
+	if request.user == uid:
+		s = Story.objects.get(id=sid)
+		s.is_open = False
+		s.save()
+		data['result'] = 'true' 
+	else:
+		data['result'] = 'false'
+	return HttpResponse(json.dumps(data), content_type = "application/json")
+
+@login_required
+@csrf_exempt
+def setComplete(request, uid, sid):
+	data={}
+	if request.user == uid:
+		s = Story.objects.get(id=sid)
+		s.is_complete = True
+		s.save()
+		data['result'] = 'true' 
+	else:
+		data['result'] = 'false'
+	return HttpResponse(json.dumps(data), content_type = "application/json")
+
+@login_required
+@csrf_exempt
+def setIncomplete(request, uid, sid):
+	data={}
+	if request.user == uid:
+		s = Story.objects.get(id=sid)
+		s.is_complete = False
+		s.save()
+		data['result'] = 'true' 
+	else:
+		data['result'] = 'false'
+	return HttpResponse(json.dumps(data), content_type = "application/json")
 
 @login_required
 @csrf_exempt
 def like(request, uid, sid):
-	pass
+	data = {}
+	if request.user.id == uid:
+		s = Story.objects.get(id=sid)
+		l = Like(user = request.user,\
+					story = s)
+		l.save()
+		data['result'] = 'true' 
+	else:
+		data['result'] = 'false'
+	return HttpResponse(json.dumps(data), content_type = "application/json")
+	
 
 @login_required
 @csrf_exempt
@@ -90,12 +177,29 @@ def deleteBranch(request, uid, sid):
 @login_required
 @csrf_exempt
 def deleteStroy(request, uid, sid):
-	pass
+	story = Entry.objects.get(id=sid)
+	data = {}
+	if story.user == request.user and request.user == uid:
+		Story.objects.filter(id=sid).delete()
+		data['result'] = 'true' 
+	else:
+		data['result'] = 'false'
+	return HttpResponse(json.dumps(data), content_type = "application/json")
 
 @login_required
 @csrf_exempt
 def addSRead(request, uid, sid):
-	pass
+	data = {}
+	if request.user == uid:
+		s = Story.objects.get(id = sid)
+		count = s.read
+		s.read = count+1
+		s.save()
+		data['result'] = 'true'
+	else:
+		data['result'] = 'false';
+	return HttpResponse(json.dumps(data), content_type = "application/json") 
+
 
 @login_required
 @csrf_exempt
@@ -105,7 +209,20 @@ def addBread(request, uid, sid):
 @login_required
 @csrf_exempt
 def createStroy(request, uid):
-	pass
+	data = {}
+	if request.user.id == uid:
+		g = Graph(name = request.POST['data'],\
+					user = request.POST['user'])
+		g.save()
+		s = Story(user = request.user,\
+					title = request.POST['title'],\
+					roomID = request.POST['roomID'],\
+					graph = g)
+		s.save()
+		data['result'] = 'true'
+	else:
+		data['result'] = 'false';
+	return HttpResponse(json.dumps(data), content_type = "application/json") 
 
 
 
