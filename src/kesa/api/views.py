@@ -35,6 +35,10 @@ def recursive_node_to_dict(node):
 
 from django.contrib.auth import logout
 
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('api.views.index',))
+
 # Create your views here.
 
 
@@ -48,13 +52,15 @@ def getInit(request):
 def getStory(request, sid):
 	story = Story.objects.get(id=sid)
 	graph = story.graph
-	graphTree = recursive_node_to_dict(node);
+	graphTree = recursive_node_to_dict(graph);
 	return HttpResponse(json.dumps(graphTree), content_type = "application/json")
 
 
 @login_required	
-def getBranch(request, sid):
-	pass
+def getBranch(request, bid):
+	branch = Graph.objects.get(id=bid)
+	graphTree = recursive_node_to_dict(graph);
+	return HttpResponse(json.dumps(graphTree), content_type = "application/json")
 
 @login_required
 def getContributors(request, sid):
@@ -74,14 +80,39 @@ def getNumContributions(request, uid):
 def getUserLikesUser(request, uid):
 	user = User.objects.get(id=uid)
 	likes = Likes.objects.get(user=user)
-	data = serializers.serialize('json', contributors)
+	data = serializers.serialize('json', likes)
 	return HttpResponse(data, content_type = "application/json")
 
 @login_required
 def getLikesStory(request, sid):
 	story = Story.objects.get(id=sid)
-	likes = Likes.objects.get(story=story)
-	data = serializers.serialize('json', contributors)
+	likes = Likes.objects.filter(story=story)
+	data = serializers.serialize('json', likes)
+	return HttpResponse(data, content_type = "application/json")
+
+@login_required
+def getLikesUser(request, uid):
+	user = User.objects.get(id=uid)
+	likes = Likes.objects.filter(user=user)
+	data = serializers.serialize('json', likes)
+	return HttpResponse(data, content_type = "application/json")
+
+@login_required
+def getNCompleted(request,n):
+	stories = Story.objects.filter(is_complete=True).order_by('id')[:n]
+	data = serializers.serialize('json', stories)
+	return HttpResponse(data, content_type = "application/json")
+
+@login_required
+def getNActive(request,n):
+	stories = Story.objects.filter(is_open=True).order_by('id')[:n]
+	data = serializers.serialize('json', stories)
+	return HttpResponse(data, content_type = "application/json")
+
+@login_required
+def getUser(request,uid,cid):
+	user = User.objects.filter(id=cid)
+	data = serializers.serialize('json', user)
 	return HttpResponse(data, content_type = "application/json")
 
 
@@ -171,12 +202,21 @@ def like(request, uid, sid):
 
 @login_required
 @csrf_exempt
-def deleteBranch(request, uid, sid):
-	pass
+def deleteBranch(request, uid, sid, bid):
+	story = Entry.objects.get(id=sid)
+	branch = Graph.objects.get(id=bid)
+	data = {}
+	if story.user == request.user or branch.user == request.user and\
+	   request.user == uid:
+		Graph.objects.filter(id=bid).delete()
+		data['result'] = 'true' 
+	else:
+		data['result'] = 'false'
+	return HttpResponse(json.dumps(data), content_type = "application/json")
 
 @login_required
 @csrf_exempt
-def deleteStroy(request, uid, sid):
+def deleteStory(request, uid, sid):
 	story = Entry.objects.get(id=sid)
 	data = {}
 	if story.user == request.user and request.user == uid:
@@ -188,7 +228,7 @@ def deleteStroy(request, uid, sid):
 
 @login_required
 @csrf_exempt
-def addSRead(request, uid, sid):
+def addSReads(request, uid, sid):
 	data = {}
 	if request.user == uid:
 		s = Story.objects.get(id = sid)
@@ -203,12 +243,21 @@ def addSRead(request, uid, sid):
 
 @login_required
 @csrf_exempt
-def addBread(request, uid, sid):
-	pass
+def addBReads(request, uid, bid):
+	data = {}
+	if request.user == uid:
+		b = Graph.objects.get(id = bid)
+		count = b.read
+		b.read = count+1
+		b.save()
+		data['result'] = 'true'
+	else:
+		data['result'] = 'false';
+	return HttpResponse(json.dumps(data), content_type = "application/json") 
 
 @login_required
 @csrf_exempt
-def createStroy(request, uid):
+def createStory(request, uid):
 	data = {}
 	if request.user.id == uid:
 		g = Graph(name = request.POST['data'],\
