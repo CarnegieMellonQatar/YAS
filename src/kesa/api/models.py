@@ -12,6 +12,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 class Graph(MPTTModel):
 	name = models.CharField(max_length=200, unique=True)
+	data = models.TextField()
 	parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
 	user = models.ForeignKey(User)
 	read = models.IntegerField(default=0)

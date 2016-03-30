@@ -14,12 +14,7 @@ class GraphAdmin(DjangoMpttAdmin):
     def has_change_permission(self, request, obj=None):
         return request.user.is_superuser
 
-# class GraphAdmin(MPTTModelAdmin):
-#     pass
-
 admin.site.register(Graph, GraphAdmin)
-# admin.site.register(Graph)
-# admin.site.register(Graph, GraphAdmin)
 admin.site.register(Story)
 admin.site.register(Contributors)
 admin.site.register(Likes)

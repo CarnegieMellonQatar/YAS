@@ -130,8 +130,23 @@ def sign_up(request):
 
 @login_required
 @csrf_exempt
-def addToStory(request, uid, sid):
-	pass
+def addToStory(request, uid, sid, bid):
+	data={}
+	if request.user == uid:
+		s = Story.objects.get(id=sid)
+		u = User.objects.get(id=uid)
+		p = Graph.objects.get(id=bid)
+		g = Graph(name = request.POST['data'],\
+					data = request.POST['data'],\
+					parent = p,\
+					user = request.POST['user'])
+		g.save()
+		data['result'] = 'true' 
+	else:
+		data['result'] = 'false'
+	return HttpResponse(json.dumps(data), content_type = "application/json")
+
+
 
 @login_required
 @csrf_exempt
@@ -261,6 +276,7 @@ def createStory(request, uid):
 	data = {}
 	if request.user.id == uid:
 		g = Graph(name = request.POST['data'],\
+					data = request.POST['data'],\
 					user = request.POST['user'])
 		g.save()
 		s = Story(user = request.user,\
