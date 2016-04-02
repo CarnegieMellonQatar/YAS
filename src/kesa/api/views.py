@@ -46,7 +46,11 @@ def logout_view(request):
 
 @login_required
 def getInit(request):
-	return
+	storiesComp = Story.objects.filter(is_complete=True).order_by('id')[:10]
+	storiesAct = Story.objects.filter(is_complete=False, is_open=True).order_by('id')[:10]
+	concat = storiesComp+storiesAct
+	data = serializers.serialize('json', concat)
+	return HttpResponse(data, content_type = "application/json") 
 
 @login_required
 def getStory(request, sid):
