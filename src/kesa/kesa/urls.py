@@ -20,6 +20,8 @@ from api import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include('api.urls')),
+    url(r'^(?:index.html)?$', views.index, name='index'),
+    url(r'^signup/', views.signup, name='signup'),
 ]
 
 # Authentication
