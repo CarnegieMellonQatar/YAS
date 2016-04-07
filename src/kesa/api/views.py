@@ -24,6 +24,7 @@ def recursive_node_to_dict(node):
     result = {
         'id': node.pk,
         'name': node.name,
+        'data': node.data,
     }
     children = [recursive_node_to_dict(c) for c in node.get_children()]
     if children:
@@ -33,13 +34,29 @@ def recursive_node_to_dict(node):
 
 # ##### logout #####
 
-from django.contrib.auth import logout
-
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse('api.views.index',))
 
 # Create your views here.
+
+# ##### views #####
+
+def index(request):
+    data = {}
+    data['title'] = "KESA StoryBoarding"
+    data['buttonUrl'] = reverse('add',kwargs={})
+    data['buttonClass'] = "admin_button"
+    response =  render(request,'api/index.html', data)
+    return response
+
+def signup(request):
+    data = {}
+    data['title'] = "Sign UP"
+    data['buttonUrl'] = reverse('index',kwargs={})
+    data['buttonClass'] = "close_button"
+    response =  render(request,'api/signup.html', data)
+    return response
 
 
 # ##### GET methods #####
