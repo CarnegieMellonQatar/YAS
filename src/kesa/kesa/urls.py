@@ -27,6 +27,11 @@ urlpatterns = [
 # Authentication
 urlpatterns += [
     url(r'^login/$', 'django.contrib.auth.views.login', { 'template_name': 'api/login.html'}, name='login'),
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login', { 'template_name': 'api/login.html'}, name='login'),
     url(r'^logout/$', views.logout_view, name='logout'),
+    url(r'^index/$', views.index, name='index'),
+    url(r'^(?P<id>\d+)/reading/$', views.reading, name='reading'),
+    url(r'^(?P<id>\d+)/writing/$', views.writing, name='writing'),
+    url(r'^profile/$', views.profile, name='profile'),
+    url(r'^analytics/$', views.analytics, name='analytics'),
+    url(r'^signup/$', views.signup, name='signup'),
 ]

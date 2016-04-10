@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html ng-app="webGallery">
+    <head>
+        <title>Sign Up</title>
+        <!-- css -->
+        <link href="/static/style/style.css" rel="stylesheet" type="text/css"/>
+        <link href="/static/style/base.css" rel="stylesheet" type="text/css"/>
+        <link href="/static/style/animate.css" rel="stylesheet" type="text/css"/>
+
+        <!-- lib -->
+        <script src="/static/bower_components/angular/angular.min.js"></script>
+        <script src="/static/bower_components/d3/d3.min.js"></script>
+        <script src="/static/bower_components/peerjs/peer.min.js"></script>
+        <script src="/static/bower_components/jquery/dist/jquery.min.js"></script>
+
+        <!-- app -->
+        <script src="/static/app/kesa.js"></script>
+    </head>
+<body >
+    {% if errors %}
+    <p>Your username and password didn't match. Please try again.</p>
+    {% endif %}
+    <form method="post" action="{% url 'api.views.sign_up'  %}">
+        {% csrf_token %}
+        <div id="form_header">
+            <h1>Authentication</h1>
+        </div>
+
+        <div class="form_shape">
+            <div class="full_pane">
+                <div class="section">
+                    <h3>First Name:</h3>
+                    <input type="text" name="firstName" placeholder="firstName"/>
+                </div>
+
+                <div class="section">
+                    <h3>Last Name:</h3>
+                    <input type="text" name="lastName" placeholder="lastName"/>
+                </div>
+
+                <div class="section">
+                    <h3>Email:</h3>
+                    <input type="text" name="email" placeholder="email"/>
+                </div>
+
+                <div class="section">
+                    <h3>Username:</h3>
+                    <input type="text" name="userName" placeholder="username"/>
+                </div>
+
+                <div class="section">
+                    <h3>Password:</h3>
+                    <input type="password" name="password" placeholder="password"/>
+                </div>
+
+                <div class="section">
+                    <input type="submit" class="form_button" value="Login"/>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
+</html>

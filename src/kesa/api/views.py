@@ -7,7 +7,7 @@ from django.core import serializers
 from django.core.urlresolvers import reverse
 import json
 import os
-
+from itertools import chain
 from django.db.models import Count
 
 from .models import Graph, Story, Contributors, Likes
@@ -24,7 +24,6 @@ def recursive_node_to_dict(node):
     result = {
         'id': node.pk,
         'name': node.name,
-        'data': node.data,
     }
     children = [recursive_node_to_dict(c) for c in node.get_children()]
     if children:
@@ -34,30 +33,37 @@ def recursive_node_to_dict(node):
 
 # ##### logout #####
 
+from django.contrib.auth import logout
+
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse('api.views.index',))
 
 # Create your views here.
 
-# ##### views #####
-
 def index(request):
-    data = {}
-    data['title'] = "KESA StoryBoarding"
-    data['buttonUrl'] = reverse('add',kwargs={})
-    data['buttonClass'] = "admin_button"
-    response =  render(request,'api/index.html', data)
+    response = render(request,'api/index.html')
+    return response
+
+def profile(request):
+    response = render(request,'api/profile.html')
+    return response
+
+def reading(request,id):
+    response = render(request,'api/reading.html')
+    return response
+
+def writing(request,id):
+    response = render(request,'api/writing.html')
+    return response
+
+def analytics(request):
+    response = render(request,'api/analytics.html')
     return response
 
 def signup(request):
-    data = {}
-    data['title'] = "Sign UP"
-    data['buttonUrl'] = reverse('index',kwargs={})
-    data['buttonClass'] = "close_button"
-    response =  render(request,'api/signup.html', data)
-    return response
-
+	response = render(request,'api/signup.html')
+	return response
 
 # ##### GET methods #####
 
@@ -65,7 +71,7 @@ def signup(request):
 def getInit(request):
 	storiesComp = Story.objects.filter(is_complete=True).order_by('id')[:10]
 	storiesAct = Story.objects.filter(is_complete=False, is_open=True).order_by('id')[:10]
-	concat = storiesComp+storiesAct
+	concat = list(chain(storiesComp, storiesAct))
 	data = serializers.serialize('json', concat)
 	return HttpResponse(data, content_type = "application/json") 
 
@@ -73,14 +79,14 @@ def getInit(request):
 def getStory(request, sid):
 	story = Story.objects.get(id=sid)
 	graph = story.graph
-	graphTree = recursive_node_to_dict(graph);
+	graphTree = recursive_node_to_dict(graph)
 	return HttpResponse(json.dumps(graphTree), content_type = "application/json")
 
 
 @login_required	
 def getBranch(request, bid):
 	branch = Graph.objects.get(id=bid)
-	graphTree = recursive_node_to_dict(graph);
+	graphTree = recursive_node_to_dict(graph)
 	return HttpResponse(json.dumps(graphTree), content_type = "application/json")
 
 @login_required
@@ -146,8 +152,7 @@ def sign_up(request):
 	user.last_name = request.POST['lastName']
 	user.email = request.POST['email']
 	user.save()
-	data = {}
-	return HttpResponse(data, content_type = "application/json")
+	return HttpResponseRedirect(reverse('api.views.index',))
 
 @login_required
 @csrf_exempt
@@ -273,7 +278,7 @@ def addSReads(request, uid, sid):
 		s.save()
 		data['result'] = 'true'
 	else:
-		data['result'] = 'false';
+		data['result'] = 'false'
 	return HttpResponse(json.dumps(data), content_type = "application/json") 
 
 
@@ -288,7 +293,7 @@ def addBReads(request, uid, bid):
 		b.save()
 		data['result'] = 'true'
 	else:
-		data['result'] = 'false';
+		data['result'] = 'false'
 	return HttpResponse(json.dumps(data), content_type = "application/json") 
 
 @login_required
@@ -307,7 +312,7 @@ def createStory(request, uid):
 		s.save()
 		data['result'] = 'true'
 	else:
-		data['result'] = 'false';
+		data['result'] = 'false'
 	return HttpResponse(json.dumps(data), content_type = "application/json") 
 
 
