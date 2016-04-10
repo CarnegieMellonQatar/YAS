@@ -25,7 +25,7 @@ class Graph(MPTTModel):
 
 class Story(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
-	graph = models.ForeignKey(Graph, on_delete=models.CASCADE)
+	graph = models.ForeignKey(Graph, on_delete=models.CASCADE, null=True, blank=True)
 	title = models.CharField(max_length=200)
 	roomID = models.CharField(max_length=10000)
 	read = models.IntegerField(default=0)
