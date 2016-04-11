@@ -49,6 +49,7 @@
             <h2>Contributors: {$ story.fields.contributors $}</h2>
             <h2>Status: {$ storyController.isComplete(story.fields.is_complete) $}  </h2>
         </div>
+        <button ng-show="storyController.haveMoreComplete && storyController.enabled" ng-click="storyController.getMoreCompleteStories()">Show More</button>
         <div ng-hide="storyController.enabled" ng-repeat="story in storyController.uncompleteStories">
             <a href="/{$ story.pk $}/writing"><h2>{$ story.fields.title $}</h2></a>
             <a href="/{$ story.fields.userInfo.fields.username $}/profile"><h2>Author: {$ story.fields.userInfo.fields.username $}</h2></a>
@@ -56,6 +57,7 @@
             <h2>Contributors: {$ story.fields.contributors $}</h2>
             <h2>Status: {$ storyController.isComplete(story.fields.is_complete) $}</h2>
         </div>
+        <button ng-show="storyController.haveMoreIncomplete && !storyController.enabled" ng-click="storyController.getMoreInCompleteStories()">Show More</button>
     </div>
 {% else %}
     <br/>
