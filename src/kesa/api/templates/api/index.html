@@ -3,21 +3,29 @@
     <head>
         <title>Story Teller</title>
         <!-- css -->
+        <link href="/static/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
         <link href="/static/style/style.css" rel="stylesheet" type="text/css"/>
         <link href="/static/style/base.css" rel="stylesheet" type="text/css"/>
         <link href="/static/style/animate.css" rel="stylesheet" type="text/css"/>
+
 
         <!-- lib -->
         <script src="/static/bower_components/angular/angular.min.js"></script>
         <script src="/static/bower_components/d3/d3.min.js"></script>
         <script src="/static/bower_components/peerjs/peer.min.js"></script>
         <script src="/static/bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="/static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
         <!-- app -->
         <script src="/static/app/kesa.js"></script>
         <script src="/static/app/service/storyService.js"></script>
-        <script src="/static/app/controllers/adminController.js"></script>
+        <script src="/static/app/service/MiscService.js"></script>
+        <script src="/static/app/directives/organizedButtonsDirective.js"></script>
+        <script src="/static/app/controllers/profileController.js"></script>
         <script src="/static/app/controllers/storyController.js"></script>
+        <script src="/static/app/controllers/createController.js"></script>
+        <script src="/static/app/controllers/joinController.js"></script>
+        <script src="/static/app/controllers/readController.js"></script>
         <script src="/static/app/controllers/storytellerController.js"></script>
     </head>
 <body>
@@ -25,7 +33,7 @@
     {% if request.user.is_authenticated %}
     <ul>
         <a href="/index"><li>Stories</li></a>
-        <a href="/profile"><li>Profile</li></a>
+        <a href="/{{ request.user.username }}/profile"><li>Profile</li></a>
         <a href="/logout"><li>Log out</li></a>
     </ul>
     {% else %}
@@ -38,12 +46,26 @@
 {% block content %}
 {% if request.user.is_authenticated %}
     <div ng-controller="storyController as storyController">
+        <div>
+            <button ng-click="storyController.changeTabs(true)">Complete Stories</button>
+            <button ng-click="storyController.changeTabs(false)">Active Stories</button>
+        </div>
         <div ng-show="storyController.enabled" ng-repeat="story in storyController.completeStories">
             <a href="/{$ story.pk $}/reading"><h2>{$ story.fields.title $}</h2></a>
+            <a href="/{$ story.fields.userInfo.fields.username $}/profile"><h2>Author: {$ story.fields.userInfo.fields.username $}</h2></a>
+            <h2>Likes: {$ story.fields.likes $}</h2>
+            <h2>Contributors: {$ story.fields.contributors $}</h2>
+            <h2>Status: {$ storyController.isComplete(story.fields.is_complete) $}  </h2>
         </div>
+        <button ng-show="storyController.haveMoreComplete && storyController.enabled" ng-click="storyController.getMoreCompleteStories()">Show More</button>
         <div ng-hide="storyController.enabled" ng-repeat="story in storyController.uncompleteStories">
             <a href="/{$ story.pk $}/writing"><h2>{$ story.fields.title $}</h2></a>
+            <a href="/{$ story.fields.userInfo.fields.username $}/profile"><h2>Author: {$ story.fields.userInfo.fields.username $}</h2></a>
+            <h2>Likes: {$ story.fields.likes $}</h2>
+            <h2>Contributors: {$ story.fields.contributors $}</h2>
+            <h2>Status: {$ storyController.isComplete(story.fields.is_complete) $}</h2>
         </div>
+        <button ng-show="storyController.haveMoreIncomplete && !storyController.enabled" ng-click="storyController.getMoreInCompleteStories()">Show More</button>
     </div>
 {% else %}
     <br/>
