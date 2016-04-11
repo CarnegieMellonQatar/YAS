@@ -1,0 +1,29 @@
+<!--<h2 class="story-title">A Song of Fire</h2>-->
+<!--<div class="row">-->
+<!--<section class="tree-container col-xs-7"></section>-->
+<!--<section class="story-container col-xs-4">-->
+<!--</section>-->
+<!--</div>-->
+<div id="main_page">
+    <div class="create-page">
+        <label>
+            Enter your the ID you'd like to create
+            <input type="text" name="input" ng-model="session.createID">
+        </label>
+        <a href="#/create/{{session.createID}}">create session</a>
+    </div>
+    <div class="join-page">
+        <label>
+            Enter the ID you'd like to join
+            <input type="text" name="input" ng-model="session.joinID">
+        </label>
+        <a href="#/join/{{session.joinID}}">join session</a>
+    </div>
+    <div class="join-page">
+        <label>
+            Enter the ID of the story you'd like to read
+            <input type="text" name="input" ng-model="session.readID">
+        </label>
+        <a href="#/story/{{session.readID}}">read story</a>
+    </div>
+</div>
