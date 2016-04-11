@@ -1,5 +1,5 @@
 (function () {
-    angular.module('kesaApp').service('MiscService', function () {
+    angular.module('storyTeller').service('MiscService', function () {
 
         var srvc = this;
 
@@ -84,7 +84,7 @@
                 branch.children.forEach(function (d) {
                     var ret = srvc.findContactNoder(d, id);
                     if (ret.some === true) {
-                        objFound = d;
+                        objFound = ret.obj;
                     } else {
                         countFail++;
                     }
@@ -124,7 +124,7 @@
                 default:
                     console.log("Cannot handle this case!!");
             }
-            return tos
+            return toSend;
         };
 
 

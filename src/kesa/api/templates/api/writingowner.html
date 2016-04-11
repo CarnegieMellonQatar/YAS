@@ -1,0 +1,12 @@
+{% extends "api/index.html" %}
+
+{% block content %}
+<div ng-controller="createController as cc">
+    <h2 class="story-title">Story Session {$ cc.createID $}</h2>
+    <div class="row">
+        <section class="tree-container col-xs-7"></section>
+        <section class="story-container col-xs-4"></section>
+    </div>
+</div>
+
+{% endblock %}
