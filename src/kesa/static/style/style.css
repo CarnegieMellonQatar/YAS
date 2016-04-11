@@ -155,8 +155,13 @@
     font-weight: 700;
 }
 
+textarea, input {
+    outline: none;
+}
+
 textarea, .textareaClone {
-    padding: 3%;
+    padding: 20px;
+    /*margin: 20px;*/
     background: transparent;
     /*font-family: Arial;*/
     /*font-style: italic;*/
@@ -166,9 +171,9 @@ textarea, .textareaClone {
     word-wrap: break-word;
 }
 
-textarea {
-    font-size: 20px;
-}
+/*textarea {*/
+/*font-size: 20px;*/
+/*}*/
 
 .expandingText > textarea {
     -webkit-box-sizing: border-box;
@@ -186,8 +191,87 @@ textarea {
 
 .body-edit {
     text-align: justify;
+    padding-top: 0;
 }
 
 #next_page {
     display: none;
+}
+
+.edit-branch-button-full {
+    transition: all 0.2s;
+    cursor: pointer;
+    margin: 20px;
+    padding: 10px;
+    background-color: #BD3613;
+    text-align: center;
+    color: white;
+}
+
+.edit-branch-button-full:hover {
+    margin: 20px;
+    padding: 10px;
+    background-color: white;
+    text-align: center;
+    color: #BD3613;
+}
+
+.story-header {
+    margin-top: 100px;
+    text-align: center;
+    background-color: #808080;
+    background: no-repeat center center;
+    background-attachment: scroll;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+    margin-bottom: 20px;
+}
+
+.story-center-container {
+    margin-left: 300px;
+    margin-right: 300px;
+    margin-bottom: 50px;
+}
+
+.story-header h1 {
+    font-size: 122px;
+    margin-bottom: 80px;
+}
+
+.story-node {
+    line-height: 120%;
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+.story-choice-button {
+    transition: all 0.2s;
+    cursor: pointer;
+    margin: 5px;
+    padding: 10px;
+    background-color: #BD3613;
+    text-align: center;
+    color: white;
+}
+
+.story-choice-button:hover {
+    margin: 5px;
+    padding: 10px;
+    background-color: white;
+    text-align: center;
+    color: #BD3613;
+}
+
+hr.med {
+    width: 200px;
+    margin: 15px auto;
+    border-width: 4px;
+    border-color: #BD3613;
+}
+
+.center {
+    text-align: center;
 }
