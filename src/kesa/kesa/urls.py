@@ -29,7 +29,7 @@ urlpatterns += [
     url(r'^index/$', views.index, name='index'),
     url(r'^(?P<id>\d+)/reading/$', views.reading, name='reading'),
     url(r'^(?P<id>\d+)/writing/$', views.writing, name='writing'),
-    url(r'^profile/$', views.profile, name='profile'),
+    url(r'^(?P<username>\w+)/profile/$', views.profile, name='profile'),
     url(r'^analytics/$', views.analytics, name='analytics'),
     url(r'^signup/$', views.signup, name='signup'),
 ]
