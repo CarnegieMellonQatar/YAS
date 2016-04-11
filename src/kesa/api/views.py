@@ -97,12 +97,13 @@ def getStory(request, sid):
 	story = Story.objects.get(id=sid)
 	graph = story.graph
 	graphTree = recursive_node_to_dict(graph)
+	graphTree['name'] = story.title
 	return HttpResponse(json.dumps(graphTree), content_type = "application/json")
 
 @login_required	
 def getBranch(request, bid):
 	branch = Graph.objects.get(id=bid)
-	graphTree = recursive_node_to_dict(graph)
+	graphTree = recursive_node_to_dict(branch)
 	return HttpResponse(json.dumps(graphTree), content_type = "application/json")
 
 @login_required
@@ -197,7 +198,7 @@ def sign_up(request):
 @csrf_exempt
 def addToStory(request, uid, sid, bid):
 	data={}
-	if request.user == uid:
+	if request.user.id == int(uid):
 		s = Story.objects.get(id=sid)
 		u = User.objects.get(id=uid)
 		p = Graph.objects.get(id=bid)
@@ -211,13 +212,11 @@ def addToStory(request, uid, sid, bid):
 		data['result'] = 'false'
 	return HttpResponse(json.dumps(data), content_type = "application/json")
 
-
-
 @login_required
 @csrf_exempt
 def setOpen(request, uid, sid):
 	data={}
-	if request.user == uid:
+	if request.user.id == int(uid):
 		s = Story.objects.get(id=sid)
 		s.is_open = True
 		s.save()
@@ -230,7 +229,7 @@ def setOpen(request, uid, sid):
 @csrf_exempt
 def setClosed(request, uid, sid):
 	data={}
-	if request.user == uid:
+	if request.user.id == int(uid):
 		s = Story.objects.get(id=sid)
 		s.is_open = False
 		s.save()
@@ -243,7 +242,7 @@ def setClosed(request, uid, sid):
 @csrf_exempt
 def setComplete(request, uid, sid):
 	data={}
-	if request.user == uid:
+	if request.user.id == int(uid):
 		s = Story.objects.get(id=sid)
 		s.is_complete = True
 		s.save()
@@ -256,7 +255,8 @@ def setComplete(request, uid, sid):
 @csrf_exempt
 def setIncomplete(request, uid, sid):
 	data={}
-	if request.user == uid:
+	print request.user.id
+	if request.user.id == int(uid):
 		s = Story.objects.get(id=sid)
 		s.is_complete = False
 		s.save()
@@ -269,11 +269,15 @@ def setIncomplete(request, uid, sid):
 @csrf_exempt
 def like(request, uid, sid):
 	data = {}
-	if request.user.id == uid:
+	if request.user.id == int(uid):
+
 		s = Story.objects.get(id=sid)
-		l = Like(user = request.user,\
-					story = s)
-		l.save()
+		u = User.objects.get(id=uid)
+		l = Likes.objects.filter(user=u,story=s)
+		if(len(l) != 0):
+			l = Likes(user = request.user,\
+						story = s)
+			l.save()
 		data['result'] = 'true' 
 	else:
 		data['result'] = 'false'
@@ -283,7 +287,7 @@ def like(request, uid, sid):
 @login_required
 @csrf_exempt
 def deleteBranch(request, uid, sid, bid):
-	story = Entry.objects.get(id=sid)
+	story = Story.objects.get(id=sid)
 	branch = Graph.objects.get(id=bid)
 	data = {}
 	if story.user == request.user or branch.user == request.user and\
@@ -297,9 +301,9 @@ def deleteBranch(request, uid, sid, bid):
 @login_required
 @csrf_exempt
 def deleteStory(request, uid, sid):
-	story = Entry.objects.get(id=sid)
+	story = Story.objects.get(id=sid)
 	data = {}
-	if story.user == request.user and request.user == uid:
+	if story.user == request.user and request.user.id == int(uid):
 		Story.objects.filter(id=sid).delete()
 		data['result'] = 'true' 
 	else:
@@ -310,7 +314,7 @@ def deleteStory(request, uid, sid):
 @csrf_exempt
 def addSReads(request, uid, sid):
 	data = {}
-	if request.user == uid:
+	if request.user.id == int(uid):
 		s = Story.objects.get(id = sid)
 		count = s.read
 		s.read = count+1
@@ -325,7 +329,7 @@ def addSReads(request, uid, sid):
 @csrf_exempt
 def addBReads(request, uid, bid):
 	data = {}
-	if request.user == uid:
+	if request.user.id == int(uid):
 		b = Graph.objects.get(id = bid)
 		count = b.read
 		b.read = count+1
@@ -339,7 +343,7 @@ def addBReads(request, uid, bid):
 @csrf_exempt
 def createStory(request, uid):
 	data = {}
-	if request.user.id == uid:
+	if request.user.id == int(uid):
 		g = Graph(name = request.POST['name'],\
 					data = request.POST['data'],\
 					user = request.POST['user'])
