@@ -24,6 +24,7 @@ def recursive_node_to_dict(node):
     result = {
         'id': node.pk,
         'name': node.name,
+		'data': node.data,
     }
     children = [recursive_node_to_dict(c) for c in node.get_children()]
     if children:
@@ -45,21 +46,37 @@ def index(request):
     response = render(request,'api/index.html')
     return response
 
-def profile(request):
-    response = render(request,'api/profile.html')
-    return response
+def profile(request,username):
+	response = None
+	if(request.user.is_authenticated()):
+		response = render(request,'api/profile.html')
+	else:
+		response = render(request,'api/index.html')
+	return response
 
 def reading(request,id):
-    response = render(request,'api/reading.html')
-    return response
+	response = None
+	if(request.user.is_authenticated()):
+		response = render(request,'api/reading.html')
+	else:
+		response = render(request,'api/index.html')
+	return response
 
 def writing(request,id):
-    response = render(request,'api/writing.html')
-    return response
+	response = None
+	if(request.user.is_authenticated()):
+		response = render(request,'api/writing.html')
+	else:
+		response = render(request,'api/index.html')
+	return response
 
 def analytics(request):
-    response = render(request,'api/analytics.html')
-    return response
+	response = None
+	if(request.user.is_authenticated()):
+		response = render(request,'api/analytics.html')
+	else:
+		response = render(request,'api/index.html')
+	return response
 
 def signup(request):
 	response = render(request,'api/signup.html')
@@ -82,7 +99,6 @@ def getStory(request, sid):
 	graphTree = recursive_node_to_dict(graph)
 	return HttpResponse(json.dumps(graphTree), content_type = "application/json")
 
-
 @login_required	
 def getBranch(request, bid):
 	branch = Graph.objects.get(id=bid)
@@ -92,23 +108,23 @@ def getBranch(request, bid):
 @login_required
 def getContributors(request, sid):
 	story = Story.objects.get(id=sid)
-	contributors = Contributors.objects.filter(sid=story)
+	contributors = Contributors.objects.filter(story=story)
 	data = serializers.serialize('json', contributors)
 	return HttpResponse(data, content_type = "application/json") 
 
 @login_required
 def getNumContributions(request, uid):
 	user = User.objects.get(id=uid)
-	contributions = Contributors.objects.get(user=user)
+	contributions = Contributors.objects.filter(user=user)
 	count = len(contributions)
 	return HttpResponse(json.dumps(count), content_type = "application/json")
 
 @login_required
-def getUserLikesUser(request, uid):
+def getNumStories(request, uid):
 	user = User.objects.get(id=uid)
-	likes = Likes.objects.get(user=user)
-	data = serializers.serialize('json', likes)
-	return HttpResponse(data, content_type = "application/json")
+	story = Story.objects.filter(user=user)
+	story = len(story)
+	return HttpResponse(json.dumps(story), content_type = "application/json")
 
 @login_required
 def getLikesStory(request, sid):
@@ -125,23 +141,46 @@ def getLikesUser(request, uid):
 	return HttpResponse(data, content_type = "application/json")
 
 @login_required
-def getNCompleted(request,n):
-	stories = Story.objects.filter(is_complete=True).order_by('id')[:n]
+def getNCompleted(request,sid,n):
+	stories = Story.objects.filter(is_complete=True).filter(id__gt=sid).order_by('id')[:n]
 	data = serializers.serialize('json', stories)
 	return HttpResponse(data, content_type = "application/json")
 
 @login_required
-def getNActive(request,n):
-	stories = Story.objects.filter(is_open=True).order_by('id')[:n]
+def getNIncompleted(request,sid,n):
+	stories = Story.objects.filter(is_complete=False).filter(id__gt=sid).order_by('id')[:n]
+	data = serializers.serialize('json', stories)
+	return HttpResponse(data, content_type = "application/json")
+
+@login_required
+def getNActive(request,sid,n):
+	stories = Story.objects.filter(is_open=True).filter(id__gt=sid).order_by('id')[:n]
 	data = serializers.serialize('json', stories)
 	return HttpResponse(data, content_type = "application/json")
 
 @login_required
 def getUser(request,uid,cid):
-	user = User.objects.filter(id=cid)
-	data = serializers.serialize('json', user)
+	story = Story.objects.get(id=cid)
+	user = story.user
+	data = serializers.serialize('json', [user])
 	return HttpResponse(data, content_type = "application/json")
 
+@login_required
+def getUserByName(request,username):
+	user = User.objects.get(username=username)
+	data = serializers.serialize('json', [user])
+	return HttpResponse(data, content_type = "application/json")
+
+@login_required
+def getUserStories(request,uid,sid,n):
+	story = None
+	user = User.objects.get(id=uid)
+	if(int(sid) == 0):
+		story = Story.objects.filter(user=user).filter(id__gt=sid).order_by('-id')[:n]
+	else:
+		story = Story.objects.filter(user=user).filter(id__lt=sid).order_by('-id')[:n]
+	data = serializers.serialize('json', story)
+	return HttpResponse(data, content_type = "application/json")
 
 # ##### POST methods #####
 
@@ -301,7 +340,7 @@ def addBReads(request, uid, bid):
 def createStory(request, uid):
 	data = {}
 	if request.user.id == uid:
-		g = Graph(name = request.POST['data'],\
+		g = Graph(name = request.POST['name'],\
 					data = request.POST['data'],\
 					user = request.POST['user'])
 		g.save()
