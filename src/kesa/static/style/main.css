@@ -1,0 +1,287 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto+Slab:700|Exo+2:300,600);
+/* Eric Meyer's Reset CSS v2.0 - http://cssreset.com */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  margin: 0;
+  padding: 0; }
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+body {
+  line-height: 1; }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after, q:before, q:after {
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+body {
+  font-family: "sans-serif", "Exo 2", "Helvetica Neue", Helvetica, sans-serif;
+  font-weight: 300;
+  font-size: 1.2em;
+  line-height: 1.2em;
+  background: #FCF4DC;
+  color: #475B62; }
+
+strong {
+  font-weight: 600; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Roboto Slab", "Helvetica Neue", Helvetica, sans-serif;
+  font-weight: 700;
+  color: #FF7B2E;
+  font-size: 1.75em;
+  margin-bottom: .4em; }
+
+p {
+  margin-bottom: .5em; }
+
+.container {
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-top: 10px; }
+
+hr.med {
+  width: 200px;
+  margin: 15px auto;
+  border-width: 4px;
+  border-color: #FF7B2E; }
+
+.center {
+  text-align: center; }
+
+@media all and (max-width: 500px) {
+  h2 {
+    padding-left: 10px;
+    text-align: center; }
+
+  .container {
+    width: 100%; } }
+.node {
+  cursor: pointer; }
+
+.node circle {
+  fill: white;
+  stroke: #BD3613;
+  stroke-width: 3px; }
+
+.node text {
+  font: 12px sans-serif; }
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px; }
+
+.story-container {
+  animation-duration: 0.3s;
+  transition: all 0.5s;
+  background-color: #EAE3CB;
+  height: 85%;
+  right: 0;
+  margin-right: 40px;
+  position: absolute;
+  overflow-x: auto; }
+
+.story-section-title {
+  color: #FF7B2E;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 20px; }
+
+.story-section-body {
+  margin: 20px;
+  text-align: justify; }
+
+.add-branch-button {
+  transition: all 0.2s;
+  cursor: pointer;
+  margin: 20px;
+  padding: 10px;
+  background-color: #A57706;
+  text-align: center;
+  color: white; }
+
+.add-branch-button:hover {
+  margin: 20px;
+  padding: 10px;
+  background-color: white;
+  text-align: center;
+  color: #A57706; }
+
+.delete-branch-button {
+  width: 42.375%;
+  transition: all 0.2s;
+  cursor: pointer;
+  margin: 20px;
+  padding: 10px;
+  background-color: #D11C24;
+  text-align: center;
+  color: white; }
+
+.delete-branch-button:hover {
+  margin: 20px;
+  padding: 10px;
+  background-color: white;
+  text-align: center;
+  color: #D11C24; }
+
+.edit-branch-button {
+  width: 42.375%;
+  transition: all 0.2s;
+  cursor: pointer;
+  margin: 20px;
+  padding: 10px;
+  background-color: #FF4C2E;
+  text-align: center;
+  color: white; }
+
+.save-branch-button {
+  width: 42.375%;
+  transition: all 0.2s;
+  cursor: pointer;
+  margin: 20px;
+  padding: 10px;
+  background-color: #738A05;
+  text-align: center;
+  color: white; }
+
+.edit-branch-button:hover {
+  margin: 20px;
+  padding: 10px;
+  background-color: white;
+  text-align: center;
+  color: #FF4C2E; }
+
+.custom-alert {
+  height: 50px;
+  border-radius: 5px;
+  background-color: #D11C24;
+  color: white;
+  position: fixed;
+  padding: 10px;
+  right: 0;
+  top: 0;
+  margin: 20px; }
+
+.row {
+  transition: all 0.5s; }
+
+.tree-container {
+  transition: all 0.5s;
+  overflow-x: auto;
+  overflow-y: auto; }
+
+.story-title {
+  margin: 20px; }
+
+.close-story-button {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  cursor: pointer;
+  font-weight: 700; }
+
+textarea, input {
+  outline: none; }
+
+textarea, .textareaClone {
+  padding: 20px;
+  background: transparent;
+  border: none;
+  white-space: pre-wrap;
+  word-wrap: break-word; }
+
+.expandingText > textarea {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%; }
+
+.title-edit {
+  padding-bottom: 0;
+  color: #FF7B2E;
+  font-size: 32px;
+  font-weight: 700; }
+
+.body-edit {
+  text-align: justify;
+  padding-top: 0; }
+
+#next_page {
+  display: none; }
+
+.edit-branch-button-full {
+  transition: all 0.2s;
+  cursor: pointer;
+  margin: 20px;
+  padding: 10px;
+  background-color: #A23313;
+  text-align: center;
+  color: white; }
+
+.edit-branch-button-full:hover {
+  margin: 20px;
+  padding: 10px;
+  background-color: white;
+  text-align: center;
+  color: #A23313; }
+
+.story-header {
+  margin-top: 100px;
+  text-align: center;
+  background-color: #819090;
+  background: no-repeat center center;
+  background-attachment: scroll;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
+  margin-bottom: 20px; }
+
+.story-center-container {
+  margin-left: 300px;
+  margin-right: 300px;
+  margin-bottom: 50px; }
+
+.story-header h1 {
+  font-size: 122px;
+  margin-bottom: 80px; }
+
+.story-node {
+  line-height: 120%;
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 30px; }
+
+.story-choice-button {
+  transition: all 0.2s;
+  cursor: pointer;
+  margin: 5px;
+  padding: 10px;
+  background-color: #a23313;
+  text-align: center;
+  color: white; }
+
+.story-choice-button:hover {
+  margin: 5px;
+  padding: 10px;
+  background-color: white;
+  text-align: center;
+  color: #a23313; }
+
+/*# sourceMappingURL=main.css.map */
