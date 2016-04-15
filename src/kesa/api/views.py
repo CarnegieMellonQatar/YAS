@@ -7,10 +7,11 @@ from django.core import serializers
 from django.core.urlresolvers import reverse
 import json
 import os
+import random
 from itertools import chain
 from django.db.models import Count
 
-from .models import Graph, Story, Contributors, Likes
+from .models import Graph, Story, Contributors, Likes, Image
 
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -214,6 +215,17 @@ def getUserStories(request, uid, sid, n):
     data = serializers.serialize('json', story)
     return HttpResponse(data, content_type="application/json")
 
+@login_required
+def getImage(request, username):
+    user = User.objects.filter(username = username)
+    i = Image.objects.filter(user=user)
+    if len(i) == 0:
+        default = Image.objects.get(0)
+        return HttpResponse(default.image.read(), content_type = default.mimeType)
+    else:
+        im = i[0]
+        return HttpResponse(im.image.read(), content_type = im.mimeType)
+
 
 # ##### POST methods #####
 
@@ -225,6 +237,28 @@ def sign_up(request):
     user.email = request.POST['email']
     user.save()
     return HttpResponseRedirect(reverse('api.views.index', ))
+
+@login_required
+@csrf_exempt
+def addImage(request):
+    data = {}
+    user = User.objects.get(id = request.user.id)
+    u = Image.objects.filter(user = user)
+    if request.FILES:
+        if len(u) == 0:
+            i = Image(user = user,\
+                      image = request.FILES['img_file'],\
+                      mimeType = request.FILES['img_file'].content_type)
+            i.save()
+        else: 
+            i = u[0]
+            i.image = request.FILES['img_file']
+            i.mimeType = request.FILES['img_file'].content_type
+            i.save()
+        data['result'] = 'true'
+    else:
+        data['result'] = 'false'
+    return HttpResponse(json.dumps(data), content_type="application/json")
 
 
 @login_required
@@ -389,3 +423,119 @@ def createStory(request, uid):
     else:
         data['result'] = 'false'
     return HttpResponse(json.dumps(data), content_type="application/json")
+
+def makeBodies(numBodies, length):
+    smallestChar = 32
+    largestChar = 122
+    retList = []
+    string = ""
+    for i in range(numBodies):
+        string = ""
+        for j in range(length):
+            currentChar = chr(random.randint(smallestChar, largestChar))
+            string += currentChar
+        retList.append(string)
+    return retList
+
+def getUniqueName():
+    id = Graph.objects.all().order_by('-id')[0].id
+    return id
+
+
+def getData(dataList):
+    i = random.randint(0, len(dataList)-1)
+    data = dataList[i]
+    return data
+
+def getBool():
+    i = random.randint(0,1)
+    if i == 0:
+        return True
+    else:
+        return False
+
+def getRandomUser():
+    allUsers = User.objects.all()
+    l = len(allUsers)
+    index = random.randint(0,l-1)
+    return allUsers[index]
+
+def makeGraph(parent, user, d, story):
+    dataList = makeBodies(100, 100)
+    name = getUniqueName()
+    data = getData(dataList)
+    read = random.randint(1,10)
+    g = Graph(name = name, \
+              data = data,\
+              read = read,\
+              user = user,\
+              parent = parent)
+    g.save()
+    c = Contributors.objects.filter(user = user, story = story)
+    if len(c) == 0:
+        contributor = Contributors(story = story,\
+                                   user = user)
+        contributor.save()
+    user1 = getRandomUser()
+    r = random.randint(1,3)
+    if(d == 5):
+        return
+    else:
+        for i in range(r):
+            makeGraph(g, user1, d+1, story)
+
+
+def makeStories(user, n):
+    dataList = makeBodies(100, 100)
+    for i in range(n):
+        g = Graph(name = str(user.id)+ " " +str(i), \
+                  data = getData(dataList),\
+                  read = random.randint(1,10),\
+                  user = user)
+        g.save()
+        user1 = getRandomUser()
+        # makeGraph(g, user1, 1)
+        s = Story(user = user,\
+                  title = str(user.id)+ " " +str(i),\
+                  graph = g,\
+                  read = random.randint(1,10),\
+                  is_complete = getBool(),\
+                  is_open = getBool())
+        s.save()
+        makeGraph(g, user1, 1, s)
+
+
+def makeUsers(request, n):
+    data = {}
+    for i in range(int(n)):
+        user = User.objects.create_user(str(i), "", str(i))
+        user.firstName = str(i)
+        user.lastName = str(i)
+        user.email = "a@a.com"
+        user.save()
+        r =  random.randint(1, 5)
+        makeStories(user, r)
+    data['result'] = 'true'
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+def populateLikes(request):
+    data = {}
+    numStories = Story.objects.all().count()
+    users = User.objects.all()
+    stories = Story.objects.all()
+    for i in users:
+        for j in range(numStories/4):
+            story = stories[random.randint(0, numStories-1)]
+            l = Likes.objects.filter(user=i, story=story)
+            while (len(l) != 0):
+                story = stories[random.randint(0, numStories-1)]
+                l = Likes.objects.filter(user=i, story=story)
+
+            like = Likes(user=i, \
+                         story=story)
+            like.save()
+    data['result'] = 'true'
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+

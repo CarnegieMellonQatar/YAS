@@ -259,5 +259,27 @@
                         callback(error,null);
                     });
             };
+
+            service.addImage = function(image, callback){
+                var formdata = new FormData();
+                for (var key in image) {
+                    formdata.append(key, image[key]);
+                }
+                var request = {
+                    method: 'POST',
+                    url: '/api/addImage/',
+                    data: formdata,
+                    headers: {
+                        'Content-Type': undefined
+                    }
+                };
+                $http(request)
+                    .success(function(data,status){
+                        callback(null,data);
+                    })
+                    .error(function(error, status){
+                         callback(error,null);
+                    });
+            };
         });
 })();

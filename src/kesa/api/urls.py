@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^getLikesStory/(?P<sid>\d+)/$', views.getLikesStory, name='getLikesStory'),
     url(r'^getLikesUser/(?P<uid>\d+)/$', views.getLikesUser, name='getLikesUser'),
     url(r'^(?P<username>\w+)/getUserByName/$', views.getUserByName, name='getUserByName'),
+    url(r'^img/(?P<username>\w+)/$', views.getImage, name='getImage'),
 	url(r'^(?P<uid>\d+)/getNumContributions/$', views.getNumContributions, name='getNumContributions'),
     url(r'^(?P<uid>\d+)/getNumStories/$', views.getNumStories, name='getNumStories'),
 	url(r'^(?P<uid>\d+)/getUser/(?P<cid>\d+)/$', views.getUser, name='getUser'),
@@ -28,5 +29,8 @@ urlpatterns = [
     url(r'^deleteStory/(?P<sid>\d+)/$', views.deleteStory, name='deleteStory'),
     url(r'^addSReads/(?P<sid>\d+)/$', views.addSReads, name='addSReads'),
     url(r'^addBReads/(?P<bid>\d+)/$', views.addBReads, name='addBReads'),
-    url(r'^(?P<uid>\d+)/createStory/$', views.createStory, name='createStory'),  
+    url(r'^(?P<uid>\d+)/createStory/$', views.createStory, name='createStory'),
+    url(r'^addImage/$', views.addImage, name='addImage'), 
+    url(r'^makeUsers/(?P<n>\d+)/$', views.makeUsers, name='makeUsers'),
+    url(r'^populateLikes/$', views.populateLikes, name='populateLikes'), 
 ]

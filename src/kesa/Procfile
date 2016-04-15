@@ -1,0 +1,1 @@
+web: gunicorn kesa.wsgi --log-file -
