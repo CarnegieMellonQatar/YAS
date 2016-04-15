@@ -1,7 +1,7 @@
 {% extends "api/index.html" %}
 
 {% block content %}
-    <div ng-controller="profileController as profileController">
+    <div ng-controller="profileController as profileController" ng-cloak>
         <h2>{$ profileController.user.fields.username $}'s Stories</h2>
         <div>
             <h3>Stories: {$ profileController.user.fields.stories $}</h3>
@@ -12,6 +12,7 @@
             <h2>Likes: {$ story.fields.likes $}</h2>
             <h2>Contributors: {$ story.fields.contributors $}</h2>
             <h2>Status: {$ profileController.getStatus(story.fields) $}</h2>
+            <button ng-click="profileController.deleteStory(story)">Delete</button>
         </div>
         <button ng-show="profileController.haveMore" ng-click="profileController.getMoreStories()">Show More</button>
     </div>
