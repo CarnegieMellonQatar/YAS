@@ -24,9 +24,9 @@ urlpatterns = [
     url(r'^(?P<uid>\d+)/setComplete/(?P<sid>\d+)/$', views.setComplete, name='setComplete'),
     url(r'^(?P<uid>\d+)/setIncomplete/(?P<sid>\d+)/$', views.setIncomplete, name='setIncomplete'),
     url(r'^(?P<uid>\d+)/like/(?P<sid>\d+)/$', views.like, name='like'),
-    url(r'^(?P<uid>\d+)/deleteBranch/(?P<sid>\d+)/(?P<bid>\d+)/$', views.deleteBranch, name='deleteBranch'),
-    url(r'^(?P<uid>\d+)/deleteStory/(?P<sid>\d+)/$', views.deleteStory, name='deleteStory'),
-    url(r'^(?P<uid>\d+)/addSReads/(?P<sid>\d+)/$', views.addSReads, name='addSReads'),
-    url(r'^(?P<uid>\d+)/addBReads/(?P<bid>\d+)/$', views.addBReads, name='addBReads'),
+    url(r'^deleteBranch/(?P<sid>\d+)/(?P<bid>\d+)/$', views.deleteBranch, name='deleteBranch'),
+    url(r'^deleteStory/(?P<sid>\d+)/$', views.deleteStory, name='deleteStory'),
+    url(r'^addSReads/(?P<sid>\d+)/$', views.addSReads, name='addSReads'),
+    url(r'^addBReads/(?P<bid>\d+)/$', views.addBReads, name='addBReads'),
     url(r'^(?P<uid>\d+)/createStory/$', views.createStory, name='createStory'),  
 ]

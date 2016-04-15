@@ -126,6 +126,25 @@
                     });
             };
 
+            service.getStory = function(sid, callback){
+               $http.get('/api/getStory/'+sid+'/')
+                    .success(function(data,status){
+                        callback(null,data);
+                    })
+                    .error(function(error,status){
+                        callback(error,null);
+                    });
+            };
+
+            service.getBranch = function(bid, callback){
+               $http.get('/api/getStory/'+bid+'/')
+                    .success(function(data,status){
+                        callback(null,data);
+                    })
+                    .error(function(error,status){
+                        callback(error,null);
+                    });
+            };
 
             service.setOpen = function(uid, sid, callback){
                 $http.post('/api/'+uid+'/setOpen/'+sid+'/')
@@ -178,7 +197,7 @@
             };
 
             service.deleteBranch = function(uid, sid, bid, callback){
-                $http.post('/api/'+uid+'/deleteBranch/'+sid+'/'+bid+'/')
+                $http.post('/api/deleteBranch/'+sid+'/'+bid+'/')
                     .success(function(data,status){
                         callback(null,data);
                     })
@@ -188,7 +207,7 @@
             };
 
             service.deleteStory = function(uid, sid, callback){
-                $http.post('/api/'+uid+'/deleteStory/'+sid+'/')
+                $http.post('/api/deleteStory/'+sid+'/')
                     .success(function(data,status){
                         callback(null,data);
                     })
@@ -197,8 +216,8 @@
                     });
             };
 
-            service.addSReads = function(uid, sid, callback){
-                $http.post('/api/'+uid+'/addSReads/'+sid+'/')
+            service.addSReads = function(sid, callback){
+                $http.post('/api/addSReads/'+sid+'/')
                     .success(function(data,status){
                         callback(null,data);
                     })
@@ -207,8 +226,8 @@
                     });
             };
 
-            service.addBReads = function(uid, bid, callback){
-                $http.post('/api/'+uid+'/addBReads/'+bid+'/')
+            service.addBReads = function(bid, callback){
+                $http.post('/api/addBReads/'+bid+'/')
                     .success(function(data,status){
                         callback(null,data);
                     })
