@@ -129,4 +129,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads/')
 
 # Login
 
-LOGIN_REDIRECT_URL = '/index'
+LOGIN_REDIRECT_URL = '/stories'

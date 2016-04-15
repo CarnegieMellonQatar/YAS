@@ -46,12 +46,17 @@ def logout_view(request):
 # Create your views here.
 
 def landing(request):
-    response = render(request, 'api/landing.html')
+    response = render(request, 'api/index.html')
     return response
 
 
 def index(request):
     response = render(request, 'api/index.html')
+    return response
+
+
+def stories(request):
+    response = render(request, 'api/stories.html')
     return response
 
 
