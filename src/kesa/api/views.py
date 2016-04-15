@@ -84,14 +84,18 @@ def profile(request, username):
 def story(request, id):
     response = None
     if (request.user.is_authenticated()):
-        s = Story.objects.get(id=id)
-        if(s.is_open):
-            if(s.user == request.user):
-                response = render(request, 'api/writingowner.html')
+        s = Story.objects.filter(id=id)
+        if(len(s) != 0):
+            s=s[0]
+            if(s.is_open):
+                if(s.user == request.user):
+                    response = render(request, 'api/writingowner.html')
+                else:
+                    response = render(request, 'api/writingguest.html')
             else:
-                response = render(request, 'api/writingguest.html')
+                response = render(request, 'api/reading.html')
         else:
-            response = render(request, 'api/reading.html')
+            response = render(request, 'api/error.html')
     else:
         response = render(request, 'api/index.html')
     return response
