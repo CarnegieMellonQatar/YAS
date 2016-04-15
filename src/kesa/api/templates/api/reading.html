@@ -1,28 +1,32 @@
 {% extends "api/index.html" %}
 
 {% block content %}
-<div class="story-reader-container plain-theme" ng-controller="readController as rc" ng-cloak>
+<div class="story-reader-container plain-theme" ng-controller="readController as rc" ng-cloak ng-show="rc.loaded">
     <header class="story-header">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <h1>Story {$rc.readID$}</h1>
-                    <h2>By some author</h2>
+                    <h1>{$ rc.storyTree.title $}</h1>
+                    <h2 class="author-subheader">By some author</h2>
                 </div>
             </div>
         </div>
     </header>
-    <div ng-if="rc.currentChoices !== []" class="story-center-container">
-        <div ng-repeat="node in rc.currentNodes track by $index">
-            <div class="story-node">{$node$}</div>
-            <hr class="med">
-        </div>
-        <div organized-buttons class="row">
+    <!--<div ng-if="rc.currentChoices !== []" class="story-center-container">-->
+        <!--<div ng-repeat="node in rc.currentNodes track by $index">-->
+            <!--<div class="story-node">{$node$}</div>-->
+            <!--<hr class="med">-->
+        <!--</div>-->
+    <!--</div>-->
+    <div class="story-center-container">
+        <div class="story-node"></div>
+        <div ng-if="!rc.currentChoicesIsEmpty() && !animating" organized-buttons class="row">
             <div class="story-choice-button" ng-repeat="choice in rc.currentChoices track by $index"
                  ng-click="rc.updateCurrentChoices(choice)">
                 {$choice.name$}
             </div>
         </div>
     </div>
+    <!--<div class="test-inject" style="width:100%;height: 100px;"></div>-->
 </div>
 {% endblock %}

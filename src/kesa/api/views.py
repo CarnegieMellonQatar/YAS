@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
 from django.core.urlresolvers import reverse
 import json
+import random
 import os
 from itertools import chain
 from django.db.models import Count
@@ -22,13 +23,9 @@ from django.contrib.auth.decorators import permission_required
 # code taken from: http://stackoverflow.com/questions/12556268/fastest-way-to-create-json-to-reflect-a-tree-structure-in-python-django-using
 
 def recursive_node_to_dict(node):
-    print node.name
-    indexvalue = node.name.find(str(node.pk))
-    if(indexvalue == -1):
-        indexvalue = len(node.name)
     result = {
-        'branchid': node.pk,
-        'name': node.name[0:indexvalue],
+        'id': node.pk,
+        'name': node.name,
         'body': node.data,
     }
     children = [recursive_node_to_dict(c) for c in node.get_children()]
@@ -84,8 +81,8 @@ def story(request, id):
     response = None
     if (request.user.is_authenticated()):
         s = Story.objects.get(id=id)
-        if(s.is_open):
-            if(s.user == request.user):
+        if (s.is_open):
+            if (s.user == request.user):
                 response = render(request, 'api/writingowner.html')
             else:
                 response = render(request, 'api/writingguest.html')
@@ -94,6 +91,7 @@ def story(request, id):
     else:
         response = render(request, 'api/index.html')
     return response
+
 
 def analytics(request):
     response = None
@@ -125,7 +123,7 @@ def getStory(request, sid):
     story = Story.objects.get(id=sid)
     graph = story.graph
     graphTree = "undefined"
-    if(graph != None):
+    if (graph != None):
         graphTree = recursive_node_to_dict(graph)
         graphTree['title'] = story.title
     return HttpResponse(json.dumps(graphTree), content_type="application/json")
@@ -134,7 +132,6 @@ def getStory(request, sid):
 @login_required
 def getBranch(request, bid):
     branch = Graph.objects.get(id=bid)
-
     graphTree = recursive_node_to_dict(branch)
     return HttpResponse(json.dumps(graphTree), content_type="application/json")
 
@@ -241,19 +238,20 @@ def sign_up(request):
 
 @login_required
 @csrf_exempt
-def addToStory(request, sid, bid):
+def addToStory(request, uid, sid, bid):
     data = {}
-    s = Story.objects.get(id=sid)
-    u = User.objects.get(id=request.user.id)
-    p = Graph.objects.get(id=bid)
-    g = Graph(name="Empty Branch"+str(bid), \
-              data="Add something here", \
-              parent=p, \
-              user=u)
-    g.save()
-    g.name = g.name[:g.name.find(str(bid))]+str(int(g.id))
-    g.save()
-    data['result'] = 'true'
+    if request.user.id == int(uid):
+        s = Story.objects.get(id=sid)
+        u = User.objects.get(id=uid)
+        p = Graph.objects.get(id=bid)
+        g = Graph(name=request.POST['data'], \
+                  data=request.POST['data'], \
+                  parent=p, \
+                  user=request.POST['user'])
+        g.save()
+        data['result'] = 'true'
+    else:
+        data['result'] = 'false'
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 
@@ -262,7 +260,7 @@ def addToStory(request, sid, bid):
 def setOpen(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
-    if(request.user == s.user):
+    if (request.user == s.user):
         s.is_open = True
         s.save()
         data['result'] = 'true'
@@ -276,7 +274,7 @@ def setOpen(request, sid):
 def setClosed(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
-    if(request.user == s.user):
+    if (request.user == s.user):
         s.is_open = False
         s.save()
         data['result'] = 'true'
@@ -290,7 +288,7 @@ def setClosed(request, sid):
 def setComplete(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
-    if(request.user == s.user):
+    if (request.user == s.user):
         s.is_complete = True
         s.save()
         data['result'] = 'true'
@@ -304,7 +302,7 @@ def setComplete(request, sid):
 def setIncomplete(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
-    if(request.user == s.user):
+    if (request.user == s.user):
         s.is_complete = False
         s.save()
         data['result'] = 'true'
@@ -352,9 +350,7 @@ def deleteStory(request, sid):
     story = Story.objects.get(id=sid)
     data = {}
     if story.user == request.user:
-        s = Story.objects.filter(id=sid)
-        s[0].graph.delete()
-        s.delete()
+        Story.objects.filter(id=sid).delete()
         data['result'] = 'true'
     else:
         data['result'] = 'false'
@@ -389,20 +385,28 @@ def addBReads(request, bid):
 @csrf_exempt
 def createStory(request, uid):
     data = {}
-    response = None
     if request.user.id == int(uid):
         g = Graph(name=request.POST['name'], \
                   data="This is empty!! Edit me", \
                   user=request.user)
-        g.save()
-        g.name = g.name+str(g.id)
         g.save()
         s = Story(user=request.user, \
                   title=request.POST['title'], \
                   is_open=request.POST['is_open'],\
                   graph=g)
         s.save()
-        string = "/"+str(s.id)+"/story"
-        return HttpResponseRedirect(string)
+        data['result'] = 'true'
     else:
-        return HttpResponseRedirect("/create")
+        data['result'] = 'false'
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+def getUniqueName():
+    id = Graph.object.all().order_by('-id')[0].id
+    return id
+
+
+def getData(dataList):
+    i = random.randint(1, len(dataList))
+    data = dataList[i]
+    return data
