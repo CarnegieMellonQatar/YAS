@@ -46,18 +46,25 @@ def logout_view(request):
 
 # Create your views here.
 
-def landing(request):
-    response = render(request, 'api/index.html')
-    return response
-
-
 def index(request):
     response = render(request, 'api/index.html')
     return response
 
 
 def stories(request):
-    response = render(request, 'api/stories.html')
+    response = None
+    if (request.user.is_authenticated()):
+        response = render(request, 'api/stories.html')
+    else:
+        response = render(request, 'api/index.html')
+    return response
+
+def create(request):
+    response = None
+    if (request.user.is_authenticated()):
+        response = render(request, 'api/create.html')
+    else:
+        response = render(request, 'api/index.html')
     return response
 
 
@@ -380,11 +387,12 @@ def createStory(request, uid):
     data = {}
     if request.user.id == int(uid):
         g = Graph(name=request.POST['name'], \
-                  data=request.POST['data'], \
-                  user=request.POST['user'])
+                  data="This is empty!! Edit me", \
+                  user=request.user)
         g.save()
         s = Story(user=request.user, \
                   title=request.POST['title'], \
+                  is_open=request.POST['is_open'],\
                   graph=g)
         s.save()
         data['result'] = 'true'

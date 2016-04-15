@@ -89,7 +89,7 @@ hr.med {
 
   .container {
     width: 100%; } }
-.btn-classic, .story-active-switch-button, .story-active-switch-button:hover, .story-join, .story-join:hover, .story-choice-button, .story-choice-button:hover {
+.btn-classic, .story-active-switch-button, .story-active-switch-button:hover, .story-join, .story-join:hover, .story-nav-add, .story-nav-add:hover, .story-choice-button, .story-choice-button:hover {
   text-align: center;
   display: inline-block;
   padding: 1.2em 1.4em;
@@ -459,6 +459,18 @@ header .header-content .header-content-inner p {
   background-color: white;
   color: #fb5e58; }
 
+.story-nav-add {
+  border-radius: 0;
+  height: 100%;
+  background-color: #fb5e58;
+  color: white; }
+
+.story-nav-add:hover {
+  border-color: transparent;
+  background-color: white;
+  color: #fb5e58; }
+
+
 .story-list {
   background: transparent;
   float: right;
@@ -466,7 +478,7 @@ header .header-content .header-content-inner p {
   height: 90%;
   overflow-y: scroll;
   margin-top: 20px;
-  margin-right: 100px; }
+  margin-right: 5%; }
 
 .story-header {
   margin-top: 100px;
@@ -556,5 +568,6 @@ header .header-content .header-content-inner p {
   background-color: white;
   color: #fb5e58;
   border-color: #fb5e58; }
+
 
 /*# sourceMappingURL=main.css.map */
