@@ -1,0 +1,197 @@
+.node {
+  cursor: pointer;
+}
+
+.node circle {
+  fill: white;
+  stroke: $primary-dark-color;
+  stroke-width: 3px;
+}
+
+.node text {
+  font: 12px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px;
+}
+
+.story-container {
+  animation-duration: 0.3s;
+  transition: all 0.5s;
+  background-color: $staple;
+  height: 85%;
+  right: 0;
+  margin-right: 40px;
+  position: absolute;
+  overflow-x: auto;
+}
+
+.story-section-title {
+  color: $primary-light-color;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 20px;
+}
+
+.story-section-body {
+  margin: 20px;
+  text-align: justify;
+}
+
+.add-branch-button {
+  transition: all 0.2s;
+  cursor: pointer;
+  margin: 20px;
+  padding: 10px;
+  background-color: $staple-dark;
+  text-align: center;
+  color: white;
+}
+
+.add-branch-button:hover {
+  margin: 20px;
+  padding: 10px;
+  background-color: white;
+  text-align: center;
+  color: $staple-dark;
+}
+
+.delete-branch-button {
+  width: 42.375%;
+  transition: all 0.2s;
+  cursor: pointer;
+  margin: 20px;
+  padding: 10px;
+  background-color: $fail;
+  text-align: center;
+  color: white;
+}
+
+.delete-branch-button:hover {
+  margin: 20px;
+  padding: 10px;
+  background-color: white;
+  text-align: center;
+  color: $fail;
+}
+
+.edit-branch-button {
+  width: 42.375%;
+  transition: all 0.2s;
+  cursor: pointer;
+  margin: 20px;
+  padding: 10px;
+  background-color: $secondary-light-color;
+  text-align: center;
+  color: white;
+}
+
+.save-branch-button {
+  width: 42.375%;
+  transition: all 0.2s;
+  cursor: pointer;
+  margin: 20px;
+  padding: 10px;
+  background-color: $success;
+  text-align: center;
+  color: white;
+}
+
+.edit-branch-button:hover {
+  margin: 20px;
+  padding: 10px;
+  background-color: white;
+  text-align: center;
+  color: $secondary-light-color;
+}
+
+.custom-alert {
+  height: 50px;
+  border-radius: 5px;
+  background-color: $fail;
+  color: white;
+  position: fixed;
+  padding: 10px;
+  right: 0;
+  top: 0;
+  margin: 20px;
+}
+
+.row {
+  transition: all 0.5s;
+}
+
+.tree-container {
+  transition: all 0.5s;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.story-title {
+  margin: 20px;
+}
+
+.close-story-button {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+textarea, input {
+  outline: none;
+}
+
+textarea, .textareaClone {
+  padding: 20px;
+  background: transparent;
+  border: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.expandingText > textarea {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.title-edit {
+  padding-bottom: 0;
+  color: $primary-light-color;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.body-edit {
+  text-align: justify;
+  padding-top: 0;
+}
+
+#next_page {
+  display: none;
+}
+
+.edit-branch-button-full {
+  transition: all 0.2s;
+  cursor: pointer;
+  margin: 20px;
+  padding: 10px;
+  background-color: $secondary-dark-color;
+  text-align: center;
+  color: white;
+}
+
+.edit-branch-button-full:hover {
+  margin: 20px;
+  padding: 10px;
+  background-color: white;
+  text-align: center;
+  color: $secondary-dark-color;
+}

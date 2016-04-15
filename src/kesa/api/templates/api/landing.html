@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html ng-app="storyTeller">
+    <head>
+        <title>Story Teller</title>
+        <!-- css -->
+        <link href="/static/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="/static/style/main.css" rel="stylesheet" type="text/css"/>
+        <link href="/static/style/animate.css" rel="stylesheet" type="text/css"/>
+
+
+        <!-- lib -->
+        <script src="/static/bower_components/d3/d3.min.js"></script>
+        <script src="/static/bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="/static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    </head>
+<body>
+<header>
+    {% if request.user.is_authenticated %}
+    <ul>
+        <a href="/index"><li>Stories</li></a>
+        <a href="/{{ request.user.username }}/profile"><li>Profile</li></a>
+        <a href="/logout"><li>Log out</li></a>
+    </ul>
+    {% else %}
+    <ul>
+        <a href="/login"><li>Login</li></a>
+        <a href="/signup"><li>Signup</li></a>
+    </ul>
+    {% endif %}
+</header>
+{% block content %}
+    
+{% endblock %}
+</body>
+</html>

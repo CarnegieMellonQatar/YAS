@@ -20,6 +20,6 @@
     "peerjs": "^0.3.14",
     "jquery": "^2.2.2",
     "d3": "^3.5.16",
-    "angular": "angularjs#^1.5.3"
+    "angular": "angularjs#^1.5.3",
   }
 }

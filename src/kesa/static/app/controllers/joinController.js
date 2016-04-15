@@ -2,13 +2,14 @@
     "use strict";
 
     angular.module('storyTeller')
-        .controller('joinController', function (MiscService, $location) {
-            var id = location.pathname.substring(1, location.pathname.indexOf("writingguest") - 1);
+        .controller('joinController', function (MiscService, $location, storyService) {
+           var id = location.pathname.substring(1, location.pathname.indexOf("story")-1);
 
             console.log("Join controller initialized to the ID " + id);
             var ctrl = this;
 
             ctrl.joinID = id;
+            ctrl.title = "";
 
             var root, currentNode, tree, diagonal, svg;
 
@@ -22,7 +23,7 @@
                 duration = 750;
 
             this.join = function () {
-                peer = new Peer({key: 'b6lunl4jlb4kj4i'});
+                peer = new Peer({host:'storypeerserver.herokuapp.com', secure:true, port:443});
 
                 peer.on('open', function (id) {
                     console.log("My id is: " + id);
@@ -76,8 +77,11 @@
                             console.log(contact);
                             console.log(currentNode);
                             if (contact.obj.id == currentNode.id) {
-                                MiscService.customAlert("<strong> Master has deleted your current node </strong>, sorry");
+                                console.log("here1");
+                                MiscService.customAlert("Master has deleted your current node, sorry");
+                                console.log("here2");
                                 ctrl.update(contact.obj.parent, false, false, 1, null);
+                                console.log("here3");
                                 ctrl.click(currentNode.parent);
                             } else {
                                 ctrl.update(contact.obj.parent, false, false, 1, null);
@@ -537,6 +541,7 @@
                 root.x0 = height / 2;
                 root.y0 = 0;
                 currentNode = root;
+                ctrl.title = root.title;
 
                 ctrl.click(root);
                 ctrl.update(root, false, true, -1, null);

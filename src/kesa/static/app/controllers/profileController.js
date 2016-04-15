@@ -112,11 +112,17 @@
             };
 
 
-            profile.isComplete = function(is_complete){
-                if(is_complete){
+            profile.getStatus = function(data){
+                if(data.is_complete){
                     return "Complete";
                 } else {
-                    return "Active";
+                    if(data.is_open) {
+                        return "Active";
+                    }
+                    else{
+                        return "Closed";
+                    }
+
                 }
             };
         })
