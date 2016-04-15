@@ -33,8 +33,5 @@ urlpatterns += [
     url(r'^analytics/$', views.analytics, name='analytics'),
     url(r'^signup/$', views.signup, name='signup'),
     url(r'^stories/$', views.stories, name='stories'),
-<<<<<<< HEAD
-=======
     url(r'^create/$', views.create, name='create'),
->>>>>>> c6bb1630c9c9657f276c379d62606d7d69341fe5
 ]
