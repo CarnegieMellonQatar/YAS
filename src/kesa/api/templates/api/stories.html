@@ -1,0 +1,80 @@
+{% extends "api/index.html" %}
+
+{% block content %}
+{% if request.user.is_authenticated %}
+<div class="stories-section" ng-controller="storyController as storyController">
+    <div class="switch-buttons">
+        <a ng-class="{chosen: storyController.enabled}" class="story-active-switch-button" ng-click="storyController.changeTabs(true)">
+            <i class="fa fa-check fa-2x" aria-hidden="true"></i>
+        </a>
+        <a ng-class="{chosen: !storyController.enabled}" class="story-active-switch-button" ng-click="storyController.changeTabs(false)">
+            <i class="fa fa-pencil fa-2x" aria-hidden="true"></i>
+        </a>
+    </div>
+    <div class="story-list" ng-show="storyController.enabled">
+        <div class="story-entry" ng-repeat="story in storyController.completeStories">
+            <a href="/{$ story.fields.userInfo.fields.username $}/profile">
+                <div class="story-entry-author"> {$ story.fields.userInfo.fields.username $}</div>
+            </a>
+            <a href="/{$ story.pk $}/story">
+                <div class="story-entry-title">{$ story.fields.title $}</div>
+            </a>
+            <div class="story-entry-stats">
+                <div class="story-entry-likes" data-toggle="tooltip" title="likes">
+                    <i class="fa fa-heart fa-2x" aria-hidden="true"></i>
+                    <span class="faint-sub">{$ story.fields.likes $}</span>
+                </div>
+                <div class="story-entry-contributors" data-toggle="tooltip" title="contributors">
+                    <i class="fa fa-user fa-2x" aria-hidden="true"></i>
+                    <span class="faint-sub">{$ story.fields.contributors $}</span>
+                </div>
+                <!--<div class="story-entry-completed">-->
+                <!--{$ storyController.isComplete(story.fields.is_complete) $}-->
+                <!--</div>-->
+            </div>
+            <!--<hr class="small">-->
+        </div>
+        <button ng-show="storyController.haveMoreComplete && storyController.enabled"
+                ng-click="storyController.getMoreCompleteStories()">Show More
+        </button>
+    </div>
+    <div class="story-list" ng-hide="storyController.enabled">
+        <div class="story-entry" ng-repeat="story in storyController.uncompleteStories">
+            <a href="/{$ story.fields.userInfo.fields.username $}/profile">
+                <div class="story-entry-author">{$story.fields.userInfo.fields.username $}</div>
+            </a>
+            <a href="/{$ story.pk $}/story">
+                <div class="story-entry-title">{$ story.fields.title $}</div>
+            </a>
+            <div class="story-entry-stats">
+                <div class="story-entry-likes" data-toggle="tooltip" title="likes">
+                    <i class="fa fa-heart fa-2x" aria-hidden="true"></i>
+                    <span class="faint-sub">{$ story.fields.likes $}</span>
+                </div>
+                <div class="story-entry-contributors" data-toggle="tooltip" title="contributors">
+                    <i class="fa fa-user fa-2x" aria-hidden="true"></i>
+                    <span class="faint-sub">{$ story.fields.contributors $}</span>
+                </div>
+            </div>
+            <div ng-if="storyController.isComplete(story.fields.is_complete)">
+                <a class="story-join" href="/{$ story.pk $}/story">Join the writing session!</a>
+            </div>
+            <!--<h2>Status: {$ storyController.isComplete(story.fields.is_complete) $}</h2>-->
+        </div>
+        <button ng-show="storyController.haveMoreIncomplete && !storyController.enabled"
+                ng-click="storyController.getMoreInCompleteStories()">Show More
+        </button>
+    </div>
+</div>
+{% else %}
+<br/>
+<br/>
+<br/>
+<h1> Stories</h1>
+<br/>
+<h2> Write stories for people with people</h2>
+<br/>
+<br/>
+<br/>
+{% endif %}
+{% endblock %}

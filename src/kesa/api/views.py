@@ -25,7 +25,7 @@ def recursive_node_to_dict(node):
     result = {
         'id': node.pk,
         'name': node.name,
-        'data': node.data,
+        'body': node.data,
     }
     children = [recursive_node_to_dict(c) for c in node.get_children()]
     if children:
@@ -45,8 +45,18 @@ def logout_view(request):
 
 # Create your views here.
 
+def landing(request):
+    response = render(request, 'api/index.html')
+    return response
+
+
 def index(request):
     response = render(request, 'api/index.html')
+    return response
+
+
+def stories(request):
+    response = render(request, 'api/stories.html')
     return response
 
 
@@ -59,32 +69,20 @@ def profile(request, username):
     return response
 
 
-def reading(request, id):
+def story(request, id):
     response = None
     if (request.user.is_authenticated()):
-        response = render(request, 'api/reading.html')
+        s = Story.objects.get(id=id)
+        if(s.is_open):
+            if(s.user == request.user):
+                response = render(request, 'api/writingowner.html')
+            else:
+                response = render(request, 'api/writingguest.html')
+        else:
+            response = render(request, 'api/reading.html')
     else:
         response = render(request, 'api/index.html')
     return response
-
-
-def writingowner(request, id):
-    response = None
-    if (request.user.is_authenticated()):
-        response = render(request, 'api/writingowner.html')
-    else:
-        response = render(request, 'api/index.html')
-    return response
-
-
-def writingguest(request, id):
-    response = None
-    if (request.user.is_authenticated()):
-        response = render(request, 'api/writingguest.html')
-    else:
-        response = render(request, 'api/index.html')
-    return response
-
 
 def analytics(request):
     response = None
@@ -115,8 +113,10 @@ def getInit(request):
 def getStory(request, sid):
     story = Story.objects.get(id=sid)
     graph = story.graph
-    graphTree = recursive_node_to_dict(graph)
-    graphTree['name'] = story.title
+    graphTree = "undefined"
+    if(graph != None):
+        graphTree = recursive_node_to_dict(graph)
+        graphTree['title'] = story.title
     return HttpResponse(json.dumps(graphTree), content_type="application/json")
 
 
@@ -248,10 +248,10 @@ def addToStory(request, uid, sid, bid):
 
 @login_required
 @csrf_exempt
-def setOpen(request, uid, sid):
+def setOpen(request, sid):
     data = {}
-    if request.user.id == int(uid):
-        s = Story.objects.get(id=sid)
+    s = Story.objects.get(id=sid)
+    if(request.user == s.user):
         s.is_open = True
         s.save()
         data['result'] = 'true'
@@ -262,10 +262,10 @@ def setOpen(request, uid, sid):
 
 @login_required
 @csrf_exempt
-def setClosed(request, uid, sid):
+def setClosed(request, sid):
     data = {}
-    if request.user.id == int(uid):
-        s = Story.objects.get(id=sid)
+    s = Story.objects.get(id=sid)
+    if(request.user == s.user):
         s.is_open = False
         s.save()
         data['result'] = 'true'
@@ -276,10 +276,10 @@ def setClosed(request, uid, sid):
 
 @login_required
 @csrf_exempt
-def setComplete(request, uid, sid):
+def setComplete(request, sid):
     data = {}
-    if request.user.id == int(uid):
-        s = Story.objects.get(id=sid)
+    s = Story.objects.get(id=sid)
+    if(request.user == s.user):
         s.is_complete = True
         s.save()
         data['result'] = 'true'
@@ -290,11 +290,10 @@ def setComplete(request, uid, sid):
 
 @login_required
 @csrf_exempt
-def setIncomplete(request, uid, sid):
+def setIncomplete(request, sid):
     data = {}
-    print request.user.id
-    if request.user.id == int(uid):
-        s = Story.objects.get(id=sid)
+    s = Story.objects.get(id=sid)
+    if(request.user == s.user):
         s.is_complete = False
         s.save()
         data['result'] = 'true'
@@ -324,12 +323,11 @@ def like(request, uid, sid):
 
 @login_required
 @csrf_exempt
-def deleteBranch(request, uid, sid, bid):
+def deleteBranch(request, sid, bid):
     story = Story.objects.get(id=sid)
     branch = Graph.objects.get(id=bid)
     data = {}
-    if story.user == request.user or branch.user == request.user and \
-                    request.user == uid:
+    if story.user == request.user or branch.user == request.user:
         Graph.objects.filter(id=bid).delete()
         data['result'] = 'true'
     else:
@@ -339,10 +337,10 @@ def deleteBranch(request, uid, sid, bid):
 
 @login_required
 @csrf_exempt
-def deleteStory(request, uid, sid):
+def deleteStory(request, sid):
     story = Story.objects.get(id=sid)
     data = {}
-    if story.user == request.user and request.user.id == int(uid):
+    if story.user == request.user:
         Story.objects.filter(id=sid).delete()
         data['result'] = 'true'
     else:
@@ -352,31 +350,25 @@ def deleteStory(request, uid, sid):
 
 @login_required
 @csrf_exempt
-def addSReads(request, uid, sid):
+def addSReads(request, sid):
     data = {}
-    if request.user.id == int(uid):
-        s = Story.objects.get(id=sid)
-        count = s.read
-        s.read = count + 1
-        s.save()
-        data['result'] = 'true'
-    else:
-        data['result'] = 'false'
+    s = Story.objects.get(id=sid)
+    count = s.read
+    s.read = count + 1
+    s.save()
+    data['result'] = 'true'
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 
 @login_required
 @csrf_exempt
-def addBReads(request, uid, bid):
+def addBReads(request, bid):
     data = {}
-    if request.user.id == int(uid):
-        b = Graph.objects.get(id=bid)
-        count = b.read
-        b.read = count + 1
-        b.save()
-        data['result'] = 'true'
-    else:
-        data['result'] = 'false'
+    b = Graph.objects.get(id=bid)
+    count = b.read
+    b.read = count + 1
+    b.save()
+    data['result'] = 'true'
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 
@@ -391,7 +383,6 @@ def createStory(request, uid):
         g.save()
         s = Story(user=request.user, \
                   title=request.POST['title'], \
-                  roomID=request.POST['roomID'], \
                   graph=g)
         s.save()
         data['result'] = 'true'

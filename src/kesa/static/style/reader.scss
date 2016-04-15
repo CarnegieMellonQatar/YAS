@@ -1,0 +1,173 @@
+
+.stories-section {
+  margin-top: 50px;
+  height: 100%;
+  background-color: $lightgray;
+}
+
+.switch-buttons {
+  display: inline-block;
+  margin: 20px;
+}
+
+.story-active-switch-button {
+  @extend .btn-classic;
+  @include make-circular();
+  display: block;
+  margin-bottom: 11px;
+  background-color: $primary-light-color;
+  color: white;
+}
+
+.story-active-switch-button:hover {
+  @extend .btn-classic;
+  @include make-circular();
+  display: block;
+  border-color: $primary-light-color;
+  background-color: white;
+  color: $primary-light-color;
+}
+
+.chosen {
+  border-color: $primary-light-color;
+  background-color: white;
+  color: $primary-light-color;
+}
+
+.story-join {
+  @extend .btn-classic;
+  position: absolute;
+  top: 30%;
+  right: 4%;
+  background-color: $primary-light-color;
+  color: white;
+}
+
+.story-join:hover {
+  @extend .btn-classic;
+  border-color: $primary-light-color;
+  background-color: white;
+  color: $primary-light-color;
+  //float: right;
+}
+
+.story-list {
+  background: transparent;
+  float: right;
+  width: 85%;
+  height: 90%;
+  overflow-y: scroll;
+  margin-top: 20px;
+  margin-right: 100px;
+  //box-shadow: 0 1px 4px rgba(0, 0, 0, .04);
+  //border: 1px solid rgba(0, 0, 0, .09);
+}
+
+.story-header {
+  margin-top: 100px;
+  text-align: center;
+  background-color: $lightgray;
+  background: no-repeat center center;
+  background-attachment: scroll;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
+  margin-bottom: 20px;
+}
+
+.story-entry {
+  position: relative;
+  background: white;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .04);
+  border: 1px solid rgba(0, 0, 0, .09);
+}
+
+.story-entry-author {
+  transition: all 0.25s;
+  color: $primary-dark-color;
+  font-size: $font-size-small;
+  margin: 20px;
+}
+
+.story-entry-author:hover {
+  opacity: 0.7;
+}
+
+.story-entry-title {
+  color: $primary-black;
+  margin: 20px;
+  font-size: $font-size-med;
+  font-weight: 700;
+}
+
+.story-entry-title:hover {
+  opacity: 0.7;
+}
+
+.story-entry-likes {
+  transition: all 0.25s;
+  cursor: pointer;
+  color: $fail;
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
+.story-entry-contributors {
+  transition: all 0.25s;
+  cursor: pointer;
+  margin-left: 20px;
+  color: $success;
+}
+
+.story-entry-contributors:hover {
+  opacity: 0.7;
+}
+
+.story-entry-likes:hover {
+  opacity: 0.7;
+}
+
+.story-entry-stats {
+  display: inline-flex;
+}
+
+.story-entry-completed {
+  margin-left: 20px;
+}
+
+.faint-sub {
+  color: gray;
+  opacity: 0.9;
+}
+
+.story-center-container {
+  margin-left: 300px;
+  margin-right: 300px;
+  margin-bottom: 50px;
+}
+
+.story-header h1 {
+  font-size: 122px;
+  margin-bottom: 80px;
+}
+
+.story-node {
+  line-height: 120%;
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+
+.story-choice-button {
+  @extend .btn-classic;
+  background-color: $primary-light-color;
+}
+
+.story-choice-button:hover {
+  @extend .story-choice-button;
+  background-color: white;
+  color: $primary-light-color;
+  border-color: $primary-light-color;
+}

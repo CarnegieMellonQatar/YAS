@@ -1,0 +1,178 @@
+// Solarized Palette - http://ethanschoonover.com/solarized
+// Used and modified
+$lightgray: #F1F1F1;
+$gray: #708284;
+$mediumgray: #536870;
+$darkgray: #475B62;
+$darkblue: #0A2933;
+$darkerblue: #042029;
+$paleryellow: #FCF4DC;
+$paleyellow: #EAE3CB;
+$yellow: #A57706;
+$paleorange: #FF7B2E;
+$orange: #FF4C2E;
+$darkorange: #BD3613;
+$darkerorange: #a23313;
+$red: #D11C24;
+$pink: #C61C6F;
+$purple: #595AB7;
+$blue: #2176C7;
+$cyan: #259286;
+$green: #738A05;
+
+$primary-font-stack: "sans-serif", "Exo 2", "Helvetica Neue", Helvetica, sans-serif;
+$header-font-stack: "Open Sans", "Helvetica Neue", Arial, sans-serif;
+
+$primary-light-color: #fb5e58;
+$secondary-light-color: #FF4C2E;
+$primary-dark-color: #2D6CA5;
+$secondary-dark-color: #1A1F58;
+$primary-black: #000;
+$secondary-black: #0A2933;
+$success: #738A05;
+$fail: #D11C24;
+$staple-light: #FCF4DC;
+$staple: #EAE3CB;
+$staple-dark: #A57706;
+
+$primary-nav-color: #2D6CA5;
+$focus-nav-color: #caeafd;
+$font-nav-color: white;
+
+$font-size-jumbo: 128px;
+$font-size-large: 64px;
+$font-size-med: 32px;
+$font-size-small: 24px;
+$font-size-very-small: 16px;
+
+/* Eric Meyer's Reset CSS v2.0 - http://cssreset.com */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  border: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  margin: 0;
+  padding: 0
+}
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+  display: block
+}
+
+body {
+  line-height: 1
+}
+
+a {
+  -webkit-transition: all .35s;
+  -moz-transition: all .35s;
+  transition: all .35s;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+ol, ul {
+  list-style: none
+}
+
+blockquote, q {
+  quotes: none
+}
+
+blockquote:before, blockquote:after, q:before, q:after {
+  content: none
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0
+}
+
+body {
+  font-family: $primary-font-stack;
+  font-weight: 300;
+  font-size: 1.2em;
+  line-height: 1.2em;
+  background: $secondary-light-color;
+  color: $darkgray;
+  width: 100%;
+  height: 100%;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+strong {
+  font-weight: 600;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $header-font-stack;
+  font-weight: 700;
+  color: $primary-black;
+  font-size: 1.75em;
+  margin-bottom: .4em;
+}
+
+p {
+  margin-bottom: .5em;
+}
+
+.container {
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-top: 10px;
+}
+
+hr.small{
+  width: 100%;
+  margin: 15px auto;
+  border-width: 1px;
+  border-color: $lightgray;
+}
+
+hr.med {
+  width: 200px;
+  margin: 15px auto;
+  border-width: 4px;
+  border-color: $primary-light-color;
+}
+
+.center {
+  text-align: center;
+}
+
+@media all and (max-width: 500px) {
+  h2 {
+    padding-left: 10px;
+    text-align: center;
+  }
+  .container {
+    width: 100%;
+  }
+}
+
+@mixin make-circular() {
+  border-radius: 50%;
+}
+
+.btn-classic {
+  text-align: center;
+  display: inline-block;
+  padding: 1.2em 1.4em;
+  font-size: 1.3rem;
+  color: #ffffff;
+  transition: all 0.2s;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 1px;
+  border-radius: .25em;
+  margin-right: 11px;
+  border: 2px solid transparent;
+}

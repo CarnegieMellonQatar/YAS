@@ -6,6 +6,8 @@
 
             var service = this;
 
+            // Get's the first 10 completed story objects
+            // and first 10 active stories
             service.getfirst = function(callback){
                 $http.get('/api/getInit/')
                     .success(function (data,status){
@@ -16,6 +18,7 @@
                     });
             };
 
+            // Gets like objects for a story
             service.getLikes = function(story, callback){
                 $http.get('/api/getLikesStory/'+story.pk+'/')
                     .success(function (data, status){
@@ -26,6 +29,7 @@
                     });
             };
 
+            // Gets back like objects
             service.getLikesUser = function(uid, callback){
                 $http.get('/api/getLikesUser/'+uid+'/')
                     .success(function (data, status){
@@ -36,6 +40,7 @@
                     });
             };
 
+            // Gets back the user objects that have contributed to a story
             service.getContributors = function(story, callback){
                 $http.get('/api/getContributors/'+story.pk+'/')
                     .success(function (data, status){
@@ -46,6 +51,7 @@
                     });
             };
 
+            // Gets the story objects for a user
             service.getUserStories = function(uid, sid, number, callback){
                 $http.get('/api/'+uid+'/getUserStories/'+sid+'/'+number+'/')
                     .success(function (data, status){
@@ -56,6 +62,7 @@
                     });
             };
 
+            // Gets a number of completed story objects given a number as input
             service.getCompleted = function(id, number, callback){
                 $http.get('/api/getCompleted/'+id+'/'+number+'/')
                     .success(function (data,status){
@@ -66,6 +73,7 @@
                     });
             };
 
+            // Gets a number of active story objects given a number as input
             service.getActive = function(id, number, callback){
                 $http.get('/api/getActive/'+id+'/'+number+'/')
                     .success(function (data,status){
@@ -76,6 +84,7 @@
                     });
             };
 
+            // Gets a number of incompleted story objects given a number as input
             service.getIncompleted = function(id, number, callback){
                 $http.get('/api/getIncompleted/'+id+'/'+number+'/')
                     .success(function (data,status){
@@ -86,6 +95,7 @@
                     });
             };
 
+            // Get user object for a story given a user pk and story pk
             service.getUser = function(story, callback){
                 $http.get('/api/'+story.fields.user+'/getUser/'+story.pk+'/')
                     .success(function (data,status){
@@ -96,6 +106,7 @@
                     });
             };
 
+            // Get user object by username
             service.getUserByName = function(username, callback){
                 $http.get('/api/'+username+'/getUserByName/')
                     .success(function (data,status){
@@ -106,6 +117,7 @@
                     });
             };
 
+            // Get number of contributions for a user
             service.getNumContributors = function(id, callback){
                 $http.get('/api/'+id+'/getNumContributions/')
                     .success(function(data,status){
@@ -116,6 +128,7 @@
                     });
             };
 
+            // Get number of stories created by a user
             service.getNumStories = function(id, callback){
                 $http.get('/api/'+id+'/getNumStories/')
                     .success(function(data,status){
@@ -126,9 +139,9 @@
                     });
             };
 
-
-            service.setOpen = function(uid, sid, callback){
-                $http.post('/api/'+uid+'/setOpen/'+sid+'/')
+            // Get the story's graph
+            service.getStory = function(sid, callback){
+               $http.get('/api/getStory/'+sid+'/')
                     .success(function(data,status){
                         callback(null,data);
                     })
@@ -137,8 +150,9 @@
                     });
             };
 
-            service.setClosed = function(uid, sid, callback){
-                $http.post('/api/'+uid+'/setClosed/'+sid+'/')
+            // Get a branch of the story graph
+            service.getBranch = function(bid, callback){
+               $http.get('/api/getStory/'+bid+'/')
                     .success(function(data,status){
                         callback(null,data);
                     })
@@ -147,8 +161,9 @@
                     });
             };
 
-            service.setComplete = function(uid, sid, callback){
-                $http.post('/api/'+uid+'/setComplete/'+sid+'/')
+            // Set a story writing session to open (users can join)
+            service.setOpen = function(sid, callback){
+                $http.post('/api/setOpen/'+sid+'/')
                     .success(function(data,status){
                         callback(null,data);
                     })
@@ -157,8 +172,9 @@
                     });
             };
 
-            service.setIncomplete = function(uid, sid, callback){
-                $http.post('/api/'+uid+'/setIncComplete/'+sid+'/')
+            // Set a story writing session to be closed (users cannot join)
+            service.setClosed = function(sid, callback){
+                $http.post('/api/setClosed/'+sid+'/')
                     .success(function(data,status){
                         callback(null,data);
                     })
@@ -167,6 +183,29 @@
                     });
             };
 
+            // Set a story to be completed and published
+            service.setComplete = function(sid, callback){
+                $http.post('/api/setComplete/'+sid+'/')
+                    .success(function(data,status){
+                        callback(null,data);
+                    })
+                    .error(function(error,status){
+                        callback(error,null);
+                    });
+            };
+
+            // Set a story to be incomplete
+            service.setIncomplete = function(sid, callback){
+                $http.post('/api/setIncComplete/'+sid+'/')
+                    .success(function(data,status){
+                        callback(null,data);
+                    })
+                    .error(function(error,status){
+                        callback(error,null);
+                    });
+            };
+
+            // Like a story
             service.Like = function(uid, sid, callback){
                 $http.post('/api/'+uid+'/like/'+sid+'/')
                     .success(function(data,status){
@@ -177,8 +216,9 @@
                     });
             };
 
-            service.deleteBranch = function(uid, sid, bid, callback){
-                $http.post('/api/'+uid+'/deleteBranch/'+sid+'/'+bid+'/')
+            // Delete branch given story id and branch id
+            service.deleteBranch = function(sid, bid, callback){
+                $http.post('/api/deleteBranch/'+sid+'/'+bid+'/')
                     .success(function(data,status){
                         callback(null,data);
                     })
@@ -187,8 +227,9 @@
                     });
             };
 
-            service.deleteStory = function(uid, sid, callback){
-                $http.post('/api/'+uid+'/deleteStory/'+sid+'/')
+            // Delete a story given a story id
+            service.deleteStory = function(sid, callback){
+                $http.post('/api/deleteStory/'+sid+'/')
                     .success(function(data,status){
                         callback(null,data);
                     })
@@ -197,8 +238,9 @@
                     });
             };
 
-            service.addSReads = function(uid, sid, callback){
-                $http.post('/api/'+uid+'/addSReads/'+sid+'/')
+            // Increment the number of readers given story id
+            service.addSReads = function(sid, callback){
+                $http.post('/api/addSReads/'+sid+'/')
                     .success(function(data,status){
                         callback(null,data);
                     })
@@ -207,8 +249,9 @@
                     });
             };
 
-            service.addBReads = function(uid, bid, callback){
-                $http.post('/api/'+uid+'/addBReads/'+bid+'/')
+            // Increment the number of readers given branch id
+            service.addBReads = function(bid, callback){
+                $http.post('/api/addBReads/'+bid+'/')
                     .success(function(data,status){
                         callback(null,data);
                     })
