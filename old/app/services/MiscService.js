@@ -1,10 +1,10 @@
 (function () {
-    angular.module('storyTeller').service('MiscService', function () {
+    angular.module('kesaApp').service('MiscService', function () {
 
         var srvc = this;
 
         this.customAlert = function (string) {
-            $("body").append('<div class="custom-alert animated fadeInRightBig">' + string + '</div>');
+            angular.element("body").append('<div class="custom-alert animated fadeInRightBig">' + string + '</div>');
             setTimeout(function () {
                 $(".custom-alert").remove();
             }, 3000);
@@ -52,7 +52,6 @@
             var retObj;
             retObj = srvc.toJSONr(root);
             console.log(retObj);
-            retObj.title = root.title;
             return retObj;
         };
 
@@ -85,7 +84,7 @@
                 branch.children.forEach(function (d) {
                     var ret = srvc.findContactNoder(d, id);
                     if (ret.some === true) {
-                        objFound = ret.obj;
+                        objFound = d;
                     } else {
                         countFail++;
                     }

@@ -45,6 +45,11 @@ def logout_view(request):
 
 # Create your views here.
 
+def landing(request):
+    response = render(request, 'api/landing.html')
+    return response
+
+
 def index(request):
     response = render(request, 'api/index.html')
     return response
@@ -63,14 +68,12 @@ def story(request, id):
     response = None
     if (request.user.is_authenticated()):
         s = Story.objects.get(id=id)
-        print s
-        if(s.is_complete):
-            response = render(request, 'api/reading.html')
+        if(s.is_open):
+            response = render(request, 'api/writingguest.html')
+        elif(s.user == request.user):
+            response = render(request, 'api/writingowner.html')
         else:
-            if(s.is_active):
-                response = render(request, 'api/writingguest.html')
-            elif(s.user == request.user):
-                response = render(request, 'api/writingowner.html')
+            response = render(request, 'api/reading.html')
     else:
         response = render(request, 'api/index.html')
     return response
@@ -239,10 +242,10 @@ def addToStory(request, uid, sid, bid):
 
 @login_required
 @csrf_exempt
-def setOpen(request, uid, sid):
+def setOpen(request, sid):
     data = {}
-    if request.user.id == int(uid):
-        s = Story.objects.get(id=sid)
+    s = Story.objects.get(id=sid)
+    if(request.user == s.user):
         s.is_open = True
         s.save()
         data['result'] = 'true'
@@ -253,10 +256,10 @@ def setOpen(request, uid, sid):
 
 @login_required
 @csrf_exempt
-def setClosed(request, uid, sid):
+def setClosed(request, sid):
     data = {}
-    if request.user.id == int(uid):
-        s = Story.objects.get(id=sid)
+    s = Story.objects.get(id=sid)
+    if(request.user == s.user):
         s.is_open = False
         s.save()
         data['result'] = 'true'
@@ -267,10 +270,10 @@ def setClosed(request, uid, sid):
 
 @login_required
 @csrf_exempt
-def setComplete(request, uid, sid):
+def setComplete(request, sid):
     data = {}
-    if request.user.id == int(uid):
-        s = Story.objects.get(id=sid)
+    s = Story.objects.get(id=sid)
+    if(request.user == s.user):
         s.is_complete = True
         s.save()
         data['result'] = 'true'
@@ -281,11 +284,10 @@ def setComplete(request, uid, sid):
 
 @login_required
 @csrf_exempt
-def setIncomplete(request, uid, sid):
+def setIncomplete(request, sid):
     data = {}
-    print request.user.id
-    if request.user.id == int(uid):
-        s = Story.objects.get(id=sid)
+    s = Story.objects.get(id=sid)
+    if(request.user == s.user):
         s.is_complete = False
         s.save()
         data['result'] = 'true'
