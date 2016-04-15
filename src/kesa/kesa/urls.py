@@ -28,6 +28,7 @@ urlpatterns += [
     url(r'^login/$', 'django.contrib.auth.views.login', { 'template_name': 'api/login.html'}, name='login'),
     url(r'^logout/$', views.logout_view, name='logout'),
     url(r'^index/$', views.index, name='index'),
+    url(r'^stories/$', views.stories, name='stories'),
     url(r'^(?P<id>\d+)/reading/$', views.reading, name='reading'),
     url(r'^(?P<id>\d+)/writingowner/$', views.writingowner, name='writingowner'),
     url(r'^(?P<id>\d+)/writingguest/$', views.writingguest, name='writingguest'),
