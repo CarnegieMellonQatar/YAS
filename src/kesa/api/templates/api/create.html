@@ -1,0 +1,34 @@
+{% extends "api/index.html" %}
+
+{% block content %}
+    <form method="post" onsubmit="location.pathname='/stories'" action="/api/{{ request.user.id }}/createStory/">
+        {% csrf_token %}
+        <div id="form_header">
+            <h1>Create a Story</h1>
+        </div>
+
+        <div class="form_shape">
+            <div class="full_pane">
+                <div class="section">
+                    <h3>Title:</h3>
+                    <input type="text" name="title" placeholder="title"/>
+                </div>
+
+                <div class="section">
+                    <h3>Name of the Beginning:</h3>
+                    <input type="text" name="name" placeholder="name"/>
+                </div>
+
+                <div class="section">
+                    <h3>Privacy:</h3>
+                    <input type="radio" name="is_open" value="True" /> Open
+                    <input type="radio" name="is_open" value="False" /> Closed
+                </div>
+
+                <div class="section">
+                    <input type="submit" class="form_button" value="Login"/>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

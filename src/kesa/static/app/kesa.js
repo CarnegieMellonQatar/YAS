@@ -1,5 +1,5 @@
-(function(){
-     "use strict";
+(function () {
+    "use strict";
 
      angular.module('dropzone', []).directive('dropzone', function () {
       return function (scope, element, attrs) {
@@ -38,5 +38,13 @@
              //http://django-angular.readthedocs.org/en/latest/integration.html
              $interpolateProvider.startSymbol('{$');
              $interpolateProvider.endSymbol('$}');
-         });
+         })
+         .run(function () {
+            $(document).keydown(function (e) {
+                if (e.which == 32) {
+                    return false;
+                }
+            });
+        });
  })();
+

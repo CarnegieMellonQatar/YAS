@@ -2,7 +2,7 @@
 
 {% block content %}
 {% if request.user.is_authenticated %}
-<div class="stories-section" ng-controller="storyController as storyController">
+<div class="stories-section" ng-controller="storyController as storyController" ng-cloak>
     <div class="switch-buttons">
         <a ng-class="{chosen: storyController.enabled}" class="story-active-switch-button" ng-click="storyController.changeTabs(true)">
             <i class="fa fa-check fa-2x" aria-hidden="true"></i>
@@ -56,7 +56,7 @@
                     <span class="faint-sub">{$ story.fields.contributors $}</span>
                 </div>
             </div>
-            <div ng-if="storyController.isComplete(story.fields.is_complete)">
+            <div ng-if="!storyController.isComplete(story.fields.is_complete)">
                 <a class="story-join" href="/{$ story.pk $}/story">Join the writing session!</a>
             </div>
             <!--<h2>Status: {$ storyController.isComplete(story.fields.is_complete) $}</h2>-->

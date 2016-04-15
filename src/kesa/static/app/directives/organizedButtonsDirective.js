@@ -1,4 +1,4 @@
-(function() {
+(function () {
     "use strict";
     angular.module('storyTeller')
         .directive('organizedButtons', function ($timeout) {
@@ -23,7 +23,7 @@
                                 angular.element('.story-choice-button').css("width", (parseInt(width) - 11) + "px");
                             }
                         }
-                    });
+                    }, 0);
                 }
             };
         });

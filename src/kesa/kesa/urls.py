@@ -26,7 +26,7 @@ urlpatterns = [
 
 # Authentication
 urlpatterns += [
-    url(r'^$', views.landing, name='landing'),
+    url(r'^$', views.index, name='index2'),
     url(r'^login/$', 'django.contrib.auth.views.login', { 'template_name': 'api/login.html'}, name='login'),
     url(r'^logout/$', views.logout_view, name='logout'),
     url(r'^index/$', views.index, name='index'),
@@ -34,4 +34,6 @@ urlpatterns += [
     url(r'^(?P<username>\w+)/profile/$', views.profile, name='profile'),
     url(r'^analytics/$', views.analytics, name='analytics'),
     url(r'^signup/$', views.signup, name='signup'),
+    url(r'^stories/$', views.stories, name='stories'),
+    url(r'^create/$', views.create, name='create'),
 ]
