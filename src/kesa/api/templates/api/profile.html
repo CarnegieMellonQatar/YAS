@@ -8,10 +8,10 @@
             <h3>Contributions: {$ profileController.user.fields.contributions $}</h3>
         </div>
         <div ng-repeat="story in profileController.stories">
-            <a href="/{$ story.pk $}/reading"><h2>{$ story.fields.title $}</h2></a>
+            <a href="/{$ story.pk $}/story"><h2>{$ story.fields.title $}</h2></a>
             <h2>Likes: {$ story.fields.likes $}</h2>
             <h2>Contributors: {$ story.fields.contributors $}</h2>
-            <h2>Status: {$ profileController.isComplete(story.fields.is_complete) $}</h2>
+            <h2>Status: {$ profileController.getStatus(story.fields) $}</h2>
         </div>
         <button ng-show="profileController.haveMore" ng-click="profileController.getMoreStories()">Show More</button>
     </div>

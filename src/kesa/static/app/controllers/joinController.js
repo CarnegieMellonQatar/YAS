@@ -2,13 +2,14 @@
     "use strict";
 
     angular.module('storyTeller')
-        .controller('joinController', function (MiscService, $location) {
-            var id = location.pathname.substring(1, location.pathname.indexOf("writingguest") - 1);
+        .controller('joinController', function (MiscService, $location, storyService) {
+           var id = location.pathname.substring(1, location.pathname.indexOf("story")-1);
 
             console.log("Join controller initialized to the ID " + id);
             var ctrl = this;
 
             ctrl.joinID = id;
+            ctrl.title = "";
 
             var root, currentNode, tree, diagonal, svg;
 
@@ -22,7 +23,7 @@
                 duration = 750;
 
             this.join = function () {
-                peer = new Peer({key: 'b6lunl4jlb4kj4i'});
+                peer = new Peer({host:'storypeerserver.herokuapp.com', secure:true, port:443});
 
                 peer.on('open', function (id) {
                     console.log("My id is: " + id);
@@ -540,6 +541,7 @@
                 root.x0 = height / 2;
                 root.y0 = 0;
                 currentNode = root;
+                ctrl.title = root.title;
 
                 ctrl.click(root);
                 ctrl.update(root, false, true, -1, null);

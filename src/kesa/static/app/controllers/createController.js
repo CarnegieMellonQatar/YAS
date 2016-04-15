@@ -2,40 +2,16 @@
     "use strict";
 
     angular.module('storyTeller')
-        .controller('createController', function (MiscService, $location) {
-            var id = location.pathname.substring(1, location.pathname.indexOf("writingowner")-1);
+        .controller('createController', function (MiscService, $location, storyService) {
+            var id = location.pathname.substring(1, location.pathname.indexOf("story")-1);
 
             console.log("Create controller initialized to the ID " + id);
             var ctrl = this;
 
             ctrl.createID = id;
+            ctrl.title = "";
 
-            var treeData = [
-                {
-                    "name": "Sadly So",
-                    "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus egestas mauris neque, sit amet vestibulum enim pulvinar sit amet. Donec mattis a est at commodo. Suspendisse potenti. Maecenas vitae lectus sed enim euismod fringilla rutrum ut dui. Nam tortor quam, condimentum vitae aliquam sed, volutpat id turpis. Proin purus metus, tincidunt nec tellus id, tincidunt luctus lectus. Suspendisse vitae semper felis. Etiam ac molestie nisi. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Duis a scelerisque purus. Ut eu laoreet massa. In hac habitasse platea dictumst. Proin hendrerit erat vitae vehicula finibus. Curabitur viverra fringilla neque, ac imperdiet lectus. Pellentesque nisi neque, posuere feugiat nulla sed, gravida pharetra lectus.",
-                    "children": [
-                        {
-                            "name": "What happened next...",
-                            "body": "Quisque sodales sed arcu a posuere. Mauris malesuada, turpis et fringilla efficitur, quam purus ullamcorper sem, nec blandit magna erat quis eros. Aenean eleifend neque tempus metus lacinia venenatis. Vestibulum non quam ac augue volutpat imperdiet. Nam tristique, nibh sed tincidunt bibendum, dui nisi iaculis sem, in venenatis risus nisi nec dui. Nam elementum, mi sed imperdiet gravida, risus ligula finibus lorem, eu venenatis ligula arcu fringilla mi. Nam id mattis erat. Maecenas rhoncus egestas enim, vel rutrum sapien bibendum eu. Interdum et malesuada fames ac ante ipsum primis in faucibus. Suspendisse sed cursus arcu.",
-                            "children": [
-                                {
-                                    "name": "Then suddenly...",
-                                    "body": "Vivamus ac velit tellus. Cras lacinia dictum laoreet. Etiam auctor turpis ut eleifend iaculis. Nunc rutrum augue leo, ornare hendrerit felis lacinia id. In pulvinar imperdiet convallis. Praesent augue tellus, ultricies id fermentum malesuada, sodales non tortor. Sed ac pulvinar erat. Morbi vel consectetur arcu, vel posuere magna. Sed sit amet dictum lacus. Donec porttitor a leo non commodo. Proin nec est lacinia, fringilla felis quis, luctus leo."
-                                },
-                                {
-                                    "name": "Once, twice and now thrice",
-                                    "body": "Integer malesuada augue in elit lobortis porta. Curabitur suscipit nisl in egestas dignissim. Suspendisse ut mauris ut nisi lacinia volutpat. Sed aliquet tempus dui, vel dapibus ante blandit eget. Aliquam erat volutpat. Aenean convallis mauris non neque mattis consectetur. Nunc commodo eleifend pretium. Vivamus ipsum ligula, imperdiet vitae placerat quis, vehicula vitae nulla. Cras dapibus iaculis mauris, nec fringilla nisi congue at. Nullam fermentum scelerisque odio non volutpat. Proin malesuada erat a lorem sollicitudin mollis. Donec nec sodales est, ut pharetra ipsum. Proin semper blandit fermentum."
-                                }
-                            ]
-                        },
-                        {
-                            "name": "Et tu, Brute?",
-                            "body": "Curabitur viverra libero dolor, id rhoncus felis sagittis nec. Donec est dui, placerat non quam quis, dictum imperdiet libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ac ultrices purus, non semper mi. Phasellus blandit eleifend mauris, ut cursus diam. Fusce consequat lectus sed efficitur efficitur. Ut eros augue, tempus ut rhoncus non, suscipit quis lorem. Aenean purus quam, ullamcorper nec ullamcorper vel, placerat et purus. Aliquam congue nec nibh et commodo. Phasellus eget dapibus urna. Morbi eu euismod dolor."
-                        }
-                    ]
-                }
-            ];
+            var treeData = null;
 
             var root, currentNode, tree, diagonal, svg;
 
@@ -48,6 +24,81 @@
 
             var i = 0,
                 duration = 750;
+
+            storyService.getStory(id, function(err,data){
+                if (err){
+                    console.log(err);
+                }
+                else {
+                    console.log(data);
+                    treeData = [data];
+
+                    storyService.setOpen(data.id, function(err,data){
+                        if(err){
+                            console.log(err);
+                        } else{
+                            console.log(data);
+                        }
+                    });
+
+                    // Source http://bl.ocks.org/d3noob/8375092
+                    if (treeData === undefined || treeData === null || treeData[0] === "undefined" ||
+                        (Object.keys(treeData).length === 0
+                        && (JSON.stringify(treeData) === JSON.stringify({})
+                        || JSON.stringify(treeData) === JSON.stringify([])))) {
+
+                        treeData =
+                            [
+                                {
+                                    "name": "Start writing your story!",
+                                    "body": "C'mon bruv you can do it.",
+                                    "title": "Story Session"
+                                }
+                            ];
+
+                        console.log("JSON object is undefined or null or is empty");
+                    }
+
+                    // Setting up the graph canvas
+                    var w = d3.select(".tree-container").style("width");
+                    var widthlen = w.length;
+
+                    d3.select(".tree-container").style("height", screen.height + "px");
+
+                    var margin = {top: 20, right: 120, bottom: 20, left: -20},
+                        width = parseInt(w.slice(0, widthlen - 2)) - margin.right - margin.left,
+                        height = 3000 - margin.top - margin.bottom;
+
+
+                    tree = d3.layout.tree()
+                        .size([width, height]);
+
+                    diagonal = d3.svg.diagonal()
+                        .projection(function (d) {
+                            return [d.x, d.y];
+                        });
+
+                    svg = d3.select(".tree-container").append("svg")
+                        .attr("width", width + margin.right + margin.left)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                    root = treeData[0];
+                    root.x0 = height / 2;
+                    root.y0 = 0;
+                    currentNode = root;
+                    ctrl.title = root.title;
+
+                    ctrl.click(root);
+                    ctrl.update(root, true, true);
+
+                    // TODO: Not certain what this is, figure it out
+                    d3.select(self.frameElement).style("height", "500px");
+
+                    ctrl.createSession();
+                }
+            });
 
             this.applyChanges = function (response) {
                 //ctrl.update(root, false);
@@ -92,7 +143,7 @@
             };
 
             this.createSession = function () {
-                peer = new Peer(ctrl.createID, {key: 'b6lunl4jlb4kj4i'});
+                peer = new Peer(ctrl.createID, {host:'storypeerserver.herokuapp.com', secure:true, port:443});
 
                 leader = true;
                 peer.on('open', function (id) {
@@ -102,7 +153,6 @@
                 peer.on('connection', function (connec) {
                     conn.push(connec);
                     index = index + 1;
-                    console.log(conn);
 
                     var initJSON = {};
                     console.log("sending initial data structure");
@@ -133,12 +183,21 @@
                     setTimeout(function () {
                         conn[index].send(MiscService.stringify(initJSON));
                     }, 2000);
-                })
+                });
+
+                peer.on('close', function (connec) {
+                    console.log("asdasd");
+                    storyService.setClosed(data.id, function(err,data){
+                        if(err){
+                            console.log(err);
+                        } else{
+                            console.log(data);
+                        }
+                    });
+                });
             };
 
             this.update = function (source, sendToPeers, changeCurrentNode, action, specialNode) {
-
-                console.log(source);
 
                 var cont = d3.select(".story-container");
 
@@ -525,59 +584,6 @@
             };
 
 
-            // Source http://bl.ocks.org/d3noob/8375092
-            if (treeData === undefined || treeData === null ||
-                (Object.keys(treeData).length === 0
-                && (JSON.stringify(treeData) === JSON.stringify({})
-                || JSON.stringify(treeData) === JSON.stringify([])))) {
 
-                treeData =
-                    [
-                        {
-                            "name": "Start writing your story!",
-                            "body": "C'mon bruv you can do it."
-                        }
-                    ];
-
-                console.log("JSON object is undefined or null or is empty");
-            }
-
-            // Setting up the graph canvas
-            var w = d3.select(".tree-container").style("width");
-            var widthlen = w.length;
-
-            d3.select(".tree-container").style("height", screen.height + "px");
-
-            var margin = {top: 20, right: 120, bottom: 20, left: -20},
-                width = parseInt(w.slice(0, widthlen - 2)) - margin.right - margin.left,
-                height = 3000 - margin.top - margin.bottom;
-
-
-            tree = d3.layout.tree()
-                .size([width, height]);
-
-            diagonal = d3.svg.diagonal()
-                .projection(function (d) {
-                    return [d.x, d.y];
-                });
-
-            svg = d3.select(".tree-container").append("svg")
-                .attr("width", width + margin.right + margin.left)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-            root = treeData[0];
-            root.x0 = height / 2;
-            root.y0 = 0;
-            currentNode = root;
-
-            ctrl.click(root);
-            ctrl.update(root, true, true);
-
-            // TODO: Not certain what this is, figure it out
-            d3.select(self.frameElement).style("height", "500px");
-
-            ctrl.createSession();
         })
 })();
