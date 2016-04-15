@@ -1,0 +1,12 @@
+Django==1.9.4
+django-mptt==0.8.3
+django-mptt-admin==0.3.6
+Pillow==3.1.1
+py2app==0.7.3
+pyobjc-framework-WebKit==2.5.1
+pyOpenSSL==0.13.1
+pyparsing==2.0.1
+python-dateutil==1.5
+six==1.10.0
+xattr==0.6.4
+zope.interface==4.1.1
