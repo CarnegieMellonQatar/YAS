@@ -77,8 +77,11 @@
                             console.log(contact);
                             console.log(currentNode);
                             if (contact.obj.id == currentNode.id) {
-                                MiscService.customAlert("<strong> Master has deleted your current node </strong>, sorry");
+                                console.log("here1");
+                                MiscService.customAlert("Master has deleted your current node, sorry");
+                                console.log("here2");
                                 ctrl.update(contact.obj.parent, false, false, 1, null);
+                                console.log("here3");
                                 ctrl.click(currentNode.parent);
                             } else {
                                 ctrl.update(contact.obj.parent, false, false, 1, null);

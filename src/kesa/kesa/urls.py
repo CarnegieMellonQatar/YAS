@@ -24,6 +24,7 @@ urlpatterns = [
 
 # Authentication
 urlpatterns += [
+    url(r'^$', views.landing, name='landing'),
     url(r'^login/$', 'django.contrib.auth.views.login', { 'template_name': 'api/login.html'}, name='login'),
     url(r'^logout/$', views.logout_view, name='logout'),
     url(r'^index/$', views.index, name='index'),

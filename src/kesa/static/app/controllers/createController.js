@@ -33,7 +33,13 @@
                     console.log(data);
                     treeData = [data];
 
-                    //storyService.
+                    storyService.setOpen(data.id, function(err,data){
+                        if(err){
+                            console.log(err);
+                        } else{
+                            console.log(data);
+                        }
+                    });
 
                     // Source http://bl.ocks.org/d3noob/8375092
                     if (treeData === undefined || treeData === null || treeData[0] === "undefined" ||
@@ -177,7 +183,18 @@
                     setTimeout(function () {
                         conn[index].send(MiscService.stringify(initJSON));
                     }, 2000);
-                })
+                });
+
+                peer.on('close', function (connec) {
+                    console.log("asdasd");
+                    storyService.setClosed(data.id, function(err,data){
+                        if(err){
+                            console.log(err);
+                        } else{
+                            console.log(data);
+                        }
+                    });
+                });
             };
 
             this.update = function (source, sendToPeers, changeCurrentNode, action, specialNode) {
