@@ -69,9 +69,10 @@ def story(request, id):
     if (request.user.is_authenticated()):
         s = Story.objects.get(id=id)
         if(s.is_open):
-            response = render(request, 'api/writingguest.html')
-        elif(s.user == request.user):
-            response = render(request, 'api/writingowner.html')
+            if(s.user == request.user):
+                response = render(request, 'api/writingowner.html')
+            else:
+                response = render(request, 'api/writingguest.html')
         else:
             response = render(request, 'api/reading.html')
     else:
