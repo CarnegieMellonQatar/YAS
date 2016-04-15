@@ -16,7 +16,7 @@
             <a href="/{$ story.fields.userInfo.fields.username $}/profile">
                 <div class="story-entry-author"> {$ story.fields.userInfo.fields.username $}</div>
             </a>
-            <a href="/{$ story.pk $}/reading">
+            <a href="/{$ story.pk $}/story">
                 <div class="story-entry-title">{$ story.fields.title $}</div>
             </a>
             <div class="story-entry-stats">
@@ -43,7 +43,7 @@
             <a href="/{$ story.fields.userInfo.fields.username $}/profile">
                 <div class="story-entry-author">{$story.fields.userInfo.fields.username $}</div>
             </a>
-            <a href="/{$ story.pk $}/reading">
+            <a href="/{$ story.pk $}/story">
                 <div class="story-entry-title">{$ story.fields.title $}</div>
             </a>
             <div class="story-entry-stats">
@@ -57,7 +57,7 @@
                 </div>
             </div>
             <div ng-if="storyController.isComplete(story.fields.is_complete)">
-                <a class="story-join" href="/{$ story.pk $}/writingguest">Join the writing session!</a>
+                <a class="story-join" href="/{$ story.pk $}/story">Join the writing session!</a>
             </div>
             <!--<h2>Status: {$ storyController.isComplete(story.fields.is_complete) $}</h2>-->
         </div>
