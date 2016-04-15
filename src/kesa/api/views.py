@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
 from django.core.urlresolvers import reverse
 import json
+import random
 import os
 from itertools import chain
 from django.db.models import Count
@@ -73,8 +74,8 @@ def story(request, id):
     response = None
     if (request.user.is_authenticated()):
         s = Story.objects.get(id=id)
-        if(s.is_open):
-            if(s.user == request.user):
+        if (s.is_open):
+            if (s.user == request.user):
                 response = render(request, 'api/writingowner.html')
             else:
                 response = render(request, 'api/writingguest.html')
@@ -83,6 +84,7 @@ def story(request, id):
     else:
         response = render(request, 'api/index.html')
     return response
+
 
 def analytics(request):
     response = None
@@ -114,7 +116,7 @@ def getStory(request, sid):
     story = Story.objects.get(id=sid)
     graph = story.graph
     graphTree = "undefined"
-    if(graph != None):
+    if (graph != None):
         graphTree = recursive_node_to_dict(graph)
         graphTree['title'] = story.title
     return HttpResponse(json.dumps(graphTree), content_type="application/json")
@@ -251,7 +253,7 @@ def addToStory(request, uid, sid, bid):
 def setOpen(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
-    if(request.user == s.user):
+    if (request.user == s.user):
         s.is_open = True
         s.save()
         data['result'] = 'true'
@@ -265,7 +267,7 @@ def setOpen(request, sid):
 def setClosed(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
-    if(request.user == s.user):
+    if (request.user == s.user):
         s.is_open = False
         s.save()
         data['result'] = 'true'
@@ -279,7 +281,7 @@ def setClosed(request, sid):
 def setComplete(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
-    if(request.user == s.user):
+    if (request.user == s.user):
         s.is_complete = True
         s.save()
         data['result'] = 'true'
@@ -293,7 +295,7 @@ def setComplete(request, sid):
 def setIncomplete(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
-    if(request.user == s.user):
+    if (request.user == s.user):
         s.is_complete = False
         s.save()
         data['result'] = 'true'
@@ -389,3 +391,14 @@ def createStory(request, uid):
     else:
         data['result'] = 'false'
     return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+def getUniqueName():
+    id = Graph.object.all().order_by('-id')[0].id
+    return id
+
+
+def getData(dataList):
+    i = random.randint(1, len(dataList))
+    data = dataList[i]
+    return data

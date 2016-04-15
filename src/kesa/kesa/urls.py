@@ -32,4 +32,5 @@ urlpatterns += [
     url(r'^(?P<username>\w+)/profile/$', views.profile, name='profile'),
     url(r'^analytics/$', views.analytics, name='analytics'),
     url(r'^signup/$', views.signup, name='signup'),
+    url(r'^stories/$', views.stories, name='stories'),
 ]
