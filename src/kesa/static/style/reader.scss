@@ -28,6 +28,19 @@
   color: $primary-light-color;
 }
 
+.story-nav-add {
+  @extend .btn-classic;
+  border-radius: 0;
+  background-color: $primary-light-color;
+  color: white;
+}
+
+.story-nav-add:hover {
+  @extend .btn-classic;
+  background-color: white;
+  color: $primary-light-color;
+}
+
 .chosen {
   border-color: $primary-light-color;
   background-color: white;
@@ -58,7 +71,7 @@
   height: 90%;
   overflow-y: scroll;
   margin-top: 20px;
-  margin-right: 100px;
+  margin-right: 5%;
   //box-shadow: 0 1px 4px rgba(0, 0, 0, .04);
   //border: 1px solid rgba(0, 0, 0, .09);
 }
@@ -149,8 +162,8 @@
 }
 
 .story-header h1 {
-  font-size: 122px;
-  margin-bottom: 80px;
+  font-size: $font-size-large;
+  margin-bottom: 20px;
 }
 
 .story-node {
@@ -170,4 +183,9 @@
   background-color: white;
   color: $primary-light-color;
   border-color: $primary-light-color;
+}
+
+.author-subheader {
+  opacity: 0.8;
+  font-weight: 100;
 }

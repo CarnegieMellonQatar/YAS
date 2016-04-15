@@ -52,7 +52,6 @@
             var retObj;
             retObj = srvc.toJSONr(root);
             console.log(retObj);
-            retObj.title = root.title;
             return retObj;
         };
 
@@ -127,7 +126,6 @@
             }
             return toSend;
         };
-
 
     });
 })();

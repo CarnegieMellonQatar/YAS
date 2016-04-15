@@ -1,8 +1,8 @@
 {% extends "api/index.html" %}
 
 {% block content %}
-<div ng-controller="joinController as jc">
-    <h2 class="story-title">{$ jc.title $}</h2>
+<div class="writing" ng-controller="joinController as jc" ng-cloak>
+    <h2 class="story-title">{$ title $}</h2>
     <div class="row">
         <section class="tree-container col-xs-7"></section>
         <section class="story-container col-xs-4"></section>

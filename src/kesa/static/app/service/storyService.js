@@ -281,5 +281,16 @@
                          callback(error,null);
                     });
             };
+
+            service.addToStory = function(sid,bid, callback){
+                $http.post('/api/addToStory/'+sid+'/'+bid+'/')
+                    .success(function(data,status){
+                        callback(null,data);
+                    })
+                    .error(function(error,status){
+                        callback(error,null);
+                    });
+            };
+
         });
 })();
