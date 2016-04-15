@@ -33,7 +33,7 @@
                     console.log(data);
                     treeData = [data];
 
-                    storyService.setOpen(data.id, function(err,data){
+                    storyService.setOpen(ctrl.createID, function(err,data){
                         if(err){
                             console.log(err);
                         } else{
@@ -119,6 +119,13 @@
 
                         if (contact.some) {
                             ctrl.update(contact.obj, false, false);
+
+                            storyService.addToStory(ctrl.createID, response.parentid, function(err,data){
+                                if(err){
+                                    console.log(err);
+                                }
+                            });
+
                         } else {
                             console.error("should not be here");
                         }
@@ -157,6 +164,7 @@
                     var initJSON = {};
                     console.log("sending initial data structure");
                     initJSON.initRoot = MiscService.toJSON(root);
+                    initJSON.title = ctrl.title;
                     initJSON.action = 3;
                     var currentIndex = index;
                     conn[currentIndex].on('data', function (data) {
@@ -177,6 +185,18 @@
                                 element.send(data);
                             }
                         });
+                    });
+
+                    peer.on("disconnected", function(connec){
+                        var index = conn.indexOf(connec);
+                        conn = conn.splice(0,index).concat(conn.splice(index+1,conn.length));
+                        console.log(conn);
+                    });
+
+                    peer.on("destroyed", function(connec){
+                        var index = conn.indexOf(connec);
+                        conn = conn.splice(0,index).concat(conn.splice(index+1,conn.length));
+                        console.log(conn);
                     });
 
                     // Send the newly connected peer the stringified JSON root
@@ -430,6 +450,12 @@
                 }
                 var specialNode = {"name": obj.name, "body": obj.body, "parentid": currentNode.id, "action": 0};
                 ctrl.update(currentNode, true, true, 0, specialNode);
+
+                storyService.addToStory(ctrl.createID, currentNode.branchid, function(err,data){
+                    if(err){
+                        console.log(err);
+                    }
+                });
                 console.log(currentNode.children);
             };
 
@@ -457,9 +483,22 @@
                     MiscService.customAlert("<strong>Node is the root,</strong> cannot delete the root");
                     console.log("Node is the root, cannot delete the root");
                 } else {
-                    ctrl.deleteBranchr(null, root, currentNode.id);
-                    ctrl.update(currentNode, true, false, 1, null);
-                    ctrl.click(currentNode.parent);
+                    storyService.deleteBranch(ctrl.createID, currentNode.branchid, function(err,data){
+                        if(err){
+                            console.log(err);
+                        } else{
+                            console.log(data);
+                            if(data["result"] === 'true'){
+                                ctrl.deleteBranchr(null, root, currentNode.id);
+                                ctrl.update(currentNode, true, false, 1, null);
+                                ctrl.click(currentNode.parent);
+                            }
+                        }
+                    });
+
+
+
+
                 }
             };
 

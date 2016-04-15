@@ -66,7 +66,7 @@
                     ctrl.currentNodes.push(node.body);
                 }
 
-                storyService.addBReads(node.id, function(err,data){
+                storyService.addBReads(node.branchid, function(err,data){
                     if (err) {
                         console.log(err);
                     }

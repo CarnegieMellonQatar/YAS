@@ -1,7 +1,7 @@
 {% extends "api/index.html" %}
 
 {% block content %}
-    <form method="post" action="/api/{{ request.user.id }}/createStory/">
+    <form method="post" onsubmit="location.pathname='/stories'" action="/api/{{ request.user.id }}/createStory/">
         {% csrf_token %}
         <div id="form_header">
             <h1>Create a Story</h1>

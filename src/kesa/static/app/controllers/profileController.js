@@ -126,6 +126,17 @@
                 }
             };
 
-
+            profile.deleteStory = function(element){
+                storyService.deleteStory(element.pk, function(err,data){
+                    if(err){
+                        console.log(err)
+                    } else {
+                        if(data["result"] === "true"){
+                            var index = profile.stories.indexOf(element);
+                            profile.stories = profile.stories.splice(0,index).concat(profile.stories.splice(index+1,profile.stories.length));
+                        }
+                    }
+                });
+            }
         })
 })();

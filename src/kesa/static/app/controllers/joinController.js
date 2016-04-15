@@ -2,14 +2,14 @@
     "use strict";
 
     angular.module('storyTeller')
-        .controller('joinController', function (MiscService, $location, storyService) {
+        .controller('joinController', function (MiscService, $location, storyService, $scope) {
            var id = location.pathname.substring(1, location.pathname.indexOf("story")-1);
 
             console.log("Join controller initialized to the ID " + id);
             var ctrl = this;
 
             ctrl.joinID = id;
-            ctrl.title = "";
+            ctrl.title = "dddd";
 
             var root, currentNode, tree, diagonal, svg;
 
@@ -33,7 +33,7 @@
                 peer.on('connection', function (connec) {
                     conn.push(connec);
                     index = index + 1;
-
+                    console.log("word");
                     //conn[index].on('data', function (data) {
                     //    console.log(data);
                     //    root = null;
@@ -43,6 +43,7 @@
                     //});
 
                 });
+
 
             };
 
@@ -105,6 +106,8 @@
                     case 3:
                         // Init connection, startup the tree
                         var treeData = response.initRoot;
+                        $scope.title = response.title;
+                        $scope.$apply();
                         ctrl.initTree(treeData);
                         break;
                     default:
@@ -541,7 +544,6 @@
                 root.x0 = height / 2;
                 root.y0 = 0;
                 currentNode = root;
-                ctrl.title = root.title;
 
                 ctrl.click(root);
                 ctrl.update(root, false, true, -1, null);
