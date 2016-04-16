@@ -30,7 +30,8 @@ urlpatterns = [
     url(r'^addSReads/(?P<sid>\d+)/$', views.addSReads, name='addSReads'),
     url(r'^addBReads/(?P<bid>\d+)/$', views.addBReads, name='addBReads'),
     url(r'^(?P<uid>\d+)/createStory/$', views.createStory, name='createStory'),
-    url(r'^addImage/$', views.addImage, name='addImage'), 
+    url(r'^addImage/$', views.addImage, name='addImage'),
+    url(r'^(?P<uid>\d+)/analytics/(?P<numDays>\d+)/graph/$', views.getGraphAnalytics, name='getGraphAnalytics'), 
     url(r'^makeUsers/(?P<n>\d+)/$', views.makeUsers, name='makeUsers'),
     url(r'^populateLikes/$', views.populateLikes, name='populateLikes'), 
 ]
