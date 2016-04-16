@@ -33,11 +33,66 @@ def recursive_node_to_dict(node):
         'branchid': node.pk,
         'name': node.name[0:indexvalue],
         'body': node.data,
+        'read': node.read,
     }
     children = [recursive_node_to_dict(c) for c in node.get_children()]
     if children:
         result['children'] = children
     return result
+
+def getMaxChild(nodeList):
+    maxNode = nodeList[0]
+    for i in nodeList:
+        if i.read > maxNode.read:
+            maxNode = i
+    return maxNode
+
+def getMinChild(nodeList):
+    minNode = nodeList[0]
+    for i in nodeList:
+        if i.read < minNode.read:
+            minNode = i
+    return minNode
+
+def recuesive_get_max_path(node, nlist):
+    children = node.get_children()
+    # if len(children) == 0:
+    if node.is_leaf_node():
+        # print node.id
+        nlist.append(node.id)
+    else:
+        nlist.append(node.id)
+        nextNode = getMaxChild(children)
+        recuesive_get_max_path(nextNode, nlist)
+
+def recuesive_get_min_path(node, nlist):
+    children = node.get_children()
+    # if len(children) == 0:
+    if node.is_leaf_node():
+        # print node.id
+        nlist.append(node.id)
+    else:
+        # print node.id
+        nlist.append(node.id)
+        nextNode = getMinChild(children)
+        recuesive_get_min_path(nextNode, nlist)
+
+def getStoryAnalysis(storyList):
+    result = []
+    m_brach = []
+    l_brach = []
+    for i in storyList:
+        data = {}
+        data['sid'] = i.id
+        recuesive_get_max_path(i.graph, m_brach)
+        recuesive_get_min_path(i.graph, l_brach)
+        data['m_brach'] = m_brach
+        data['l_brach'] = l_brach
+        result.append(data)
+        m_brach = []
+        l_brach = []
+    return result
+
 
 
 # ##### logout #####
@@ -449,18 +504,43 @@ def createStory(request, uid):
 
 @login_required
 @csrf_exempt
-def getGraphAnalytics(request, uid, numDays):
+def getGraphAnalytics(request, username, numDays):
     data = {}
-    if request.user.id == int(uid):
-        user = User.objects.get(id=int(uid))
+    if request.user.username == str(username):
+        user = User.objects.get(username=str(username))
         stories = Story.objects.filter(user = user)
         likes = Likes.objects.filter(story__in=stories, date__gte=datetime.now()-timedelta(days=int(numDays)))
         data = serializers.serialize('json', likes)
         return HttpResponse(data, content_type="application/json")
     else:
         data['result'] = 'false'
-        data['user'] = str(request.user.id)
         return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+@login_required
+@csrf_exempt
+def getGenericAnalytics(request, username):
+    data = {}
+    if request.user.username == str(username):
+        user = User.objects.get(username=str(username))
+        stories = Story.objects.filter(user = user)
+        fan = Likes.objects.filter(story__in=stories).values('user').annotate(total=Count('user')).order_by('-total')[0]
+        fan = fan['user']
+        contributor = Contributors.objects.filter(story__in=stories).values('user').annotate(total=Count('user')).order_by('-total')[0]
+        contributor = contributor['user']
+        result = {}
+        # result['fan'] = serializers.serialize('json',User.objects.filter(id = fan))
+        # result['contributor'] = serializers.serialize('json',User.objects.filter(id = contributor)) 
+        # print json.loads(serializers.serialize('json',User.objects.filter(id = contributor)))
+        result['fan'] = fan
+        result['contributor'] = contributor
+        s = getStoryAnalysis(stories)
+        result['stories'] = s
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    else:
+        data['result'] = 'false'
+        return HttpResponse(json.dumps(data), content_type="application/json")
+    
 
 # Functions to populate the database with garbage values to get analatics
 

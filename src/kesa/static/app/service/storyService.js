@@ -292,5 +292,25 @@
                     });
             };
 
+            service.getGraphAnalytics = function(uid, numDays, callback){
+                $http.post('/api/'+uid+'/analytics/'+numDays+'/graph/')
+                    .success(function(data,status){
+                        callback(null,data);
+                    })
+                    .error(function(error,status){
+                        callback(error,null);
+                    });
+            };
+
+            service.getStoryAnalytics = function(uid, callback){
+                $http.post('/api/'+uid+'/analytics/generic/')
+                    .success(function(data,status){
+                        callback(null,data);
+                    })
+                    .error(function(error,status){
+                        callback(error,null);
+                    });
+            };
+
         });
 })();
