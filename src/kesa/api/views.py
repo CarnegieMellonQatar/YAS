@@ -8,6 +8,8 @@ from django.core.urlresolvers import reverse
 import json
 import os
 import random
+import datetime
+from datetime import datetime, timedelta
 from itertools import chain
 from django.db.models import Count
 
@@ -445,6 +447,23 @@ def createStory(request, uid):
     else:
         return HttpResponseRedirect("/create")
 
+@login_required
+@csrf_exempt
+def getGraphAnalytics(request, uid, numDays):
+    data = {}
+    if request.user.id == int(uid):
+        user = User.objects.get(id=int(uid))
+        stories = Story.objects.filter(user = user)
+        likes = Likes.objects.filter(story__in=stories, date__gte=datetime.now()-timedelta(days=int(numDays)))
+        data = serializers.serialize('json', likes)
+        return HttpResponse(data, content_type="application/json")
+    else:
+        data['result'] = 'false'
+        data['user'] = str(request.user.id)
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+# Functions to populate the database with garbage values to get analatics
+
 def makeBodies(numBodies, length):
     smallestChar = 32
     largestChar = 122
@@ -460,7 +479,7 @@ def makeBodies(numBodies, length):
 
 def getUniqueName():
     id = Graph.objects.all().order_by('-id')[0].id
-    return id
+    return str(id+1)
 
 
 def getData(dataList):
@@ -529,13 +548,15 @@ def makeStories(user, n):
 def makeUsers(request, n):
     data = {}
     for i in range(int(n)):
-        user = User.objects.create_user(str(i), "", str(i))
-        user.firstName = str(i)
-        user.lastName = str(i)
-        user.email = "a@a.com"
-        user.save()
-        r =  random.randint(1, 5)
-        makeStories(user, r)
+        users = User.objects.filter(username = str(i))
+        if len(users) == 0:
+            user = User.objects.create_user(str(i), "", str(i))
+            user.firstName = str(i)
+            user.lastName = str(i)
+            user.email = "a@a.com"
+            user.save()
+            r =  random.randint(1, 5)
+            makeStories(user, r)
     data['result'] = 'true'
     return HttpResponse(json.dumps(data), content_type="application/json")
 

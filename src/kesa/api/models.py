@@ -4,6 +4,7 @@ from django.db import models
 
 import json
 import mptt
+import datetime
 
 from django.contrib.auth.models import User
 from mptt.models import MPTTModel, TreeForeignKey
@@ -41,6 +42,7 @@ class Contributors(models.Model):
 class Likes(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
+    date = models.DateField(default=datetime.date.today)
 
 class Image(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
