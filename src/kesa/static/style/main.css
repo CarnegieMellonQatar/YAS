@@ -89,7 +89,7 @@ hr.med {
 
   .container {
     width: 100%; } }
-.btn-classic, .story-active-switch-button, .story-active-switch-button:hover, .story-nav-add, .story-nav-add:hover, .story-join, .story-join:hover, .story-choice-button, .story-choice-button:hover {
+.btn-classic, .story-active-switch-button, .story-active-switch-button:hover, .story-nav-add, .story-nav-add:hover, .story-join, .story-join:hover, .story-choice-button, .story-choice-button:hover, .story-show-more {
   text-align: center;
   display: inline-block;
   padding: 1.2em 1.4em;
@@ -109,7 +109,7 @@ hr.med {
 
 .node circle {
   fill: white;
-  stroke: #2D6CA5;
+  stroke: #fb5e58;
   stroke-width: 3px; }
 
 .node text {
@@ -123,7 +123,7 @@ hr.med {
 .story-container {
   animation-duration: 0.3s;
   transition: all 0.5s;
-  background-color: #EAE3CB;
+  background-color: #F1F1F1;
   height: 85%;
   right: 0;
   margin-right: 40px;
@@ -144,8 +144,10 @@ hr.med {
   transition: all 0.2s;
   cursor: pointer;
   margin: 20px;
+  border-radius: .25em;
+  border: 2px solid transparent;
   padding: 10px;
-  background-color: #A57706;
+  background-color: #fb5e58;
   text-align: center;
   color: white; }
 
@@ -154,12 +156,15 @@ hr.med {
   padding: 10px;
   background-color: white;
   text-align: center;
-  color: #A57706; }
+  color: #fb5e58;
+  border: 2px solid #fb5e58; }
 
 .delete-branch-button {
   width: 42.375%;
   transition: all 0.2s;
   cursor: pointer;
+  border-radius: .25em;
+  border: 2px solid transparent;
   margin: 20px;
   padding: 10px;
   background-color: #D11C24;
@@ -171,10 +176,13 @@ hr.med {
   padding: 10px;
   background-color: white;
   text-align: center;
-  color: #D11C24; }
+  color: #D11C24;
+  border: 2px solid #D11C24; }
 
 .edit-branch-button {
   width: 42.375%;
+  border-radius: .25em;
+  border: 2px solid transparent;
   transition: all 0.2s;
   cursor: pointer;
   margin: 20px;
@@ -183,22 +191,30 @@ hr.med {
   text-align: center;
   color: white; }
 
-.save-branch-button {
-  width: 42.375%;
-  transition: all 0.2s;
-  cursor: pointer;
-  margin: 20px;
-  padding: 10px;
-  background-color: #738A05;
-  text-align: center;
-  color: white; }
-
 .edit-branch-button:hover {
   margin: 20px;
   padding: 10px;
   background-color: white;
   text-align: center;
-  color: #FF4C2E; }
+  color: #FF4C2E;
+  border: 2px solid #FF4C2E; }
+
+.save-branch-button {
+  width: 42.375%;
+  border-radius: .25em;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+  cursor: pointer;
+  margin: 20px;
+  padding: 10px;
+  background-color: #b0c905;
+  text-align: center;
+  color: white; }
+
+.save-branch-button:hover {
+  background-color: white;
+  color: #b0c905;
+  border: 2px solid #b0c905; }
 
 .custom-alert {
   height: 50px;
@@ -207,8 +223,8 @@ hr.med {
   color: white;
   position: fixed;
   padding: 10px;
-  right: 0;
-  top: 0;
+  left: 0;
+  bottom: 0;
   margin: 20px; }
 
 .row {
@@ -220,7 +236,8 @@ hr.med {
   overflow-y: auto; }
 
 .story-title {
-  margin: 20px; }
+  margin: 20px;
+  margin-top: 70px; }
 
 .close-story-button {
   position: absolute;
@@ -264,7 +281,9 @@ textarea, .textareaClone {
   cursor: pointer;
   margin: 20px;
   padding: 10px;
-  background-color: #1A1F58;
+  border-radius: .25em;
+  border: 2px solid transparent;
+  background-color: #FF4C2E;
   text-align: center;
   color: white; }
 
@@ -273,7 +292,8 @@ textarea, .textareaClone {
   padding: 10px;
   background-color: white;
   text-align: center;
-  color: #1A1F58; }
+  color: #FF4C2E;
+  border: 2px solid #FF4C2E; }
 
 .navbar-default {
   border-color: transparent;
@@ -525,7 +545,7 @@ header .header-content .header-content-inner p {
   transition: all 0.25s;
   cursor: pointer;
   margin-left: 20px;
-  color: #738A05; }
+  color: #b0c905; }
 
 .story-entry-contributors:hover {
   opacity: 0.7; }
@@ -566,14 +586,20 @@ header .header-content .header-content-inner p {
   color: #fb5e58;
   border-color: #fb5e58; }
 
-<<<<<<< HEAD
-.writing {
-  margin-top: 70px;
-}
-=======
 .author-subheader {
   opacity: 0.8;
   font-weight: 100; }
->>>>>>> 01b8add483c173af12008314aee52e74de33dea7
+
+.center-button {
+  margin: auto;
+  width: 100%; }
+
+.story-show-more {
+  background-color: #2D6CA5; }
+
+.story-show-more:hover {
+  background-color: white;
+  color: #2D6CA5;
+  border-color: #2D6CA5; }
 
 /*# sourceMappingURL=main.css.map */

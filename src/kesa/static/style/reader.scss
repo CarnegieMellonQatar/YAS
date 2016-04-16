@@ -189,3 +189,19 @@
   opacity: 0.8;
   font-weight: 100;
 }
+
+.center-button {
+  margin:auto;
+  width:100%;
+}
+
+.story-show-more {
+  @extend .btn-classic;
+  background-color: $primary-dark-color;
+}
+
+.story-show-more:hover {
+  background-color: white;
+  color: $primary-dark-color;
+  border-color: $primary-dark-color;
+}
