@@ -15,15 +15,32 @@
             <button ng-click="profileController.deleteStory(story)">Delete</button>
         </div>
         <button ng-show="profileController.haveMore" ng-click="profileController.getMoreStories()">Show More</button>
-        <div ng-controller="profileController as pc">
-            <div class="dnd" id="draganddrop" ng-init="pc.createDragNDropZone()">
-                <form class="complex_form" id="add_image_form2" name="add_image_form2" ng-submit="pc.addImageDND()">
+        <div>
+            <div class="dnd" id="draganddrop" ng-init="profileController.createDragNDropZone()">
+                <form class="complex_form" id="add_image_form2" name="add_image_form2" ng-submit="profileController.addImageDND()">
                     <div class="form_title">Upload Profile Picture</div>
                     <div dropzone="dropzoneConfig" class="dropzone"></div>
                     <input type="submit" class="btn" value="Add The Image" />
                 </form>
-                <div class="header_button" id="delButn" ng-click="pc.clearDND()"></div>
+                <div class="header_button" id="delButn" ng-click="profileController.clearDND()"></div>
             </div>
         </div>
+        <div>
+            <h1>
+                Analytics
+            </h1>
+            <div>
+                <h2>
+                    Graph Analatics
+                </h2>
+                {$ profileController.graphAnalytics $}
+            </div>
+            <div>
+                <h2>
+                    Story Analatics
+                </h2>
+                {$ profileController.storyAnalytics $}
+            </div>
+        </div>    
     </div>
 {% endblock %}

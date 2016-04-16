@@ -10,8 +10,12 @@
             profile.haveMore = true;
             profile.user = "";
             profile.image = {};
+            profile.uname = ""
+            profile.graphAnalytics = {};
+            profile.storyAnalytics = {};
 
             var username = profile.url.substring(1,profile.url.indexOf("profile")-1);
+            profile.uname = username;
 
             storyService.getUserByName(username,function(err,data){
                if (err){
@@ -70,6 +74,25 @@
                        }
                    });
                }
+            });
+
+            storyService.getGraphAnalytics(profile.uname, 30, function(err, data){
+                if(err){
+                    console.log("error in getting data")
+                }
+                else{
+                    console.log(data);
+                    profile.graphAnalytics = data;
+                }
+            });
+
+            storyService.getStoryAnalytics(profile.uname, function(err, data){
+                if(err){
+                    console.log("error in getting data")
+                }
+                else{
+                    profile.storyAnalytics = data;
+                }
             });
 
             Dropzone.autoDiscover = false;
