@@ -284,14 +284,28 @@ def addToStory(request, sid, bid):
     s = Story.objects.get(id=sid)
     u = User.objects.get(id=request.user.id)
     p = Graph.objects.get(id=bid)
-    g = Graph(name="Empty Branch"+str(bid), \
+    g = Graph(name="Empty Branch/"+str(bid), \
               data="Add something here", \
               parent=p, \
               user=u)
     g.save()
-    g.name = g.name[:g.name.find(str(bid))]+str(int(g.id))
+    g.name = g.name[:g.name.find("/"+str(bid))]+str(int(g.id))
     g.save()
-    data['result'] = 'true'
+    data['result'] = str(g.id)
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+@login_required
+@csrf_exempt
+def editStory(request, sid, bid):
+    data = {}
+    p = Graph.objects.get(id=bid)
+    if(request.user == p.user):
+        p.data = request.POST['body']
+        p.name = request.POST['name']+str(p.id)
+        p.save()
+        data['result'] = "true"
+    else:
+        data['result'] = "false"
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 

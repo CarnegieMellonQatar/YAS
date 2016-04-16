@@ -282,15 +282,39 @@
                     });
             };
 
-            service.addToStory = function(sid,bid, callback){
+            service.addToStory = function(sid, length, bid, callback){
                 $http.post('/api/addToStory/'+sid+'/'+bid+'/')
+                    .success(function(data,status){
+                        callback(null,data,length);
+                    })
+                    .error(function(error,status){
+                        callback(error,null,null);
+                    });
+            };
+
+            service.editStory = function(sid, bid, node, callback){
+                var formdata = new FormData();
+
+                formdata.append('name', node.name);
+                formdata.append('body', node.body);
+
+                var request = {
+                    method: 'POST',
+                    url: '/api/editStory/'+sid+"/"+bid+"/",
+                    data: formdata,
+                    headers: {
+                        'Content-Type': undefined
+                    }
+                };
+
+                $http(request)
                     .success(function(data,status){
                         callback(null,data);
                     })
-                    .error(function(error,status){
-                        callback(error,null);
+                    .error(function(error, status){
+                         callback(error,null);
                     });
-            };
+            }
 
         });
 })();

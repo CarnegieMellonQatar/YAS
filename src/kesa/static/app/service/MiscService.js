@@ -4,7 +4,7 @@
         var srvc = this;
 
         this.customAlert = function (string) {
-            $("body").append('<div class="custom-alert animated fadeInRightBig">' + string + '</div>');
+            $("body").append('<div class="custom-alert animated fadeInLeftBig">' + string + '</div>');
             setTimeout(function () {
                 $(".custom-alert").remove();
             }, 3000);
