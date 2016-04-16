@@ -1,61 +1,54 @@
 <!DOCTYPE html>
 <html ng-app="storyTeller">
-    <head>
-        <title>Story Teller</title>
-            <!-- css -->
-        <link href="/static/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
-        <link href="/static/style/main.css" rel="stylesheet" type="text/css"/>
-        <link href="/static/style/animate.css" rel="stylesheet" type="text/css"/>
-        <link href="/static/style/mask-intro.css" rel="stylesheet" type="text/css"/>
+<head>
+    <title>Story Teller</title>
+    <!-- css -->
+    <link href="/static/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+    <link href="/static/style/main.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/style/animate.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/style/mask-intro.css" rel="stylesheet" type="text/css"/>
 
-        <!-- lib -->
-        <script src="/static/bower_components/jquery/dist/jquery.min.js"></script>
-        <script src="/static/bower_components/angular/angular.min.js"></script>
-        <script src="/static/bower_components/d3/d3.min.js"></script>
-        <script src="/static/bower_components/peerjs/peer.min.js"></script>
-        <script src="/static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script src="/static/app/modernizr.js"></script>
-        <!-- Plugin JQuery -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/FitText.js/1.2.0/jquery.fittext.js"></script>
+    <!-- lib -->
+    <script src="/static/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/static/bower_components/angular/angular.min.js"></script>
+    <script src="/static/bower_components/d3/d3.min.js"></script>
+    <script src="/static/bower_components/peerjs/peer.min.js"></script>
+    <script src="/static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/app/modernizr.js"></script>
+    <!-- Plugin JQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FitText.js/1.2.0/jquery.fittext.js"></script>
 
-        <!-- app -->
-        <script src="/static/app/kesa.js"></script>
-        <script src="/static/app/script.js"></script>
-        <script src="/static/app/directives/organizedButtonsDirective.js"></script>
-        <script src="/static/app/service/storyService.js"></script>
-        <script src="/static/app/service/MiscService.js"></script>
+    <!-- app -->
+    <script src="/static/app/kesa.js"></script>
+    <script src="/static/app/script.js"></script>
+    <script src="/static/app/directives/organizedButtonsDirective.js"></script>
+    <script src="/static/app/service/storyService.js"></script>
+    <script src="/static/app/service/MiscService.js"></script>
 
-    </head>
+</head>
 <body>
 {% if errors %}
-    <p>Your username and password didn't match. Please try again.</p>
-    {% endif %}
-    <form method="post" action="{% url 'django.contrib.auth.views.login'  %}">
-        {% csrf_token %}
-        <div id="form_header">
-            <h1>Authentication</h1>
-        </div>
+<p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+<form method="post" action="{% url 'django.contrib.auth.views.login'  %}">
+    {% csrf_token %}
 
-        <div class="form_shape">
-            <div class="full_pane">
-                <div class="section">
-                    <h3>Username:</h3>
-                    <input type="text" name="username" placeholder="username"/>
-                </div>
+    <div class="form-style-8">
+        <h2><span class="lighter-text">Sign up</span></h2>
+        <form method="post" onsubmit="location.pathname='/stories'" action="/api/{{ request.user.id }}/createStory/">
+            {% csrf_token %}
+            <input type="text" name="username" required placeholder="username"/>
 
-                <div class="section">
-                    <h3>Password:</h3>
-                    <input type="password" name="password" placeholder="password"/>
-                </div>
+            <input type="password" name="password" required placeholder="password"/>
 
-                <div class="section">
-                    <input type="submit" class="form_button" value="Login"/>
-                </div>
-            </div>
-        </div>
-    </form>
+            <input type="submit" class="form_button" value="Login"/>
+
+        </form>
+    </div>
+
+</form>
 </body>
 </html>
 

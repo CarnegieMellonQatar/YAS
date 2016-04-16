@@ -34,7 +34,8 @@
             </div>
             <!--<hr class="small">-->
         </div>
-        <button ng-show="storyController.haveMoreComplete && storyController.enabled"
+
+        <button class="story-show-more" ng-show="storyController.haveMoreComplete && storyController.enabled"
                 ng-click="storyController.getMoreCompleteStories()">Show More
         </button>
     </div>
@@ -61,7 +62,7 @@
             </div>
             <!--<h2>Status: {$ storyController.isComplete(story.fields.is_complete) $}</h2>-->
         </div>
-        <button ng-show="storyController.haveMoreIncomplete && !storyController.enabled"
+        <button class="story-show-more center-button" ng-show="storyController.haveMoreIncomplete && !storyController.enabled"
                 ng-click="storyController.getMoreInCompleteStories()">Show More
         </button>
     </div>

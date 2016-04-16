@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^(?P<uid>\d+)/getNumStories/$', views.getNumStories, name='getNumStories'),
 	url(r'^(?P<uid>\d+)/getUser/(?P<cid>\d+)/$', views.getUser, name='getUser'),
     url(r'^addToStory/(?P<sid>\d+)/(?P<bid>\d+)/$', views.addToStory, name='addToStory'),
+    url(r'^editStory/(?P<sid>\d+)/(?P<bid>\d+)/$', views.editStory, name='editStory'),
     url(r'^setOpen/(?P<sid>\d+)/$', views.setOpen, name='setOpen'),
     url(r'^setClosed/(?P<sid>\d+)/$', views.setClosed, name='setClosed'),
     url(r'^setComplete/(?P<sid>\d+)/$', views.setComplete, name='setComplete'),
