@@ -1,34 +1,27 @@
 {% extends "api/index.html" %}
 
 {% block content %}
+<div class="form-style-8">
+    <h2><span class="lighter-text">Create a Story</span></h2>
     <form method="post" onsubmit="location.pathname='/stories'" action="/api/{{ request.user.id }}/createStory/">
         {% csrf_token %}
-        <div id="form_header">
-            <h1>Create a Story</h1>
-        </div>
+        <input type="text" name="title" required placeholder="Story Title"/>
 
-        <div class="form_shape">
-            <div class="full_pane">
-                <div class="section">
-                    <h3>Title:</h3>
-                    <input type="text" name="title" placeholder="title"/>
+        <input type="text" name="name" required placeholder="First Branch Name!"/>
+
+        <div class="section">
+            <h3 class="lighter-text">Privacy</h3>
+            <div class="row">
+                <div class="col-xs-6 center">
+                    <input type="radio" name="is_open" required value="True"> <span class="lighter-text">Open</span>
                 </div>
-
-                <div class="section">
-                    <h3>Name of the Beginning:</h3>
-                    <input type="text" name="name" placeholder="name"/>
-                </div>
-
-                <div class="section">
-                    <h3>Privacy:</h3>
-                    <input type="radio" name="is_open" value="True" /> Open
-                    <input type="radio" name="is_open" value="False" /> Closed
-                </div>
-
-                <div class="section">
-                    <input type="submit" class="form_button" value="Login"/>
+                <div class="col-xs-6 center">
+                    <input type="radio" name="is_open" required value="False"> <span class="lighter-text">Closed</span>
                 </div>
             </div>
         </div>
+
+        <input type="submit" class="form_button" value="Start Writing!"/>
     </form>
+</div>
 {% endblock %}

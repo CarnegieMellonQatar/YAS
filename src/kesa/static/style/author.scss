@@ -4,7 +4,7 @@
 
 .node circle {
   fill: white;
-  stroke: $primary-dark-color;
+  stroke: $primary-light-color;
   stroke-width: 3px;
 }
 
@@ -21,7 +21,7 @@
 .story-container {
   animation-duration: 0.3s;
   transition: all 0.5s;
-  background-color: $staple;
+  background-color: $lightgray;
   height: 85%;
   right: 0;
   margin-right: 40px;
@@ -45,8 +45,10 @@
   transition: all 0.2s;
   cursor: pointer;
   margin: 20px;
+  border-radius: .25em;
+  border: 2px solid transparent;
   padding: 10px;
-  background-color: $staple-dark;
+  background-color: $primary-light-color;
   text-align: center;
   color: white;
 }
@@ -56,13 +58,17 @@
   padding: 10px;
   background-color: white;
   text-align: center;
-  color: $staple-dark;
+  color: $primary-light-color;
+  border: 2px solid $primary-light-color;
+
 }
 
 .delete-branch-button {
   width: 42.375%;
   transition: all 0.2s;
   cursor: pointer;
+  border-radius: .25em;
+  border: 2px solid transparent;
   margin: 20px;
   padding: 10px;
   background-color: $fail;
@@ -76,26 +82,19 @@
   background-color: white;
   text-align: center;
   color: $fail;
+  border: 2px solid $fail;
+
 }
 
 .edit-branch-button {
   width: 42.375%;
+  border-radius: .25em;
+  border: 2px solid transparent;
   transition: all 0.2s;
   cursor: pointer;
   margin: 20px;
   padding: 10px;
   background-color: $secondary-light-color;
-  text-align: center;
-  color: white;
-}
-
-.save-branch-button {
-  width: 42.375%;
-  transition: all 0.2s;
-  cursor: pointer;
-  margin: 20px;
-  padding: 10px;
-  background-color: $success;
   text-align: center;
   color: white;
 }
@@ -106,7 +105,27 @@
   background-color: white;
   text-align: center;
   color: $secondary-light-color;
+  border: 2px solid $secondary-light-color;
+
 }
+.save-branch-button {
+  width: 42.375%;
+  border-radius: .25em;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+  cursor: pointer;
+  margin: 20px;
+  padding: 10px;
+  background-color: $success;
+  text-align: center;
+  color: white;
+}
+.save-branch-button:hover {
+  background-color: white;
+  color: $success;
+  border: 2px solid $success;
+}
+
 
 .custom-alert {
   height: 50px;
@@ -115,8 +134,8 @@
   color: white;
   position: fixed;
   padding: 10px;
-  right: 0;
-  top: 0;
+  left: 0;
+  bottom: 0;
   margin: 20px;
 }
 
@@ -132,6 +151,7 @@
 
 .story-title {
   margin: 20px;
+  margin-top: 70px;
 }
 
 .close-story-button {
@@ -183,7 +203,9 @@ textarea, .textareaClone {
   cursor: pointer;
   margin: 20px;
   padding: 10px;
-  background-color: $secondary-dark-color;
+  border-radius: .25em;
+  border: 2px solid transparent;
+  background-color: $secondary-light-color;
   text-align: center;
   color: white;
 }
@@ -193,5 +215,6 @@ textarea, .textareaClone {
   padding: 10px;
   background-color: white;
   text-align: center;
-  color: $secondary-dark-color;
+  color: $secondary-light-color;
+  border: 2px solid $secondary-light-color;
 }

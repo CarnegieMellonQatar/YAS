@@ -8,6 +8,8 @@ from django.core.urlresolvers import reverse
 import json
 import os
 import random
+import datetime
+from datetime import datetime, timedelta
 from itertools import chain
 from django.db.models import Count
 
@@ -30,11 +32,84 @@ def recursive_node_to_dict(node):
         'branchid': node.pk,
         'name': node.name[0:indexvalue],
         'body': node.data,
+        'read': node.read,
     }
     children = [recursive_node_to_dict(c) for c in node.get_children()]
     if children:
         result['children'] = children
     return result
+
+
+def getMaxChild(nodeList):
+    maxNode = nodeList[0]
+    for i in nodeList:
+        if i.read > maxNode.read:
+            maxNode = i
+    return maxNode
+
+
+def getDates(likesList):
+    for i in likesList:
+        i['date'] = str(i['date'])
+        print i['date']
+    return likesList
+
+
+def getMinChild(nodeList):
+    minNode = nodeList[0]
+    for i in nodeList:
+        if i.read < minNode.read:
+            minNode = i
+    return minNode
+
+
+def recuesive_get_max_path(node, nlist):
+    children = node.get_children()
+    # if len(children) == 0:
+    if node.is_leaf_node():
+        # print node.id
+        nlist.append(node.id)
+    else:
+        nlist.append(node.id)
+        nextNode = getMaxChild(children)
+        recuesive_get_max_path(nextNode, nlist)
+
+
+def recuesive_get_min_path(node, nlist):
+    children = node.get_children()
+    # if len(children) == 0:
+    if node.is_leaf_node():
+        # print node.id
+        nlist.append(node.id)
+    else:
+        # print node.id
+        nlist.append(node.id)
+        nextNode = getMinChild(children)
+        recuesive_get_min_path(nextNode, nlist)
+
+
+def getStoryAnalysis(storyList):
+    result = []
+    m_brach = []
+    l_brach = []
+    for i in storyList:
+        data = {}
+        data['sid'] = i.id
+        recuesive_get_max_path(i.graph, m_brach)
+        recuesive_get_min_path(i.graph, l_brach)
+        data['m_brach'] = m_brach
+        data['l_brach'] = l_brach
+        result.append(data)
+        m_brach = []
+        l_brach = []
+    return result
+
+
+def sumCount(readList):
+    sum = 0
+    for i in readList:
+        sum = sum + i[0]
+    return sum;
 
 
 # ##### logout #####
@@ -61,6 +136,7 @@ def stories(request):
         response = HttpResponseRedirect("/index")
     return response
 
+
 def create(request):
     response = None
     if (request.user.is_authenticated()):
@@ -72,7 +148,7 @@ def create(request):
 def profile(request, username):
     response = None
     if (request.user.is_authenticated()):
-        if(request.user.username == username):
+        if(str(request.user.username) == username):
             response = render(request, 'api/myprofile.html')
         else:
             response = render(request, 'api/yourprofile.html')
@@ -248,6 +324,7 @@ def getUserStories(request, uid, sid, n):
     data = serializers.serialize('json', story)
     return HttpResponse(data, content_type="application/json")
 
+
 @login_required
 def getReadLater(request,uid,rlid,n):
     rl = None
@@ -260,10 +337,11 @@ def getReadLater(request,uid,rlid,n):
 
 @login_required
 def getImage(request, username):
-    user = User.objects.filter(username=username)
+    user = User.objects.filter(username=str(username))
     i = Image.objects.filter(user=user)
     if len(i) == 0:
-        default = Image.objects.get(0)
+        admin = User.objects.get(username='admin')
+        default = Image.objects.get(user=admin)
         return HttpResponse(default.image.read(), content_type=default.mimeType)
     else:
         im = i[0]
@@ -312,14 +390,29 @@ def addToStory(request, sid, bid):
     s = Story.objects.get(id=sid)
     u = User.objects.get(id=request.user.id)
     p = Graph.objects.get(id=bid)
-    g = Graph(name="Empty Branch" + str(bid), \
+    g = Graph(name="Empty Branch/" + str(bid), \
               data="Add something here", \
               parent=p, \
               user=u)
     g.save()
-    g.name = g.name[:g.name.find(str(bid))] + str(int(g.id))
+    g.name = g.name[:g.name.find("/" + str(bid))] + str(int(g.id))
     g.save()
-    data['result'] = 'true'
+    data['result'] = str(g.id)
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+@login_required
+@csrf_exempt
+def editStory(request, sid, bid):
+    data = {}
+    p = Graph.objects.get(id=bid)
+    if (request.user == p.user):
+        p.data = request.POST['body']
+        p.name = request.POST['name'] + str(p.id)
+        p.save()
+        data['result'] = "true"
+    else:
+        data['result'] = "false"
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 
@@ -494,6 +587,24 @@ def createStory(request, uid):
 
 @login_required
 @csrf_exempt
+def getGraphAnalytics(request, username, numDays):
+    data = {}
+    if request.user.username == str(username):
+        user = User.objects.get(username=str(username))
+        stories = Story.objects.filter(user=user)
+        likes = Likes.objects.filter(story__in=stories, date__gte=datetime.now() - timedelta(days=int(numDays))).values(
+            'date').annotate(total=Count('date'))
+        # print likes
+        likes = list(getDates(likes))
+        # data = serializers.serialize('json', likes)
+        return HttpResponse(json.dumps(likes), content_type="application/json")
+    else:
+        data['user'] = request.user.username
+        data['result'] = 'false'
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+@login_required
+@csrf_exempt
 def addToReadLater(request, uid, sid):
     data = {}
     if request.user.id == int(uid):
@@ -513,6 +624,121 @@ def addToReadLater(request, uid, sid):
 
 @login_required
 @csrf_exempt
+def getGenericAnalytics(request, username):
+    data = {}
+    if request.user.username == str(username):
+        user = User.objects.get(username=str(username))
+        stories = Story.objects.filter(user=user)
+        fan = Likes.objects.filter(story__in=stories).values('user').annotate(total=Count('user')).order_by('-total')
+        if len(fan) != 0:
+            fan = fan[0]
+            fan = fan['user']
+        else:
+            fan = "You have no fans!!"
+        contributor = Contributors.objects.filter(story__in=stories).values('user').annotate(
+            total=Count('user')).order_by('-total')
+        if len(contributor) != 0:
+            contributor = contributor[0]
+            contributor = contributor['user']
+        else:
+            contributor = "You have no contributors!!"
+        result = {}
+        # result['fan'] = serializers.serialize('json',User.objects.filter(id = fan))
+        # result['contributor'] = serializers.serialize('json',User.objects.filter(id = contributor)) 
+        # print json.loads(serializers.serialize('json',User.objects.filter(id = contributor)))
+        result['fan'] = fan
+        result['contributor'] = contributor
+        s = getStoryAnalysis(stories)
+        result['stories'] = s
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    else:
+        data['result'] = 'false'
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+@login_required
+@csrf_exempt
+def totalLikes(request, username):
+    if request.user.username == str(username):
+        user = User.objects.get(username=str(username))
+        stories = Story.objects.filter(user=user)
+        count = Likes.objects.filter(story__in=stories).count()
+        result = {}
+        result['likes'] = count
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    else:
+        data = {}
+        data['result'] = False
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+@login_required
+@csrf_exempt
+def totalReads(request, username):
+    if request.user.username == str(username):
+        user = User.objects.get(username=str(username))
+        stories = Story.objects.filter(user=user).values_list('read')
+        count = sumCount(stories)
+        # print stories
+        result = {}
+        result['totalReads'] = count
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    else:
+        data = {}
+        data['result'] = False
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+@login_required
+@csrf_exempt
+def totalContributors(request, username):
+    if request.user.username == str(username):
+        user = User.objects.get(username=str(username))
+        stories = Story.objects.filter(user=user)
+        count = Contributors.objects.filter(story__in=stories).count()
+        result = {}
+        result['contributors'] = count
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    else:
+        data = {}
+        data['result'] = False
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+@login_required
+@csrf_exempt
+def likedStories(request, username):
+    if request.user.username == str(username):
+        user = User.objects.get(username=str(username))
+        likes = Likes.objects.filter(user=user).values_list('story')
+        stories = Story.objects.filter(id__in=likes)
+        result = {}
+        result = serializers.serialize('json', stories)
+        return HttpResponse(result, content_type="application/json")
+    else:
+        data = {}
+        data['result'] = False
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+@login_required
+@csrf_exempt
+def contributedStories(request, username):
+    if request.user.username == str(username):
+        user = User.objects.get(username=str(username))
+        contributions = Contributors.objects.filter(user=user).values_list('story')
+        stories = Story.objects.filter(id__in=contributions)
+        result = {}
+        result = serializers.serialize('json', stories)
+        return HttpResponse(result, content_type="application/json")
+    else:
+        data = {}
+        data['result'] = False
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+@login_required
+@csrf_exempt
+# Functions to populate the database with garbage values to get analatics
 def removeFromReadLater(request, uid, sid):
     data = {}
     if request.user.id == int(uid):
@@ -544,7 +770,7 @@ def makeBodies(numBodies, length):
 
 def getUniqueName():
     id = Graph.objects.all().order_by('-id')[0].id
-    return id
+    return str(id + 1)
 
 
 def getData(dataList):
@@ -616,13 +842,15 @@ def makeStories(user, n):
 def makeUsers(request, n):
     data = {}
     for i in range(int(n)):
-        user = User.objects.create_user(str(i), "", str(i))
-        user.firstName = str(i)
-        user.lastName = str(i)
-        user.email = "a@a.com"
-        user.save()
-        r = random.randint(1, 5)
-        makeStories(user, r)
+        users = User.objects.filter(username=str(i))
+        if len(users) == 0:
+            user = User.objects.create_user(str(i), "", str(i))
+            user.firstName = str(i)
+            user.lastName = str(i)
+            user.email = "a@a.com"
+            user.save()
+            r = random.randint(1, 5)
+            makeStories(user, r)
     data['result'] = 'true'
     return HttpResponse(json.dumps(data), content_type="application/json")
 
