@@ -100,7 +100,7 @@
             }
         };
 
-        this.createPacket = function(action, specialNode, id) {
+        this.createPacket = function (action, specialNode, id) {
             var toSend = {};
 
             toSend.action = action;
