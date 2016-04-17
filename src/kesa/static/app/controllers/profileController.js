@@ -51,6 +51,8 @@
             var username = profile.url.substring(1, profile.url.indexOf("profile") - 1);
             profile.uname = username;
 
+            var username = profile.url.substring(1, profile.url.indexOf("profile") - 1);
+
             storyService.getUserByName(username, function (err, data) {
                 if (err) {
                     console.log(err);
@@ -171,6 +173,7 @@
                 else {
                     profile.totalReads = data;
                 }
+
             });
 
             Dropzone.autoDiscover = false;
