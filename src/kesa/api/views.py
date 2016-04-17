@@ -148,7 +148,7 @@ def create(request):
 def profile(request, username):
     response = None
     if (request.user.is_authenticated()):
-        if(request.user.username == username):
+        if(str(request.user.username) == username):
             response = render(request, 'api/myprofile.html')
         else:
             response = render(request, 'api/yourprofile.html')
@@ -603,7 +603,8 @@ def getGraphAnalytics(request, username, numDays):
         data['result'] = 'false'
         return HttpResponse(json.dumps(data), content_type="application/json")
 
-
+@login_required
+@csrf_exempt
 def addToReadLater(request, uid, sid):
     data = {}
     if request.user.id == int(uid):
@@ -735,7 +736,8 @@ def contributedStories(request, username):
         data['result'] = False
         return HttpResponse(json.dumps(data), content_type="application/json")
 
-
+@login_required
+@csrf_exempt
 # Functions to populate the database with garbage values to get analatics
 def removeFromReadLater(request, uid, sid):
     data = {}

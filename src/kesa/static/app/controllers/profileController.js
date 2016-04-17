@@ -441,7 +441,7 @@
                     .append("g")
                     .attr("transform",
                         "translate(" + margin.left + "," + margin.top + ")");
-
+                
                 profile.graphAnalytics.forEach(function (d) {
                     var e = {};
                     e.date = parseDate(d.date);

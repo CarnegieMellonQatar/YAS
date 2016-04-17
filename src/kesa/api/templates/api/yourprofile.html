@@ -27,19 +27,15 @@
         </div>
         <div class="dashboard-tab-container">
             <div class="row">
-                <div class="col-xs-3 dashboard-tab"
+                <div class="col-xs-4 dashboard-tab"
                      ng-class="{'tab-selected': pc.isSet(0)}"
                      ng-click="pc.set(0)"> Stories
                 </div>
-                <div class="col-xs-3 dashboard-tab"
-                     ng-class="{'tab-selected': pc.isSet(1)}"
-                     ng-click="pc.set(1)"> Analytics
-                </div>
-                <div class="col-xs-3 dashboard-tab"
+                <div class="col-xs-4 dashboard-tab"
                      ng-class="{'tab-selected': pc.isSet(2)}"
                      ng-click="pc.set(2)">Liked Stories
                 </div>
-                <div class="col-xs-3 dashboard-tab"
+                <div class="col-xs-4 dashboard-tab"
                      ng-class="{'tab-selected': pc.isSet(3)}"
                      ng-click="pc.set(3)">Contributed Stories
                 </div>
@@ -64,25 +60,6 @@
                     <span class="faint-sub">{$ story.fields.contributors $}</span>
                 </div>
             </div>
-        </div>
-         <div class="profile-story-entry" ng-repeat="story in pc.stories">
-            <a href="/{$ story.fields.userInfo.fields.username $}/profile">
-                <div class="profile-story-entry-author"> {$ story.fields.userInfo.fields.username $}</div>
-            </a>
-            <a href="/{$ story.pk $}/story">
-                <div class="story-entry-title">{$ story.fields.title $}</div>
-            </a>
-            <div class="profile-story-entry-stats">
-                <div class="profile-story-entry-likes" data-toggle="tooltip" title="likes">
-                    <i class="fa fa-heart fa-2x" aria-hidden="true"></i>
-                    <span class="faint-sub">{$ story.fields.likes $}</span>
-                </div>
-                <div class="profile-story-entry-contributors" data-toggle="tooltip" title="contributors">
-                    <i class="fa fa-user fa-2x" aria-hidden="true"></i>
-                    <span class="faint-sub">{$ story.fields.contributors $}</span>
-                </div>
-            </div>
-            <button class="profile-delete-story-button" ng-click="pc.deleteStory(story)">Delete</button>
         </div>
     </div>
     <div class="profile-story-list" ng-show="pc.isSet(0) && pc.stories === []">
