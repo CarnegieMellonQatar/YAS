@@ -3,7 +3,7 @@
 
     angular.module('storyTeller')
         .controller('joinController', function (MiscService, $location, storyService, $scope) {
-           var id = location.pathname.substring(1, location.pathname.indexOf("story")-1);
+            var id = location.pathname.substring(1, location.pathname.indexOf("story") - 1);
 
             console.log("Join controller initialized to the ID " + id);
             var ctrl = this;
@@ -23,7 +23,7 @@
                 duration = 750;
 
             this.join = function () {
-                peer = new Peer({host:'storypeerserver.herokuapp.com', secure:true, port:443});
+                peer = new Peer({host: 'storypeerserver.herokuapp.com', secure: true, port: 443});
 
                 peer.on('open', function (id) {
                     console.log("My id is: " + id);
