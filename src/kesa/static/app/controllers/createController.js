@@ -3,7 +3,7 @@
 
     angular.module('storyTeller')
         .controller('createController', function (MiscService, $location, storyService) {
-            var id = location.pathname.substring(1, location.pathname.indexOf("story")-1);
+            var id = location.pathname.substring(1, location.pathname.indexOf("story") - 1);
 
             console.log("Create controller initialized to the ID " + id);
             var ctrl = this;
@@ -25,18 +25,18 @@
             var i = 0,
                 duration = 750;
 
-            storyService.getStory(id, function(err,data){
-                if (err){
+            storyService.getStory(id, function (err, data) {
+                if (err) {
                     console.log(err);
                 }
                 else {
                     console.log(data);
                     treeData = [data];
 
-                    storyService.setOpen(ctrl.createID, function(err,data){
-                        if(err){
+                    storyService.setOpen(ctrl.createID, function (err, data) {
+                        if (err) {
                             console.log(err);
-                        } else{
+                        } else {
                             console.log(data);
                         }
                     });
@@ -120,8 +120,8 @@
                         if (contact.some) {
                             ctrl.update(contact.obj, false, false);
 
-                            storyService.addToStory(ctrl.createID, response.parentid, function(err,data){
-                                if(err){
+                            storyService.addToStory(ctrl.createID, response.parentid, function (err, data) {
+                                if (err) {
                                     console.log(err);
                                 }
                             });
@@ -150,7 +150,7 @@
             };
 
             this.createSession = function () {
-                peer = new Peer(ctrl.createID, {host:'storypeerserver.herokuapp.com', secure:true, port:443});
+                peer = new Peer(ctrl.createID, {host: 'storypeerserver.herokuapp.com', secure: true, port: 443});
 
                 leader = true;
                 peer.on('open', function (id) {
@@ -187,15 +187,15 @@
                         });
                     });
 
-                    peer.on("disconnected", function(connec){
+                    peer.on("disconnected", function (connec) {
                         var index = conn.indexOf(connec);
-                        conn = conn.splice(0,index).concat(conn.splice(index+1,conn.length));
+                        conn = conn.splice(0, index).concat(conn.splice(index + 1, conn.length));
                         console.log(conn);
                     });
 
-                    peer.on("destroyed", function(connec){
+                    peer.on("destroyed", function (connec) {
                         var index = conn.indexOf(connec);
-                        conn = conn.splice(0,index).concat(conn.splice(index+1,conn.length));
+                        conn = conn.splice(0, index).concat(conn.splice(index + 1, conn.length));
                         console.log(conn);
                     });
 
@@ -207,10 +207,10 @@
 
                 peer.on('close', function (connec) {
                     console.log("asdasd");
-                    storyService.setClosed(data.id, function(err,data){
-                        if(err){
+                    storyService.setClosed(data.id, function (err, data) {
+                        if (err) {
                             console.log(err);
-                        } else{
+                        } else {
                             console.log(data);
                         }
                     });
@@ -451,8 +451,8 @@
                 var specialNode = {"name": obj.name, "body": obj.body, "parentid": currentNode.id, "action": 0};
                 ctrl.update(currentNode, true, true, 0, specialNode);
 
-                storyService.addToStory(ctrl.createID, currentNode.branchid, function(err,data){
-                    if(err){
+                storyService.addToStory(ctrl.createID, currentNode.branchid, function (err, data) {
+                    if (err) {
                         console.log(err);
                     }
                 });
@@ -483,20 +483,18 @@
                     MiscService.customAlert("<strong>Node is the root,</strong> cannot delete the root");
                     console.log("Node is the root, cannot delete the root");
                 } else {
-                    storyService.deleteBranch(ctrl.createID, currentNode.branchid, function(err,data){
-                        if(err){
+                    storyService.deleteBranch(ctrl.createID, currentNode.branchid, function (err, data) {
+                        if (err) {
                             console.log(err);
-                        } else{
+                        } else {
                             console.log(data);
-                            if(data["result"] === 'true'){
+                            if (data["result"] === 'true') {
                                 ctrl.deleteBranchr(null, root, currentNode.id);
                                 ctrl.update(currentNode, true, false, 1, null);
                                 ctrl.click(currentNode.parent);
                             }
                         }
                     });
-
-
 
 
                 }
@@ -621,7 +619,6 @@
                 });
 
             };
-
 
 
         })
