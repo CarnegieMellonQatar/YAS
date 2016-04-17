@@ -128,6 +128,7 @@ def index(request):
     response = render(request, 'api/index.html')
     return response
 
+
 def stories(request):
     response = None
     if (request.user.is_authenticated()):
@@ -145,10 +146,11 @@ def create(request):
         response = HttpResponseRedirect("/index")
     return response
 
+
 def profile(request, username):
     response = None
     if (request.user.is_authenticated()):
-        if(str(request.user.username) == username):
+        if (str(request.user.username) == username):
             response = render(request, 'api/myprofile.html')
         else:
             response = render(request, 'api/yourprofile.html')
@@ -156,17 +158,21 @@ def profile(request, username):
         response = HttpResponseRedirect("/index")
     return response
 
+
 def story(request, id):
     response = None
     if (request.user.is_authenticated()):
         s = Story.objects.filter(id=id)
         if (len(s) != 0):
             s = s[0]
-            if (s.is_open):
+            if (not s.is_complete):
                 if (s.user == request.user):
                     response = render(request, 'api/writingowner.html')
                 else:
-                    response = render(request, 'api/writingguest.html')
+                    if(s.is_open):
+                        response = render(request, 'api/writingguest.html')
+                    else:
+                        response = render(request, 'api/error.html')
             else:
                 response = render(request, 'api/reading.html')
         else:
@@ -209,13 +215,13 @@ def getStory(request, sid):
     if (graph != None):
         graphTree = recursive_node_to_dict(graph)
         graphTree['title'] = story.title
+        graphTree['user'] = story.user.username
     return HttpResponse(json.dumps(graphTree), content_type="application/json")
 
 
 @login_required
 def getBranch(request, bid):
     branch = Graph.objects.get(id=bid)
-
     graphTree = recursive_node_to_dict(branch)
     return HttpResponse(json.dumps(graphTree), content_type="application/json")
 
@@ -227,16 +233,18 @@ def getContributors(request, sid):
     data = serializers.serialize('json', contributors)
     return HttpResponse(data, content_type="application/json")
 
+
 @login_required
-def getReadLaterStory(request,sid):
+def getReadLaterStory(request, sid):
     story = Story.objects.get(id=sid)
-    rl = ReadLater.objects.filter(story=story,user=request.user)
+    rl = ReadLater.objects.filter(story=story, user=request.user)
     data = {}
-    if(len(rl) != 0):
+    if (len(rl) != 0):
         data['result'] = 'true'
     else:
         data['result'] = 'false'
     return HttpResponse(json.dumps(data), content_type="application/json")
+
 
 @login_required
 def getNumContributions(request, uid):
@@ -314,6 +322,13 @@ def getUserByName(request, username):
 
 
 @login_required
+def getUserByID(request, uid):
+    user = User.objects.get(id=uid)
+    name = user.name
+    return HttpResponse(json.dumps(name), content_type="application/json")
+
+
+@login_required
 def getUserStories(request, uid, sid, n):
     story = None
     user = User.objects.get(id=uid)
@@ -326,14 +341,15 @@ def getUserStories(request, uid, sid, n):
 
 
 @login_required
-def getReadLater(request,uid,rlid,n):
+def getReadLater(request, uid, rlid, n):
     rl = None
-    if(int(rlid) == 0):
+    if (int(rlid) == 0):
         rl = ReadLater.objects.filter(user=request.user).filter(id__gt=rlid).order_by('-id')[:int(n)]
     else:
         rl = ReadLater.objects.filter(user=request.user).filter(id__lt=rlid).order_by('-id')[:int(n)]
     data = serializers.serialize('json', rl)
     return HttpResponse(data, content_type="application/json")
+
 
 @login_required
 def getImage(request, username):
@@ -389,15 +405,18 @@ def addToStory(request, sid, bid):
     data = {}
     s = Story.objects.get(id=sid)
     u = User.objects.get(id=request.user.id)
-    p = Graph.objects.get(id=bid)
-    g = Graph(name="Empty Branch/" + str(bid), \
-              data="Add something here", \
-              parent=p, \
-              user=u)
-    g.save()
-    g.name = g.name[:g.name.find("/" + str(bid))] + str(int(g.id))
-    g.save()
-    data['result'] = str(g.id)
+    if (u.id == s.user.id):
+        p = Graph.objects.get(id=bid)
+        g = Graph(name="Empty Branch/" + str(bid), \
+                  data="Add something here", \
+                  parent=p, \
+                  user=u)
+        g.save()
+        g.name = g.name[:g.name.find("/" + str(bid))] + str(int(g.id))
+        g.save()
+        data['result'] = str(g.id)
+    else:
+        data['result'] = 'false'
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 
@@ -587,6 +606,27 @@ def createStory(request, uid):
 
 @login_required
 @csrf_exempt
+def addContribution(request, uid, sid):
+    response = None
+    data = {}
+    s = Story.objects.get(id=sid)
+    u = User.objects.get(id=uid)
+    if int(request.user.id) == int(s.user.id) :
+        c = Contributors.objects.filter(user=u,\
+                                        story=s)
+        if(len(c) == 0):
+            c = Contributors(user=u,\
+                             story=s)
+            c.save()
+            data['result'] = 'true'
+        else:
+            data['result'] = 'false'
+    else:
+        data['result'] = 'false'
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+@login_required
+@csrf_exempt
 def getGraphAnalytics(request, username, numDays):
     data = {}
     if request.user.username == str(username):
@@ -602,6 +642,7 @@ def getGraphAnalytics(request, username, numDays):
         data['user'] = request.user.username
         data['result'] = 'false'
         return HttpResponse(json.dumps(data), content_type="application/json")
+
 
 @login_required
 @csrf_exempt
@@ -736,6 +777,7 @@ def contributedStories(request, username):
         data['result'] = False
         return HttpResponse(json.dumps(data), content_type="application/json")
 
+
 @login_required
 @csrf_exempt
 # Functions to populate the database with garbage values to get analatics
@@ -744,7 +786,7 @@ def removeFromReadLater(request, uid, sid):
     if request.user.id == int(uid):
         story = Story.objects.get(id=sid)
         rl = ReadLater.objects.filter(user=request.user, story=story)
-        if(rl != 0):
+        if (rl != 0):
             rl.delete()
             data['result'] = 'true'
         else:
