@@ -37,6 +37,9 @@ class Contributors(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
 
+class ReadLater(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    story = models.ForeignKey(Story, on_delete=models.CASCADE)
 
 class Likes(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
