@@ -5,9 +5,9 @@
     <h2><span class="lighter-text">Create a Story</span></h2>
     <form method="post" onsubmit="location.pathname='/stories'" action="/api/{{ request.user.id }}/createStory/">
         {% csrf_token %}
-        <input type="text" name="title" required placeholder="title"/>
+        <input type="text" name="title" required placeholder="Story Title"/>
 
-        <input type="text" name="name" required placeholder="name"/>
+        <input type="text" name="name" required placeholder="First Branch Name!"/>
 
         <div class="section">
             <h3 class="lighter-text">Privacy</h3>
@@ -21,7 +21,7 @@
             </div>
         </div>
 
-        <input type="submit" class="form_button" value="Login"/>
+        <input type="submit" class="form_button" value="Start Writing!"/>
     </form>
 </div>
 {% endblock %}

@@ -509,51 +509,51 @@ header .header-content .header-content-inner p {
   -o-background-size: cover;
   margin-bottom: 20px; }
 
-.story-entry {
+.story-entry, .profile-story-entry {
   position: relative;
   background: white;
   margin-bottom: 10px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   border: 1px solid rgba(0, 0, 0, 0.09); }
 
-.story-entry-author {
+.story-entry-author, .profile-story-entry-author {
   transition: all 0.25s;
   color: #2D6CA5;
   font-size: 24px;
   margin: 20px; }
 
-.story-entry-author:hover {
+.story-entry-author:hover, .profile-story-entry-author:hover {
   opacity: 0.7; }
 
-.story-entry-title {
+.story-entry-title, .profile-story-entry-title {
   color: #000;
   margin: 20px;
   font-size: 32px;
   font-weight: 700; }
 
-.story-entry-title:hover {
+.story-entry-title:hover, .profile-story-entry-title:hover {
   opacity: 0.7; }
 
-.story-entry-likes {
+.story-entry-likes, .profile-story-entry-likes {
   transition: all 0.25s;
   cursor: pointer;
   color: #D11C24;
   margin-left: 20px;
   margin-bottom: 20px; }
 
-.story-entry-contributors {
+.story-entry-contributors, .profile-story-entry-contributors {
   transition: all 0.25s;
   cursor: pointer;
   margin-left: 20px;
   color: #b0c905; }
 
-.story-entry-contributors:hover {
+.story-entry-contributors:hover, .profile-story-entry-contributors:hover {
   opacity: 0.7; }
 
-.story-entry-likes:hover {
+.story-entry-likes:hover, .profile-story-entry-likes:hover {
   opacity: 0.7; }
 
-.story-entry-stats {
+.story-entry-stats, .profile-story-entry-stats {
   display: inline-flex; }
 
 .story-entry-completed {
@@ -601,5 +601,89 @@ header .header-content .header-content-inner p {
   background-color: white;
   color: #2D6CA5;
   border-color: #2D6CA5; }
+
+.dashboard-container {
+  margin-top: 50px;
+  background: #F1F1F1; }
+
+.user-container {
+  margin: 50px auto;
+  width: 80%;
+  height: 300px;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  position: relative; }
+
+.main-profile-pic {
+  width: 200px;
+  height: 200px;
+  margin-left: 25px;
+  margin-top: 25px; }
+
+.main-username {
+  color: #fb5e58;
+  font-weight: 700;
+  margin-top: 75px;
+  font-size: 64px;
+  margin-left: -50px; }
+
+.fa-heart {
+  color: #D11C24; }
+
+.fa-user {
+  color: #b0c905; }
+
+.fa-book {
+  color: #EAE3CB; }
+
+.main-stats-row {
+  margin-left: -60px;
+  margin-top: 68px; }
+
+.dashboard-tab-container {
+  position: absolute;
+  bottom: 0;
+  left: 5%;
+  width: 90%;
+  text-align: center; }
+
+.dashboard-tab {
+  font-size: 24px;
+  font-weight: 100;
+  border-bottom: 4px solid transparent;
+  cursor: pointer;
+  padding-bottom: 10px; }
+
+.dashboard-tab:hover {
+  opacity: 0.6;
+  border-bottom: 4px solid #fb9691; }
+
+.tab-selected {
+  border-bottom: 4px solid #fb5e58; }
+
+.tab-selected:hover {
+  opacity: 1;
+  border-bottom: 4px solid #fb5e58; }
+
+.profile-story-list {
+  margin: auto;
+  background: transparent;
+  width: 80%;
+  overflow-y: scroll; }
+
+.profile-analytics {
+  margin: auto;
+  width: 80%;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.09); }
+
+#barGraph {
+  margin: auto; }
+
+.analytics-header {
+  margin-top: 50px;
+  margin-left: 50px; }
 
 /*# sourceMappingURL=main.css.map */

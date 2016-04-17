@@ -1,0 +1,128 @@
+.dashboard-container {
+  margin-top: 50px;
+  //height: 100%;
+  background: $lightgray;
+}
+
+.user-container {
+  margin: 50px auto;
+  width: 80%;
+  height: 300px;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .04);
+  border: 1px solid rgba(0, 0, 0, .09);
+  position: relative;
+}
+
+.main-profile-pic {
+  width: 200px;
+  height: 200px;
+  margin-left: 25px;
+  margin-top: 25px;
+}
+
+.main-username {
+  color: $primary-light-color;
+  font-weight: 700;
+  margin-top: 75px;
+  font-size: $font-size-large;
+  margin-left: -50px;
+}
+
+.fa-heart {
+  color: $fail;
+}
+
+.fa-user {
+  color: $success;
+}
+
+.fa-book {
+  color: $staple;
+}
+
+.main-stats-row {
+  margin-left: -60px;
+  margin-top: 68px;
+}
+
+.dashboard-tab-container {
+  position: absolute;
+  bottom: 0;
+  left: 5%;
+  width: 90%;
+  text-align: center;
+}
+
+.dashboard-tab {
+  font-size: $font-size-small;
+  font-weight: 100;
+  border-bottom: 4px solid transparent;
+  cursor: pointer;
+  padding-bottom: 10px;
+}
+
+.dashboard-tab:hover {
+  opacity: 0.6;
+  border-bottom: 4px solid #fb9691;
+}
+
+.tab-selected {
+  border-bottom: 4px solid $primary-light-color;
+}
+
+.tab-selected:hover {
+  opacity: 1;
+  border-bottom: 4px solid $primary-light-color;
+}
+
+.profile-story-list {
+  margin: auto;
+  background: transparent;
+  width: 80%;
+  overflow-y: scroll;
+}
+
+.profile-story-entry {
+  @extend .story-entry;
+}
+
+.profile-story-entry-author {
+  @extend .story-entry-author;
+}
+
+.profile-story-entry-title {
+  @extend .story-entry-title;
+}
+
+.profile-story-entry-stats {
+  @extend .story-entry-stats;
+}
+
+.profile-story-entry-likes {
+  @extend .story-entry-likes;
+}
+
+.profile-story-entry-contributors {
+  @extend .story-entry-contributors;
+}
+
+.profile-delete-story-button {
+}
+
+.profile-analytics {
+  margin: auto;
+  width: 80%;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .04);
+  border: 1px solid rgba(0, 0, 0, .09);
+}
+
+#barGraph {
+  margin: auto;
+}
+
+.analytics-header {
+  margin-top: 50px;
+  margin-left: 50px;
+}

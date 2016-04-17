@@ -27,7 +27,7 @@ from django.contrib.auth.decorators import permission_required
 def recursive_node_to_dict(node):
     print node.name
     indexvalue = node.name.find(str(node.pk))
-    if(indexvalue == -1):
+    if (indexvalue == -1):
         indexvalue = len(node.name)
     result = {
         'branchid': node.pk,
@@ -40,6 +40,7 @@ def recursive_node_to_dict(node):
         result['children'] = children
     return result
 
+
 def getMaxChild(nodeList):
     maxNode = nodeList[0]
     for i in nodeList:
@@ -47,12 +48,21 @@ def getMaxChild(nodeList):
             maxNode = i
     return maxNode
 
+
+def getDates(likesList):
+    for i in likesList:
+        i['date'] = str(i['date'])
+        print i['date']
+    return likesList
+
+
 def getMinChild(nodeList):
     minNode = nodeList[0]
     for i in nodeList:
         if i.read < minNode.read:
             minNode = i
     return minNode
+
 
 def recuesive_get_max_path(node, nlist):
     children = node.get_children()
@@ -65,6 +75,7 @@ def recuesive_get_max_path(node, nlist):
         nextNode = getMaxChild(children)
         recuesive_get_max_path(nextNode, nlist)
 
+
 def recuesive_get_min_path(node, nlist):
     children = node.get_children()
     # if len(children) == 0:
@@ -76,6 +87,7 @@ def recuesive_get_min_path(node, nlist):
         nlist.append(node.id)
         nextNode = getMinChild(children)
         recuesive_get_min_path(nextNode, nlist)
+
 
 def getStoryAnalysis(storyList):
     result = []
@@ -93,6 +105,12 @@ def getStoryAnalysis(storyList):
         l_brach = []
     return result
 
+
+def sumCount(readList):
+    sum = 0
+    for i in readList:
+        sum = sum + i[0]
+    return sum;
 
 
 # ##### logout #####
@@ -120,6 +138,7 @@ def stories(request):
         response = render(request, 'api/index.html')
     return response
 
+
 def create(request):
     response = None
     if (request.user.is_authenticated()):
@@ -142,10 +161,10 @@ def story(request, id):
     response = None
     if (request.user.is_authenticated()):
         s = Story.objects.filter(id=id)
-        if(len(s) != 0):
-            s=s[0]
-            if(s.is_open):
-                if(s.user == request.user):
+        if (len(s) != 0):
+            s = s[0]
+            if (s.is_open):
+                if (s.user == request.user):
                     response = render(request, 'api/writingowner.html')
                 else:
                     response = render(request, 'api/writingguest.html')
@@ -156,6 +175,7 @@ def story(request, id):
     else:
         response = render(request, 'api/index.html')
     return response
+
 
 def analytics(request):
     response = None
@@ -187,7 +207,7 @@ def getStory(request, sid):
     story = Story.objects.get(id=sid)
     graph = story.graph
     graphTree = "undefined"
-    if(graph != None):
+    if (graph != None):
         graphTree = recursive_node_to_dict(graph)
         graphTree['title'] = story.title
     return HttpResponse(json.dumps(graphTree), content_type="application/json")
@@ -288,16 +308,18 @@ def getUserStories(request, uid, sid, n):
     data = serializers.serialize('json', story)
     return HttpResponse(data, content_type="application/json")
 
+
 @login_required
 def getImage(request, username):
-    user = User.objects.filter(username = username)
+    user = User.objects.filter(username=str(username))
     i = Image.objects.filter(user=user)
     if len(i) == 0:
-        default = Image.objects.get(0)
-        return HttpResponse(default.image.read(), content_type = default.mimeType)
+        admin = User.objects.get(username='admin')
+        default = Image.objects.get(user=admin)
+        return HttpResponse(default.image.read(), content_type=default.mimeType)
     else:
         im = i[0]
-        return HttpResponse(im.image.read(), content_type = im.mimeType)
+        return HttpResponse(im.image.read(), content_type=im.mimeType)
 
 
 # ##### POST methods #####
@@ -311,19 +333,20 @@ def sign_up(request):
     user.save()
     return HttpResponseRedirect(reverse('api.views.index', ))
 
+
 @login_required
 @csrf_exempt
 def addImage(request):
     data = {}
-    user = User.objects.get(id = request.user.id)
-    u = Image.objects.filter(user = user)
+    user = User.objects.get(id=request.user.id)
+    u = Image.objects.filter(user=user)
     if request.FILES:
         if len(u) == 0:
-            i = Image(user = user,\
-                      image = request.FILES['img_file'],\
-                      mimeType = request.FILES['img_file'].content_type)
+            i = Image(user=user, \
+                      image=request.FILES['img_file'], \
+                      mimeType=request.FILES['img_file'].content_type)
             i.save()
-        else: 
+        else:
             i = u[0]
             i.image = request.FILES['img_file']
             i.mimeType = request.FILES['img_file'].content_type
@@ -341,24 +364,25 @@ def addToStory(request, sid, bid):
     s = Story.objects.get(id=sid)
     u = User.objects.get(id=request.user.id)
     p = Graph.objects.get(id=bid)
-    g = Graph(name="Empty Branch/"+str(bid), \
+    g = Graph(name="Empty Branch/" + str(bid), \
               data="Add something here", \
               parent=p, \
               user=u)
     g.save()
-    g.name = g.name[:g.name.find("/"+str(bid))]+str(int(g.id))
+    g.name = g.name[:g.name.find("/" + str(bid))] + str(int(g.id))
     g.save()
     data['result'] = str(g.id)
     return HttpResponse(json.dumps(data), content_type="application/json")
+
 
 @login_required
 @csrf_exempt
 def editStory(request, sid, bid):
     data = {}
     p = Graph.objects.get(id=bid)
-    if(request.user == p.user):
+    if (request.user == p.user):
         p.data = request.POST['body']
-        p.name = request.POST['name']+str(p.id)
+        p.name = request.POST['name'] + str(p.id)
         p.save()
         data['result'] = "true"
     else:
@@ -371,7 +395,7 @@ def editStory(request, sid, bid):
 def setOpen(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
-    if(request.user == s.user):
+    if (request.user == s.user):
         s.is_open = True
         s.save()
         data['result'] = 'true'
@@ -385,7 +409,7 @@ def setOpen(request, sid):
 def setClosed(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
-    if(request.user == s.user):
+    if (request.user == s.user):
         s.is_open = False
         s.save()
         data['result'] = 'true'
@@ -399,7 +423,7 @@ def setClosed(request, sid):
 def setComplete(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
-    if(request.user == s.user):
+    if (request.user == s.user):
         s.is_complete = True
         s.save()
         data['result'] = 'true'
@@ -413,7 +437,7 @@ def setComplete(request, sid):
 def setIncomplete(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
-    if(request.user == s.user):
+    if (request.user == s.user):
         s.is_complete = False
         s.save()
         data['result'] = 'true'
@@ -504,17 +528,18 @@ def createStory(request, uid):
                   data="This is empty!! Edit me", \
                   user=request.user)
         g.save()
-        g.name = g.name+str(g.id)
+        g.name = g.name + str(g.id)
         g.save()
         s = Story(user=request.user, \
                   title=request.POST['title'], \
-                  is_open=request.POST['is_open'],\
+                  is_open=request.POST['is_open'], \
                   graph=g)
         s.save()
-        string = "/"+str(s.id)+"/story"
+        string = "/" + str(s.id) + "/story"
         return HttpResponseRedirect(string)
     else:
         return HttpResponseRedirect("/create")
+
 
 @login_required
 @csrf_exempt
@@ -522,11 +547,15 @@ def getGraphAnalytics(request, username, numDays):
     data = {}
     if request.user.username == str(username):
         user = User.objects.get(username=str(username))
-        stories = Story.objects.filter(user = user)
-        likes = Likes.objects.filter(story__in=stories, date__gte=datetime.now()-timedelta(days=int(numDays)))
-        data = serializers.serialize('json', likes)
-        return HttpResponse(data, content_type="application/json")
+        stories = Story.objects.filter(user=user)
+        likes = Likes.objects.filter(story__in=stories, date__gte=datetime.now() - timedelta(days=int(numDays))).values(
+            'date').annotate(total=Count('date'))
+        # print likes
+        likes = list(getDates(likes))
+        # data = serializers.serialize('json', likes)
+        return HttpResponse(json.dumps(likes), content_type="application/json")
     else:
+        data['user'] = request.user.username
         data['result'] = 'false'
         return HttpResponse(json.dumps(data), content_type="application/json")
 
@@ -537,11 +566,20 @@ def getGenericAnalytics(request, username):
     data = {}
     if request.user.username == str(username):
         user = User.objects.get(username=str(username))
-        stories = Story.objects.filter(user = user)
-        fan = Likes.objects.filter(story__in=stories).values('user').annotate(total=Count('user')).order_by('-total')[0]
-        fan = fan['user']
-        contributor = Contributors.objects.filter(story__in=stories).values('user').annotate(total=Count('user')).order_by('-total')[0]
-        contributor = contributor['user']
+        stories = Story.objects.filter(user=user)
+        fan = Likes.objects.filter(story__in=stories).values('user').annotate(total=Count('user')).order_by('-total')
+        if len(fan) != 0:
+            fan = fan[0]
+            fan = fan['user']
+        else:
+            fan = "You have no fans!!"
+        contributor = Contributors.objects.filter(story__in=stories).values('user').annotate(
+            total=Count('user')).order_by('-total')
+        if len(contributor) != 0:
+            contributor = contributor[0]
+            contributor = contributor['user']
+        else:
+            contributor = "You have no contributors!!"
         result = {}
         # result['fan'] = serializers.serialize('json',User.objects.filter(id = fan))
         # result['contributor'] = serializers.serialize('json',User.objects.filter(id = contributor)) 
@@ -554,7 +592,88 @@ def getGenericAnalytics(request, username):
     else:
         data['result'] = 'false'
         return HttpResponse(json.dumps(data), content_type="application/json")
-    
+
+
+@login_required
+@csrf_exempt
+def totalLikes(request, username):
+    if request.user.username == str(username):
+        user = User.objects.get(username=str(username))
+        stories = Story.objects.filter(user=user)
+        count = Likes.objects.filter(story__in=stories).count()
+        result = {}
+        result['likes'] = count
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    else:
+        data = {}
+        data['result'] = False
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+@login_required
+@csrf_exempt
+def totalReads(request, username):
+    if request.user.username == str(username):
+        user = User.objects.get(username=str(username))
+        stories = Story.objects.filter(user=user).values_list('read')
+        count = sumCount(stories)
+        # print stories
+        result = {}
+        result['totalReads'] = count
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    else:
+        data = {}
+        data['result'] = False
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+@login_required
+@csrf_exempt
+def totalContributors(request, username):
+    if request.user.username == str(username):
+        user = User.objects.get(username=str(username))
+        stories = Story.objects.filter(user=user)
+        count = Contributors.objects.filter(story__in=stories).count()
+        result = {}
+        result['contributors'] = count
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    else:
+        data = {}
+        data['result'] = False
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+@login_required
+@csrf_exempt
+def likedStories(request, username):
+    if request.user.username == str(username):
+        user = User.objects.get(username=str(username))
+        likes = Likes.objects.filter(user=user).values_list('story')
+        stories = Story.objects.filter(id__in=likes)
+        result = {}
+        result = serializers.serialize('json', stories)
+        return HttpResponse(result, content_type="application/json")
+    else:
+        data = {}
+        data['result'] = False
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+@login_required
+@csrf_exempt
+def contributedStories(request, username):
+    if request.user.username == str(username):
+        user = User.objects.get(username=str(username))
+        contributions = Contributors.objects.filter(user=user).values_list('story')
+        stories = Story.objects.filter(id__in=contributions)
+        result = {}
+        result = serializers.serialize('json', stories)
+        return HttpResponse(result, content_type="application/json")
+    else:
+        data = {}
+        data['result'] = False
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
 
 # Functions to populate the database with garbage values to get analatics
 
@@ -571,70 +690,74 @@ def makeBodies(numBodies, length):
         retList.append(string)
     return retList
 
+
 def getUniqueName():
     id = Graph.objects.all().order_by('-id')[0].id
-    return str(id+1)
+    return str(id + 1)
 
 
 def getData(dataList):
-    i = random.randint(0, len(dataList)-1)
+    i = random.randint(0, len(dataList) - 1)
     data = dataList[i]
     return data
 
+
 def getBool():
-    i = random.randint(0,1)
+    i = random.randint(0, 1)
     if i == 0:
         return True
     else:
         return False
 
+
 def getRandomUser():
     allUsers = User.objects.all()
     l = len(allUsers)
-    index = random.randint(0,l-1)
+    index = random.randint(0, l - 1)
     return allUsers[index]
+
 
 def makeGraph(parent, user, d, story):
     dataList = makeBodies(100, 100)
     name = getUniqueName()
     data = getData(dataList)
-    read = random.randint(1,10)
-    g = Graph(name = name, \
-              data = data,\
-              read = read,\
-              user = user,\
-              parent = parent)
+    read = random.randint(1, 10)
+    g = Graph(name=name, \
+              data=data, \
+              read=read, \
+              user=user, \
+              parent=parent)
     g.save()
-    c = Contributors.objects.filter(user = user, story = story)
+    c = Contributors.objects.filter(user=user, story=story)
     if len(c) == 0:
-        contributor = Contributors(story = story,\
-                                   user = user)
+        contributor = Contributors(story=story, \
+                                   user=user)
         contributor.save()
     user1 = getRandomUser()
-    r = random.randint(1,3)
-    if(d == 5):
+    r = random.randint(1, 3)
+    if (d == 5):
         return
     else:
         for i in range(r):
-            makeGraph(g, user1, d+1, story)
+            makeGraph(g, user1, d + 1, story)
 
 
 def makeStories(user, n):
     dataList = makeBodies(100, 100)
     for i in range(n):
-        g = Graph(name = str(user.id)+ " " +str(i), \
-                  data = getData(dataList),\
-                  read = random.randint(1,10),\
-                  user = user)
+        g = Graph(name=str(user.id) + " " + str(i), \
+                  data=getData(dataList), \
+                  read=random.randint(1, 10), \
+                  user=user)
         g.save()
         user1 = getRandomUser()
         # makeGraph(g, user1, 1)
-        s = Story(user = user,\
-                  title = str(user.id)+ " " +str(i),\
-                  graph = g,\
-                  read = random.randint(1,10),\
-                  is_complete = getBool(),\
-                  is_open = getBool())
+        s = Story(user=user, \
+                  title=str(user.id) + " " + str(i), \
+                  graph=g, \
+                  read=random.randint(1, 10), \
+                  is_complete=getBool(), \
+                  is_open=getBool())
         s.save()
         makeGraph(g, user1, 1, s)
 
@@ -642,17 +765,18 @@ def makeStories(user, n):
 def makeUsers(request, n):
     data = {}
     for i in range(int(n)):
-        users = User.objects.filter(username = str(i))
+        users = User.objects.filter(username=str(i))
         if len(users) == 0:
             user = User.objects.create_user(str(i), "", str(i))
             user.firstName = str(i)
             user.lastName = str(i)
             user.email = "a@a.com"
             user.save()
-            r =  random.randint(1, 5)
+            r = random.randint(1, 5)
             makeStories(user, r)
     data['result'] = 'true'
     return HttpResponse(json.dumps(data), content_type="application/json")
+
 
 def populateLikes(request):
     data = {}
@@ -660,11 +784,11 @@ def populateLikes(request):
     users = User.objects.all()
     stories = Story.objects.all()
     for i in users:
-        for j in range(numStories/4):
-            story = stories[random.randint(0, numStories-1)]
+        for j in range(numStories / 4):
+            story = stories[random.randint(0, numStories - 1)]
             l = Likes.objects.filter(user=i, story=story)
             while (len(l) != 0):
-                story = stories[random.randint(0, numStories-1)]
+                story = stories[random.randint(0, numStories - 1)]
                 l = Likes.objects.filter(user=i, story=story)
 
             like = Likes(user=i, \

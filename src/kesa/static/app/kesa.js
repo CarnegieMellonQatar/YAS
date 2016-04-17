@@ -40,7 +40,7 @@
              $interpolateProvider.endSymbol('$}');
          })
          .run(function () {
-            $(document).keydown(function (e) {
+            $(".story-reader-container").keydown(function (e) {
                 if (e.which == 32) {
                     return false;
                 }
