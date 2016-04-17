@@ -74,8 +74,8 @@
                     ctrl.currentChoices = [];
                     ctrl.currentNodes.push(node.body);
                 }
-                
-                storyService.addBReads(node.branchid, function(err,data){
+
+                storyService.addBReads(node.branchid, function (err, data) {
                     if (err) {
                         console.log(err);
                     }

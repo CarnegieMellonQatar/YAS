@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from django_mptt_admin.admin import DjangoMpttAdmin
 from mptt.admin import MPTTModelAdmin
-from .models import Graph, Story, Contributors, Likes, Image
+from .models import Graph, Story, Contributors, Likes, Image, ReadLater
 
 class GraphAdmin(DjangoMpttAdmin):
     tree_auto_open = 0
@@ -19,3 +19,4 @@ admin.site.register(Story)
 admin.site.register(Contributors)
 admin.site.register(Likes)
 admin.site.register(Image)
+admin.site.register(ReadLater)

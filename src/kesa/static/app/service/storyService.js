@@ -51,9 +51,31 @@
                     });
             };
 
+            // Gets back the user objects that have contributed to a story
+            service.getReadLaterStory = function (story, callback) {
+                $http.get('/api/getReadLaterStory/' + story.pk + '/')
+                    .success(function (data, status) {
+                        callback(null, data, story);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null, story);
+                    });
+            };
+
             // Gets the story objects for a user
             service.getUserStories = function (uid, sid, number, callback) {
                 $http.get('/api/' + uid + '/getUserStories/' + sid + '/' + number + '/')
+                    .success(function (data, status) {
+                        callback(null, data);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null);
+                    });
+            };
+
+            // Gets the story objects for a user
+            service.getReadLater = function (uid, rlid, number, callback) {
+                $http.get('/api/' + uid + '/getReadLater/' + rlid + '/' + number + '/')
                     .success(function (data, status) {
                         callback(null, data);
                     })
@@ -109,6 +131,17 @@
             // Get user object by username
             service.getUserByName = function (username, callback) {
                 $http.get('/api/' + username + '/getUserByName/')
+                    .success(function (data, status) {
+                        callback(null, data);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null);
+                    });
+            };
+
+            // Get user object
+            service.getUserByRequest = function (callback) {
+                $http.get('/api/getUserByRequest/')
                     .success(function (data, status) {
                         callback(null, data);
                     })
@@ -206,13 +239,25 @@
             };
 
             // Like a story
-            service.Like = function (uid, sid, callback) {
-                $http.post('/api/' + uid + '/like/' + sid + '/')
+
+            service.Like = function (uid, story, callback) {
+                $http.post('/api/' + uid + '/like/' + story.pk + '/')
                     .success(function (data, status) {
-                        callback(null, data);
+                        callback(null, data, story);
                     })
                     .error(function (error, status) {
-                        callback(error, null);
+                        callback(error, null, story);
+                    });
+            };
+
+            // Like a story
+            service.Unlike = function (uid, story, callback) {
+                $http.post('/api/' + uid + '/unlike/' + story.pk + '/')
+                    .success(function (data, status) {
+                        callback(null, data, story);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null, story);
                     });
             };
 
@@ -289,6 +334,27 @@
                     })
                     .error(function (error, status) {
                         callback(error, null, null);
+
+                    });
+            };
+    
+            service.addToReadLater = function (uid, story, callback) {
+                $http.post('/api/' + uid + '/addToReadLater/' + story.pk + '/')
+                    .success(function (data, status) {
+                        callback(null, data, story);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null, story);
+                    });
+            };
+
+            service.removeFromReadLater = function (uid, story, callback) {
+                $http.post('/api/' + uid + '/removeFromReadLater/' + story.pk + '/')
+                    .success(function (data, status) {
+                        callback(null, data, story);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null, story);
                     });
             };
 
