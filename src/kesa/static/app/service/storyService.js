@@ -239,6 +239,7 @@
             };
 
             // Like a story
+
             service.Like = function (uid, story, callback) {
                 $http.post('/api/' + uid + '/like/' + story.pk + '/')
                     .success(function (data, status) {
@@ -326,16 +327,17 @@
                     });
             };
 
-            service.addToStory = function (sid, bid, callback) {
+            service.addToStory = function (sid, length, bid, callback) {
                 $http.post('/api/addToStory/' + sid + '/' + bid + '/')
                     .success(function (data, status) {
-                        callback(null, data);
+                        callback(null, data, length);
                     })
                     .error(function (error, status) {
-                        callback(error, null);
+                        callback(error, null, null);
+
                     });
             };
-
+    
             service.addToReadLater = function (uid, story, callback) {
                 $http.post('/api/' + uid + '/addToReadLater/' + story.pk + '/')
                     .success(function (data, status) {
@@ -355,6 +357,100 @@
                         callback(error, null, story);
                     });
             };
+
+            service.getGraphAnalytics = function (uid, numDays, callback) {
+                $http.post('/api/' + uid + '/analytics/' + numDays + '/graph/')
+                    .success(function (data, status) {
+                        callback(null, data);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null);
+                    });
+            };
+
+            service.getStoryAnalytics = function (uid, callback) {
+                $http.post('/api/' + uid + '/analytics/generic/')
+                    .success(function (data, status) {
+                        callback(null, data);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null);
+                    });
+            };
+
+            service.getTotalLikes = function (uid, callback) {
+                $http.post('/api/' + uid + '/analytics/totalLikes/')
+                    .success(function (data, status) {
+                        callback(null, data);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null);
+                    });
+            };
+
+            service.getTotalContributors = function (uid, callback) {
+                $http.post('/api/' + uid + '/analytics/totalContributors/')
+                    .success(function (data, status) {
+                        callback(null, data);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null);
+                    });
+            };
+
+            service.getTotalContributions = function (uid, callback) {
+                $http.post('/api/' + uid + '/analytics/contributedStories/')
+                    .success(function (data, status) {
+                        callback(null, data);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null);
+                    });
+            };
+
+            service.getLikedStories = function (uid, callback) {
+                $http.post('/api/' + uid + '/analytics/likedStories/')
+                    .success(function (data, status) {
+                        callback(null, data);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null);
+                    });
+            };
+
+            service.getTotalReads = function (uid, callback) {
+                $http.post('/api/' + uid + '/analytics/totalReads/')
+                    .success(function (data, status) {
+                        callback(null, data);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null);
+                    });
+            };
+
+            service.editStory = function (sid, bid, node, callback) {
+                var formdata = new FormData();
+
+                formdata.append('name', node.name);
+                formdata.append('body', node.body);
+
+                var request = {
+                    method: 'POST',
+                    url: '/api/editStory/' + sid + "/" + bid + "/",
+                    data: formdata,
+                    headers: {
+                        'Content-Type': undefined
+                    }
+                };
+
+                $http(request)
+                    .success(function (data, status) {
+                        callback(null, data);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null);
+                    });
+            }
 
         });
 })();

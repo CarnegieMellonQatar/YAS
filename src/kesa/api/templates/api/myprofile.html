@@ -66,25 +66,6 @@
             </div>
             <button class="profile-delete-story-button" ng-click="pc.deleteStory(story)">Delete</button>
         </div>
-         <div class="profile-story-entry" ng-repeat="story in pc.stories">
-            <a href="/{$ story.fields.userInfo.fields.username $}/profile">
-                <div class="profile-story-entry-author"> {$ story.fields.userInfo.fields.username $}</div>
-            </a>
-            <a href="/{$ story.pk $}/story">
-                <div class="story-entry-title">{$ story.fields.title $}</div>
-            </a>
-            <div class="profile-story-entry-stats">
-                <div class="profile-story-entry-likes" data-toggle="tooltip" title="likes">
-                    <i class="fa fa-heart fa-2x" aria-hidden="true"></i>
-                    <span class="faint-sub">{$ story.fields.likes $}</span>
-                </div>
-                <div class="profile-story-entry-contributors" data-toggle="tooltip" title="contributors">
-                    <i class="fa fa-user fa-2x" aria-hidden="true"></i>
-                    <span class="faint-sub">{$ story.fields.contributors $}</span>
-                </div>
-            </div>
-            <button class="profile-delete-story-button" ng-click="pc.deleteStory(story)">Delete</button>
-        </div>
     </div>
     <div class="profile-story-list" ng-show="pc.isSet(0) && pc.stories === []">
         <h1 class="analytics-header"> No Stories here!</h1>

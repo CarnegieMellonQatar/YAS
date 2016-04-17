@@ -120,9 +120,12 @@
                         if (contact.some) {
                             ctrl.update(contact.obj, false, false);
 
-                            storyService.addToStory(ctrl.createID, response.parentid, function (err, data) {
+                            var oldlength = contact.obj.children.length;
+                            storyService.addToStory(ctrl.createID, oldlength, contact.obj.branchid, function (err, data, length) {
                                 if (err) {
                                     console.log(err);
+                                } else {
+                                    currentNode.children[length - 1].branchid = data["result"];
                                 }
                             });
 
@@ -138,7 +141,18 @@
                         contact.obj.body = response.body;
 
                         if (contact.some) {
-                            ctrl.update(contact.obj, false, false, 0, null);
+                            storyService.editStory(ctrl.createID, contact.obj.branchid, contact.obj, function (err, data) {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    if (data["result"] === "true") {
+                                        ctrl.update(contact.obj, false, false, 0, null);
+                                        if (contact.obj.id == currentNode.id) {
+                                            ctrl.click(currentNode);
+                                        }
+                                    }
+                                }
+                            });
                         } else {
                             console.error("should not be here");
                         }
@@ -259,7 +273,7 @@
                 nodeEnter.append("circle")
                     .attr("r", 1e-6)
                     .style("fill", function (d) {
-                        return d._children ? "lightsteelblue" : "#fff";
+                        return d._children ? "lightsteelblue" : "#fb5e58";
                     });
 
                 nodeEnter.append("text")
@@ -285,7 +299,7 @@
                 nodeUpdate.select("circle")
                     .attr("r", 10)
                     .style("fill", function (d) {
-                        return d._children ? "#D11C24" : "#fff";
+                        return d._children ? "#fb5e58" : "#fff";
                     });
 
                 nodeUpdate.select("text")
@@ -451,12 +465,14 @@
                 var specialNode = {"name": obj.name, "body": obj.body, "parentid": currentNode.id, "action": 0};
                 ctrl.update(currentNode, true, true, 0, specialNode);
 
-                storyService.addToStory(ctrl.createID, currentNode.branchid, function (err, data) {
+                var oldlength = currentNode.children.length;
+                storyService.addToStory(ctrl.createID, oldlength, currentNode.branchid, function (err, data, length) {
                     if (err) {
                         console.log(err);
+                    } else {
+                        currentNode.children[length - 1].branchid = data["result"];
                     }
                 });
-                console.log(currentNode.children);
             };
 
             this.deleteBranchr = function (parent, branch, id) {
@@ -503,6 +519,7 @@
             this.editBranch = function () {
                 editMode = !editMode;
                 ctrl.update(currentNode, false, true, -1, null);
+
             };
 
             this.saveBranch = function () {
@@ -515,7 +532,17 @@
                     "action": 2
                 };
                 editMode = false;
-                ctrl.update(currentNode, true, true, 2, specialNode);
+
+
+                storyService.editStory(ctrl.createID, currentNode.branchid, currentNode, function (err, data) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        if (data["result"] === "true") {
+                            ctrl.update(currentNode, true, true, 2, specialNode);
+                        }
+                    }
+                });
             };
 
             //Finds y value of given object
