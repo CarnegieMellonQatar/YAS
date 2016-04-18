@@ -232,3 +232,15 @@
 .add-pp-button {
   margin-left: 65px;
 }
+
+.start-writing-button {
+  @extend .btn-classic;
+  background: $secondary-light-color;
+  color: white;
+}
+
+.start-writing-button:hover {
+  background: white;
+  color: $secondary-light-color;
+  border: 2px solid $secondary-light-color;
+}

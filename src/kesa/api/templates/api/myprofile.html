@@ -96,7 +96,7 @@
                 <a class="profile-delete-story-button" ng-click="pc.deleteStory(story)">Delete</a>
                 <a class="start-reading-button" href="/{$ story.pk $}/story" ng-if="story.fields.is_complete">Start
                     Reading!</a>
-                <a class="start-reading-button" ng-click="pc.changeToWriting(story)">Start Writing!</a>
+                <a class="start-writing-button" ng-click="pc.changeToWriting(story)">Edit</a>
             </div>
             <div class="story-entry-contributors bookmark-icon" data-toggle="tooltip" title="readlater">
                 <i class="fa fa-bookmark fa-2x" aria-hidden="true" ng-if="story.fields.isBookmarked"
