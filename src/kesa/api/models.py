@@ -37,6 +37,7 @@ class Story(models.Model):
 class Contributors(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
+    date = models.DateField(default=datetime.date.today)
 
 class ReadLater(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

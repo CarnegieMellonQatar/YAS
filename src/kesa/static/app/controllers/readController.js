@@ -33,11 +33,12 @@
                     console.log(data);
                     ctrl.storyTree = data;
                     ctrl.updateCurrentChoices(ctrl.storyTree);
-                    storyService.addSReads(data.id, function (err, data) {
+                    storyService.addSReads(ctrl.readID, function (err, data) {
                         if (err) {
                             console.log(err);
                         }
                     });
+                    console.log(ctrl.storyTree);
                     ctrl.loaded = true;
                 }
             });

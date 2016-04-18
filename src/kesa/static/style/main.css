@@ -231,6 +231,24 @@ hr.med {
   bottom: 0;
   margin: 20px; }
 
+.custom-alert-jumbo {
+    height: 35%;
+    width: 55%;
+    font-size: 60px;
+    border-radius: 5px;
+    background-color: #D11C24;
+    color: white;
+    position: fixed;
+    padding: 10px;
+    left: 25%;
+    bottom: 25%;
+    margin: 20px;
+    padding-top: 38px;
+    line-height: 1;
+    padding-left: 23px;
+    font-weight: 600;
+}
+
 .row {
   transition: all 0.5s; }
 
