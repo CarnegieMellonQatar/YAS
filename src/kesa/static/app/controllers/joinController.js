@@ -5,7 +5,6 @@
         .controller('joinController', function (MiscService, $location, storyService, $scope) {
             var id = location.pathname.substring(1, location.pathname.indexOf("story") - 1);
 
-            console.log("Join controller initialized to the ID " + id);
             var ctrl = this;
 
             ctrl.joinID = id;
@@ -25,7 +24,7 @@
 
             storyService.getUserByRequest(function (err, data) {
                 if (err) {
-                    console.log(err);
+                    console.log("error in getting data");
                 } else {
                     ctrl.profile = data[0];
                 }
@@ -35,7 +34,6 @@
                 peer = new Peer({host: 'storypeerserver.herokuapp.com', secure: true, port: 443});
 
                 peer.on('open', function (id) {
-                    console.log("My id is: " + id);
                     ctrl.connect(ctrl.joinID);
                 });
 
@@ -47,9 +45,6 @@
             };
 
             this.applyChanges = function (response) {
-                //ctrl.update(root, false);
-                console.log("=============Received Packet=============");
-                console.log(response);
                 var contact;
                 switch (response.action) {
                     case 0:
@@ -65,7 +60,7 @@
                         if (contact.some) {
                             ctrl.update(contact.obj, false, false, 0, null);
                         } else {
-                            console.error("should not be here");
+                            console.log("should not be here");
                         }
                         break;
                     case 1:
@@ -74,20 +69,15 @@
                         ctrl.deleteBranchr(null, root, response.currentid);
 
                         if (contact.some) {
-                            console.log(contact);
-                            console.log(currentNode);
                             if (contact.obj.id == currentNode.id) {
-                                console.log("here1");
                                 MiscService.customAlert("Master has deleted your current node, sorry");
-                                console.log("here2");
                                 ctrl.update(contact.obj.parent, false, false, 1, null);
-                                console.log("here3");
                                 ctrl.click(currentNode.parent);
                             } else {
                                 ctrl.update(contact.obj.parent, false, false, 1, null);
                             }
                         } else {
-                            console.error("should not be here");
+                            console.log("should not be here");
                         }
                         break;
                     case 2:
@@ -98,8 +88,9 @@
 
                         if (contact.some) {
                             ctrl.update(contact.obj, false, false, 0, null);
+                            console.log(root);
                         } else {
-                            console.error("should not be here");
+                            console.log("should not be here");
                         }
                         break;
                     case 3:
@@ -108,6 +99,12 @@
                         $scope.title = response.title;
                         $scope.$apply();
                         ctrl.initTree(treeData);
+                        conn.forEach(function (element) {
+                            var toSend = MiscService.createPacket(3, null, null);
+                            toSend.myid = peer.id;
+                            toSend.user = ctrl.profile.pk;
+                            element.send(MiscService.stringify(toSend));
+                        });
                         break;
                     case 4:
                         currentNode.branchid = response.branchid;
@@ -142,6 +139,18 @@
                     conn[index].on('data', function (data) {
                         var response = JSON.parse(data);
                         ctrl.applyChanges(response);
+                    });
+
+                    conn[index].on('disconnected', function (data){
+                        console.log("random");
+                    });
+
+                    conn[index].on('destroyed', function (data){
+                        console.log("random1");
+                    });
+
+                    conn[index].on('close', function (data){
+                        console.log("random2");
                     });
                 });
             };
@@ -276,7 +285,7 @@
                         .text("x")
                         .on("click", ctrl.removeSide);
 
-                    if (editMode == true) {
+                    if (editMode === true) {
                         cont.append("textarea")
                             .classed("expanding", true)
                             .classed("title-edit", true)
@@ -322,13 +331,14 @@
 
 
                     currentNode = source;
-                    //console.log(source);
                     closed = false;
                 }
 
                 if (sendToPeers) {
                     conn.forEach(function (element) {
+                        console.log(specialNode);
                         console.log(root);
+                        console.log(source.id);
                         var toSend = MiscService.createPacket(action, specialNode, source.id);
                         toSend.myid = peer.id;
                         toSend.user = ctrl.profile.pk;
@@ -394,17 +404,6 @@
                     return 0;
                 }
             };
-
-            //this.deleteBranch = function () {
-            //    if (currentNode === root) {
-            //        MiscService.customAlert("<strong>Node is the root,</strong> cannot delete the root");
-            //        console.log("Node is the root, cannot delete the root");
-            //    } else {
-            //        ctrl.deleteBranchr(null, root, currentNode.id);
-            //        ctrl.click(currentNode.parent);
-            //        ctrl.update(currentNode.parent);
-            //    }
-            //};
 
             this.editBranch = function () {
                 editMode = !editMode;
@@ -579,5 +578,5 @@
                 }
                 peer.disconnect();
             });
-        })
+        });
 })();

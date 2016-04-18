@@ -233,6 +233,12 @@ def getContributors(request, sid):
     data = serializers.serialize('json', contributors)
     return HttpResponse(data, content_type="application/json")
 
+@login_required
+def getLikesStory(request, sid):
+    story = Story.objects.get(id=sid)
+    likes = Likes.objects.filter(story=story)
+    data = serializers.serialize('json', likes)
+    return HttpResponse(data, content_type="application/json")
 
 @login_required
 def getReadLaterStory(request, sid):
@@ -243,6 +249,33 @@ def getReadLaterStory(request, sid):
         data['result'] = 'true'
     else:
         data['result'] = 'false'
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+@login_required
+def getUser(request, uid, cid):
+    story = Story.objects.get(id=cid)
+    user = story.user
+    data = serializers.serialize('json', [user])
+    return HttpResponse(data, content_type="application/json")
+
+@login_required
+def getInfo(request,sid):
+    data = {}
+    story = Story.objects.get(id=sid)
+    contributors = Contributors.objects.filter(story=story)
+    rl = ReadLater.objects.filter(story=story, user=request.user)
+    likes = Likes.objects.filter(story=story)
+    user = story.user
+    datau = serializers.serialize('json', [user])
+    datal = serializers.serialize('json', likes)
+    datac = serializers.serialize('json', contributors)
+    if (len(rl) != 0):
+        data['rl'] = 'true'
+    else:
+        data['rl'] = 'false'
+    data['c'] = datac
+    data['l'] = datal
+    data['u'] = datau
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 
@@ -260,15 +293,6 @@ def getNumStories(request, uid):
     story = Story.objects.filter(user=user)
     story = len(story)
     return HttpResponse(json.dumps(story), content_type="application/json")
-
-
-@login_required
-def getLikesStory(request, sid):
-    story = Story.objects.get(id=sid)
-    likes = Likes.objects.filter(story=story)
-    data = serializers.serialize('json', likes)
-    return HttpResponse(data, content_type="application/json")
-
 
 @login_required
 def getLikesUser(request, uid):
@@ -297,15 +321,6 @@ def getNActive(request, sid, n):
     stories = Story.objects.filter(is_open=True).filter(id__gt=sid).order_by('id')[:n]
     data = serializers.serialize('json', stories)
     return HttpResponse(data, content_type="application/json")
-
-
-@login_required
-def getUser(request, uid, cid):
-    story = Story.objects.get(id=cid)
-    user = story.user
-    data = serializers.serialize('json', [user])
-    return HttpResponse(data, content_type="application/json")
-
 
 @login_required
 def getUserByRequest(request):

@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^getStory/(?P<sid>\d+)/$', views.getStory, name='getStory'),
     url(r'^getBranch/(?P<bid>\d+)/$', views.getBranch, name='getBranch'),
     url(r'^getContributors/(?P<sid>\d+)/$', views.getContributors, name='getContributors'),
+    url(r'^getInfo/(?P<sid>\d+)/$', views.getInfo, name='getInfo'),
     url(r'^(?P<uid>\d+)/addContribution/(?P<sid>\d+)/$', views.addContribution, name='addContribution'),
     url(r'^getCompleted/(?P<sid>\d+)/(?P<n>\d+)/$', views.getNCompleted, name='getNCompleted'),
     url(r'^getIncompleted/(?P<sid>\d+)/(?P<n>\d+)/$', views.getNIncompleted, name='getNIncompleted'),
