@@ -11,6 +11,7 @@
             profile.user = "";
             profile.image = {};
             profile.uname = "";
+            profile.me = "";
             profile.contName = "";
             profile.fanName = "";
             profile.graphAnalytics = {};
@@ -71,6 +72,14 @@
             var username = profile.url.substring(1, profile.url.indexOf("profile") - 1);
             profile.uname = username;
 
+            storyService.getUserByRequest(function(err,data){
+                if(err){
+                    console.log(err);
+                } else {
+                    profile.me = data[0];
+                }
+            });
+
             storyService.getUserByName(username, function (err, data) {
                 if (err) {
                     console.log(err);
@@ -82,7 +91,6 @@
                             console.log(err);
                         }
                         else {
-                            console.log(data);
                             var i = 0;
                             for (i = 0; i < data.length; i++) {
                                 profile.stories.push(data[i]);
@@ -107,7 +115,7 @@
                                                 if (pV) {
                                                     return pV;
                                                 } else {
-                                                    return (cV.fields.user === profile.user.pk);
+                                                    return (cV.fields.user === profile.me.pk);
                                                 }
                                             }, false);
                                         stories.fields.isLiked = isLiked;
@@ -186,6 +194,48 @@
                 }
                 else {
                     profile.userContStories = data;
+                    var i = 0;
+                    for (i = 0; i < data.length; i++) {
+                        storyService.getContributors(data[i], function (err, data, stories) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            else {
+                                stories.fields.contributors = data.length;
+                            }
+                        });
+
+                        storyService.getLikes(data[i], function (err, data, stories) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            else {
+                                stories.fields.likes = data.length;
+                                var isLiked = data.reduce(
+                                    function (pV, cV, cI, array) {
+                                        if (pV) {
+                                            return pV;
+                                        } else {
+                                            return (cV.fields.user === profile.me.pk);
+                                        }
+                                    }, false);
+                                stories.fields.isLiked = isLiked;
+                            }
+                        });
+
+                        storyService.getReadLaterStory(data[i], function (err, data, stories) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            else {
+                                if (data['result'] === 'true') {
+                                    stories.fields.isBookmarked = true;
+                                } else {
+                                    stories.fields.isBookmarked = false;
+                                }
+                            }
+                        });
+                    }
                 }
             });
 
@@ -195,15 +245,48 @@
                 }
                 else {
                     profile.likedList = data;
-                }
-            });
+                    var i = 0;
+                    for (i = 0; i < data.length; i++) {
+                        storyService.getContributors(data[i], function (err, data, stories) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            else {
+                                stories.fields.contributors = data.length;
+                            }
+                        });
 
-            storyService.getLikedStories(profile.uname, function (err, data) {
-                if (err) {
-                    console.log("error in getting data")
-                }
-                else {
-                    profile.likedList = data;
+                        storyService.getLikes(data[i], function (err, data, stories) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            else {
+                                stories.fields.likes = data.length;
+                                var isLiked = data.reduce(
+                                    function (pV, cV, cI, array) {
+                                        if (pV) {
+                                            return pV;
+                                        } else {
+                                            return (cV.fields.user === profile.me.pk);
+                                        }
+                                    }, false);
+                                stories.fields.isLiked = isLiked;
+                            }
+                        });
+
+                        storyService.getReadLaterStory(data[i], function (err, data, stories) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            else {
+                                if (data['result'] === 'true') {
+                                    stories.fields.isBookmarked = true;
+                                } else {
+                                    stories.fields.isBookmarked = false;
+                                }
+                            }
+                        });
+                    }
                 }
             });
 
@@ -277,21 +360,43 @@
                         for (i = 0; i < data.length; i++) {
                             profile.stories.push(data[i]);
 
-                            storyService.getLikes(data[i], function (err, data, stories) {
-                                if (err) {
-                                    console.log(err);
-                                }
-                                else {
-                                    stories.fields.likes = data.length;
-                                }
-                            });
-
                             storyService.getContributors(data[i], function (err, data, stories) {
                                 if (err) {
                                     console.log(err);
                                 }
                                 else {
                                     stories.fields.contributors = data.length;
+                                }
+                            });
+
+                            storyService.getLikes(data[i], function (err, data, stories) {
+                                if (err) {
+                                    console.log(err);
+                                }
+                                else {
+                                    stories.fields.likes = data.length;
+                                    var isLiked = data.reduce(
+                                        function (pV, cV, cI, array) {
+                                            if (pV) {
+                                                return pV;
+                                            } else {
+                                                return (cV.fields.user === profile.me.pk);
+                                            }
+                                        }, false);
+                                    stories.fields.isLiked = isLiked;
+                                }
+                            });
+
+                            storyService.getReadLaterStory(data[i], function (err, data, stories) {
+                                if (err) {
+                                    console.log(err);
+                                }
+                                else {
+                                    if (data['result'] === 'true') {
+                                        stories.fields.isBookmarked = true;
+                                    } else {
+                                        stories.fields.isBookmarked = false;
+                                    }
                                 }
                             });
                         }
@@ -327,7 +432,7 @@
             };
 
             profile.bookmark = function (data) {
-                storyService.addToReadLater(profile.user.pk, data, function (err, data, cstory) {
+                storyService.addToReadLater(profile.me.pk, data, function (err, data, cstory) {
                     if (err) {
                         console.log(err);
                     } else {
@@ -339,7 +444,7 @@
             };
 
             profile.unbookmark = function (data) {
-                storyService.removeFromReadLater(profile.user.pk, data, function (err, data, cstory) {
+                storyService.removeFromReadLater(profile.me.pk, data, function (err, data, cstory) {
                     if (err) {
                         console.log(err);
                     } else {
@@ -351,7 +456,7 @@
             };
 
             profile.like = function (data) {
-                storyService.Like(profile.user.pk, data, function (err, data, cstory) {
+                storyService.Like(profile.me.pk, data, function (err, data, cstory) {
                     if (err) {
                         console.log(err);
                     } else {
@@ -364,7 +469,7 @@
             };
 
             profile.unlike = function (data) {
-                storyService.Unlike(profile.user.pk, data, function (err, data, cstory) {
+                storyService.Unlike(profile.me.pk, data, function (err, data, cstory) {
                     if (err) {
                         console.log(err);
                     } else {
