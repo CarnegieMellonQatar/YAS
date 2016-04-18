@@ -7,7 +7,7 @@
 .user-container {
   margin: 50px auto;
   width: 80%;
-  height: 300px;
+  height: 350px;
   background: white;
   box-shadow: 0 1px 4px rgba(0, 0, 0, .04);
   border: 1px solid rgba(0, 0, 0, .09);
@@ -74,6 +74,21 @@
   left: 5%;
   width: 90%;
   text-align: center;
+}
+
+
+.graph-tab-container {
+  margin-left: 100px;
+  width: 90%;
+  text-align: center;
+}
+
+.graph-tab {
+  font-size: $font-size-small;
+  font-weight: 100;
+  border-bottom: 4px solid transparent;
+  cursor: pointer;
+  padding-bottom: 10px;
 }
 
 .dashboard-tab {
@@ -193,4 +208,27 @@
 .modal-content {
   width: 900px;
   overflow-y: scroll;
+}
+
+.pic-container {
+  position: relative;
+}
+
+.dz  {
+  background: transparent;
+  height: 200px;
+  width: 200px;
+  border-radius: 50%;
+  position:absolute;
+  top:25px;
+  left:25px;
+}
+
+.pp-button {
+  margin-left: 50px;
+  cursor: pointer;
+}
+
+.add-pp-button {
+  margin-left: 65px;
 }

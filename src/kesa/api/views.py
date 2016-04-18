@@ -858,7 +858,7 @@ def makeStories(user, n):
                   graph=g, \
                   read=random.randint(1, 10), \
                   is_complete=getBool(), \
-                  is_open=getBool())
+                  is_open=False)
         s.save()
         makeGraph(g, user1, 1, s)
 
