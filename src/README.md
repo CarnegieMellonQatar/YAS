@@ -3,13 +3,13 @@ Project ReadMe
 
 1. How to run on localhost: 
 --------------------------
-1) Bower Install in the app directory
+1. Bower Install in the app directory
 	- Front-end:
 		- D3
 		- peerjs
 		- anguarJs
-2) pip install django-mptt
-3) pip install django-mptt-admin
+2. pip install django-mptt
+3. pip install django-mptt-admin
 	- Back-end:
 		- django-mptt
 		- django-mptt-admin
