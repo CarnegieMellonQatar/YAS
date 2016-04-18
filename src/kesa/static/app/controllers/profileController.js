@@ -221,7 +221,6 @@
 
                                 storyService.getInfo(data[i], profile.gI);
                             }
-                            ;
                         }
                     });
 
@@ -622,8 +621,10 @@
 
             };
 
-            this.update = function (source, elem) {
+            this.update = function (sid, source, elem) {
 
+                console.log(source);
+                console.log(elem);
 
                 // Compute the new tree layout.
                 var nodes = tree.nodes(root),
@@ -631,6 +632,28 @@
 
                 // Normalize for fixed-depth.
                 nodes.forEach(function (d) {
+                    profile.storyAnalytics.stories.forEach(function (d1) {
+                        if (d1.sid === sid) {
+                            var most = [];
+                            var least = [];
+                            least = d1["l_brach"];
+                            least.forEach(function (d2) {
+                                if (d.branchid == d2) {
+                                    console.log('light branch found');
+                                    console.log(d2);
+                                    d.color = 'pink';
+                                }
+                            });
+                            most = d1["m_brach"];
+                            most.forEach(function (d2) {
+                                if (d.branchid == d2) {
+                                    console.log('heavy branch found');
+                                    console.log(d2);
+                                    d.color = 'red';
+                                }
+                            });
+                        }
+                    });
                     d.y = d.depth * 90;
                 });
 
@@ -650,7 +673,7 @@
                 nodeEnter.append("circle")
                     .attr("r", 1e-6)
                     .style("fill", function (d) {
-                        return d._children ? "lightsteelblue" : "#fff";
+                        return d.color;
                     });
 
                 nodeEnter.append("text")
@@ -676,7 +699,7 @@
                 nodeUpdate.select("circle")
                     .attr("r", 10)
                     .style("fill", function (d) {
-                        return d._children ? "#fb5e58" : "#fff";
+                        return d.color;
                     });
 
                 nodeUpdate.select("text")
@@ -745,7 +768,7 @@
                 }
             };
 
-            profile.click = function (d, elem) {
+            profile.click = function (sid, d, elem) {
                 currentNode._children = null;
                 if (d.children) {
                     d._children = [{"somev": "hello"}];
@@ -753,14 +776,14 @@
                     d._children = [{"somev": "hello"}];
                 }
                 window.scroll(0, profile.findPos(d));
-                profile.update(d, elem);
+                profile.update(sid, d, elem);
             };
 
 
-            profile.initTree = function (treeData, elem) {
+            profile.initTree = function (sid, treeData, elem) {
                 // Source http://bl.ocks.org/d3noob/8375092
 
-                var margin = {top: 50, right: 80, bottom: 80, left: 80},
+                var margin = {top: 150, right: 80, bottom: 80, left: 80},
                     width = 900 - margin.right - margin.left,
                     height = 800 - margin.top - margin.bottom;
 
@@ -783,8 +806,8 @@
                 root.y0 = 0;
                 currentNode = root;
 
-                profile.click(root, elem);
-                profile.update(root, elem);
+                profile.click(sid, root, elem);
+                profile.update(sid, root, elem);
 
                 // TODO: Not certain what this is, figure it out
                 d3.select(self.frameElement).style("height", "500px");
@@ -802,7 +825,7 @@
                     else {
                         var treeData = [data];
                         console.log(treeData);
-                        profile.initTree(treeData, ".modal-content");
+                        profile.initTree(sid, treeData, ".modal-content");
                     }
                 });
             };

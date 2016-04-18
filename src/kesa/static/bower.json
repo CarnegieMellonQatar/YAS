@@ -21,6 +21,7 @@
     "jquery": "^2.2.2",
     "d3": "^3.5.16",
     "angular": "angularjs#^1.5.3",
-    "dropzone": "^4.3.0"
+    "dropzone": "^4.3.0",
+    "font-awesome": "fontawesome#^4.6.1"
   }
 }
