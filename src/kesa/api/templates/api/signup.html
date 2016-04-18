@@ -33,9 +33,6 @@
 {% endif %}
 <form method="post" action="{% url 'api.views.sign_up'  %}">
     {% csrf_token %}
-    <!--<div id="form_header">-->
-    <!--<h1>Authentication</h1>-->
-    <!--</div>-->
 
     <div class="form-style-8">
         <h2><span class="lighter-text">Sign up</span></h2>
@@ -56,37 +53,6 @@
         </form>
     </div>
 
-    <!--<div class="form_shape">-->
-    <!--<div class="full_pane">-->
-    <!--<div class="section">-->
-    <!--<input type="text" name="firstName" placeholder="firstName"/>-->
-    <!--</div>-->
-
-    <!--<div class="section">-->
-    <!--<h3>Last Name:</h3>-->
-    <!--<input type="text" name="lastName" placeholder="lastName"/>-->
-    <!--</div>-->
-
-    <!--<div class="section">-->
-    <!--<h3>Email:</h3>-->
-    <!--<input type="email" name="email" placeholder="email"/>-->
-    <!--</div>-->
-
-    <!--<div class="section">-->
-    <!--<h3>Username:</h3>-->
-    <!--<input type="text" name="userName" placeholder="username"/>-->
-    <!--</div>-->
-
-    <!--<div class="section">-->
-    <!--<h3>Password:</h3>-->
-    <!--<input type="password" name="password" placeholder="password"/>-->
-    <!--</div>-->
-
-    <!--<div class="section">-->
-    <!--<input type="submit" class="form_button" value="Login"/>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
 </form>
 </body>
 </html>
