@@ -139,6 +139,16 @@
                     });
             };
 
+            service.getUserByID = function (uid, callback) {
+                $http.get('/api/' + uid + '/getUserByID/')
+                    .success(function (data, status) {
+                        callback(null, data);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null);
+                    });
+            };
+
             // Get user object
             service.getUserByRequest = function (callback) {
                 $http.get('/api/getUserByRequest/')

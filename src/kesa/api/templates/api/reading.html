@@ -12,18 +12,14 @@
             </div>
         </div>
     </header>
-    <!--<div ng-if="rc.currentChoices !== []" class="story-center-container">-->
-        <!--<div ng-repeat="node in rc.currentNodes track by $index">-->
-            <!--<div class="story-node">{$node$}</div>-->
-            <!--<hr class="med">-->
-        <!--</div>-->
-    <!--</div>-->
     <div class="story-center-container">
         <div class="story-node"></div>
-        <div ng-if="!rc.currentChoicesIsEmpty() && !animating" organized-buttons class="row">
+    </div>
+    <div class="story-choice-container" ng-if="!nochoices && lastNode && !animating">
+        <div organized-buttons class="row">
             <div class="story-choice-button" ng-repeat="choice in rc.currentChoices track by $index"
                  ng-click="rc.updateCurrentChoices(choice)">
-                {$choice.name$}
+                {$ choice.name $}
             </div>
         </div>
     </div>

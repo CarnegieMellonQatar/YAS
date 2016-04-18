@@ -30,21 +30,6 @@
                     ctrl.connect(ctrl.joinID);
                 });
 
-                peer.on('connection', function (connec) {
-                    conn.push(connec);
-                    index = index + 1;
-                    console.log("word");
-                    //conn[index].on('data', function (data) {
-                    //    console.log(data);
-                    //    root = null;
-                    //    //ctrl.update(root, false);
-                    //    root = JSON.parse(data);
-                    //    ctrl.update(root, false);
-                    //});
-
-                });
-
-
             };
 
             this.applyChanges = function (response) {
@@ -120,16 +105,10 @@
                 conn.push(peer.connect(id));
                 index = index + 1;
 
-                conn[index].on('open', function () {
-
-                    conn[index].on('data', function (data) {
-                        //console.log(data);
-                        //ctrl.update(root, false);
-                        //root = JSON.parse(data);
-                        //console.log(root);
-                        var response = JSON.parse(data);
-                        ctrl.applyChanges(response);
-                    });
+                conn[index].on('data', function (data) {
+                    var response = JSON.parse(data);
+                    ctrl.applyChanges(response);
+                    console.log(response);
                 });
             };
 
@@ -200,7 +179,7 @@
                 nodeUpdate.select("circle")
                     .attr("r", 10)
                     .style("fill", function (d) {
-                        return d._children ? "#D11C24" : "#fff";
+                        return d._children ? "#fb5e58" : "#fff";
                     });
 
                 nodeUpdate.select("text")

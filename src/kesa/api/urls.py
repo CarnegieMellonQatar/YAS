@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^getLikesStory/(?P<sid>\d+)/$', views.getLikesStory, name='getLikesStory'),
     url(r'^getLikesUser/(?P<uid>\d+)/$', views.getLikesUser, name='getLikesUser'),
     url(r'^(?P<username>\w+)/getUserByName/$', views.getUserByName, name='getUserByName'),
+    url(r'^(?P<uid>\d+)/getUserByID/$', views.getUserByID, name='getUserByID'),
     url(r'^getUserByRequest/$', views.getUserByRequest, name='getUserByRequest'),
     url(r'^img/(?P<username>\w+)/$', views.getImage, name='getImage'),
 	url(r'^(?P<uid>\d+)/getNumContributions/$', views.getNumContributions, name='getNumContributions'),

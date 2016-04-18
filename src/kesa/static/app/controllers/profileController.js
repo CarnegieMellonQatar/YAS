@@ -11,6 +11,8 @@
             profile.user = "";
             profile.image = {};
             profile.uname = "";
+            profile.contName = "";
+            profile.fanName = "";
             profile.graphAnalytics = {};
             profile.storyAnalytics = {};
 
@@ -31,11 +33,29 @@
                             console.log("error in getting data")
                         }
                         else {
-                            console.log(data);
                             profile.graphAnalytics = data;
                             profile.initBarGraph('#barGraph', profile.graphAnalytics);
                         }
                     });
+
+                    storyService.getUserByID(profile.storyAnalytics.contributor, function (err, data) {
+                        if (err) {
+                            console.log("error in getting data")
+                        }
+                        else {
+                            profile.contName = data;
+                        }
+                    });
+
+                    storyService.getUserByID(profile.storyAnalytics.fan, function (err, data) {
+                        if (err) {
+                            console.log("error in getting data")
+                        }
+                        else {
+                            profile.fanName = data;
+                        }
+                    });
+
                     profile.firstTime = false;
                 }
             };
@@ -64,10 +84,8 @@
                             console.log(err);
                         }
                         else {
+                            console.log(data);
                             var i = 0;
-                            if (data.length < 10) {
-                                profile.haveMore = false;
-                            }
                             for (i = 0; i < data.length; i++) {
                                 profile.stories.push(data[i]);
 
@@ -86,6 +104,37 @@
                                     }
                                     else {
                                         stories.fields.contributors = data.length;
+                                    }
+                                });
+
+                                storyService.getLikes(data[i], function (err, data, stories) {
+                                    if (err) {
+                                        console.log(err);
+                                    }
+                                    else {
+                                        stories.fields.likes = data.length;
+                                        var isLiked = data.reduce(
+                                            function (pV, cV, cI, array) {
+                                                if (pV) {
+                                                    return pV;
+                                                } else {
+                                                    return (cV.fields.user === profile.user.pk);
+                                                }
+                                            }, false);
+                                        stories.fields.isLiked = isLiked;
+                                    }
+                                });
+
+                                storyService.getReadLaterStory(data[i], function (err, data, stories) {
+                                    if (err) {
+                                        console.log(err);
+                                    }
+                                    else {
+                                        if (data['result'] === 'true') {
+                                            stories.fields.isBookmarked = true;
+                                        } else {
+                                            stories.fields.isBookmarked = false;
+                                        }
                                     }
                                 });
                             }
@@ -118,6 +167,8 @@
                 }
                 else {
                     profile.storyAnalytics = data;
+                    profile.set(0);
+
                 }
             });
 
@@ -285,215 +336,211 @@
                 });
             };
 
+            profile.bookmark = function (data) {
+                storyService.addToReadLater(profile.user.pk, data, function (err, data, cstory) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        if (data["result"] === "true") {
+                            cstory.fields.isBookmarked = true;
+                        }
+                    }
+                });
+            };
+
+            profile.unbookmark = function (data) {
+                storyService.removeFromReadLater(profile.user.pk, data, function (err, data, cstory) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        if (data["result"] === "true") {
+                            cstory.fields.isBookmarked = false;
+                        }
+                    }
+                });
+            };
+
+            profile.like = function (data) {
+                storyService.Like(profile.user.pk, data, function (err, data, cstory) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        if (data["result"] === "true") {
+                            cstory.fields.isLiked = true;
+                            cstory.fields.likes = cstory.fields.likes + 1;
+                        }
+                    }
+                });
+            };
+
+            profile.unlike = function (data) {
+                storyService.Unlike(profile.user.pk, data, function (err, data, cstory) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        if (data["result"] === "true") {
+                            cstory.fields.isLiked = false;
+                            cstory.fields.likes = cstory.fields.likes - 1;
+                        }
+                    }
+                });
+            };
+
             profile.initBarGraph = function (elemName) {
-                var data = [];
+
+                var bardata = [];
 
                 //for (var i = 0; i < 30; i++) {
                 //    bardata.push(Math.random() * 100);
                 //}
 
-                //bardata.sort(function(a,b) {
-                //    return a - b;
-                //});
-
-
-                //var parseDate = d3.time.format("%Y-%m-%d").parse;
-                //
-                //profile.graphAnalytics.forEach(function(d) {
-                //    var e = {};
-                //    e.date = parseDate(d.date);
-                //    e.total = +d.total;
-                //    bardata.push(e);
-                //});
-                //
-                //console.log(bardata);
-                //
-                //var w = d3.select(elemName).style("width");
-                //var widthlen = w.length;
-                //
-                //var margin = {top: 70, right: 70, bottom: 70, left: 70};
-                //
-                //var height = 600 - margin.top - margin.bottom,
-                //    width = parseInt(w.slice(0, widthlen - 2)) - margin.right - margin.left;
-                //
-                //var tooltip = d3.select('body')
-                //    .append('div')
-                //    .style(
-                //        {
-                //            'position': 'absolute',
-                //            'padding': '0 10px',
-                //            'background': 'white',
-                //            'opacity': 0
-                //        });
-                //
-                //var yScale = d3.scale.linear()
-                //    .domain([0, d3.max(bardata, function(d) { return d.total; })])
-                //    .range([0, height]);
-                //
-                //var xScale = d3.scale.ordinal()
-                //    .domain(bardata.map(function(d) { return d.date; }))
-                //    .rangeRoundBands([0, width], .05);
-                //
-                //var colors = d3.scale.linear()
-                //    .domain([0, d3.max(bardata, function(d) { return d.total; })])
-                //    .range(['#FFB832', '#C61C6F']);
-                //
-                //
-                //var chart = d3.select(elemName)
-                //    .append('svg')
-                //    .style('background', '#fff')
-                //    .attr('width', width + margin.right + margin.left)
-                //    .attr('height', height + margin.top + margin.bottom)
-                //    .append('g')
-                //    .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
-                //    .selectAll('rect').data(bardata)
-                //    .enter().append('rect')
-                //    .style('fill', colors)
-                //    .attr('width', xScale.rangeBand())
-                //    .attr('height', function(d) { return height - yScale(d.total); })
-                //    .attr('x', function (d, i) {
-                //        return xScale(i);
-                //    })
-                //    .attr('y', function(d) { return yScale(d.total); })
-                //    .on('mouseover', function (d) {
-                //
-                //        d3.select(this)
-                //            .transition().duration(100)
-                //            .style('opacity', 0.5);
-                //    })
-                //    .on('mouseout', function (d) {
-                //        d3.select(this)
-                //            .style('opacity', 1);
-                //
-                //    });
-                //chart.transition()
-                //    .attr('height', function (d) {
-                //        return yScale(d.total);
-                //    })
-                //    .attr('y', function (d) {
-                //        return height - yScale(d.total);
-                //    })
-                //    .delay(function (d, i) {
-                //        return i * 10;
-                //    })
-                //    .duration(1000)
-                //    .ease('elastic');
-                //
-                //var guideScale = d3.scale.linear()
-                //    .domain([0, d3.max(bardata)])
-                //    .range([height, 0]);
-                //
-                //var axis = d3.svg.axis()
-                //    .scale(guideScale)
-                //    .orient('left')
-                //    .ticks(10);
-                //
-                //var hAxis = d3.svg.axis()
-                //    .scale(xScale)
-                //    .orient('bottom')
-                //    .tickFormat(d3.time.format("%Y-%m-%d"));
-                //
-                //var guide = d3.select('svg').append('g');
-                //
-                //axis(guide);
-                //
-                //guide
-                //    .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
-                //    .selectAll('path')
-                //    .style({'fill': 'none', 'stroke': '#000'});
-                //guide.selectAll('line')
-                //    .style({'stroke': '#000'});
-                //
-                //var hGuide = d3.select('svg').append('g');
-                //
-                //hAxis(hGuide);
-                //
-                //hGuide
-                //    .attr('transform', 'translate(' + margin.left + ', ' + (height + margin.top) + ')')
-                //    .selectAll('path')
-                //    .style({'fill': 'none', 'stroke': '#000'});
-                //hGuide.selectAll('line')
-                //    .style({'stroke': '#000'});
-                var margin = {top: 20, right: 20, bottom: 70, left: 40},
-                    width = 600 - margin.left - margin.right,
-                    height = 300 - margin.top - margin.bottom;
-
-// Parse the date / time
-                var parseDate = d3.time.format("%Y-%m").parse;
-
-                var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
-
-                var y = d3.scale.linear().range([height, 0]);
-
-                var xAxis = d3.svg.axis()
-                    .scale(x)
-                    .orient("bottom")
-                    .tickFormat(d3.time.format("%Y-%m"));
-
-                var yAxis = d3.svg.axis()
-                    .scale(y)
-                    .orient("left")
-                    .ticks(10);
-
-                var svg = d3.select(elemName).append("svg")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom)
-                    .append("g")
-                    .attr("transform",
-                        "translate(" + margin.left + "," + margin.top + ")");
-                
-                profile.graphAnalytics.forEach(function (d) {
+                profile.graphAnalytics.forEach(function (d, i) {
                     var e = {};
-                    e.date = parseDate(d.date);
-                    e.value = +d.total;
-                    data.push(e);
+                    e.date = d.date;
+                    e.total = d.total;
+                    e.index = i + 1;
+                    bardata.push(e);
                 });
 
-                x.domain(data.map(function (d) {
-                    return d.date;
-                }));
-                y.domain([0, d3.max(data, function (d) {
-                    return d.value;
-                })]);
+                var domainData = [];
 
-                svg.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(xAxis)
-                    .selectAll("text")
-                    .style("text-anchor", "end")
-                    .attr("dx", "-.8em")
-                    .attr("dy", "-.55em")
-                    .attr("transform", "rotate(-90)");
+                profile.graphAnalytics.forEach(function (d) {
+                    var e = "";
+                    e = d.date;
+                    domainData.push(e);
+                });
 
-                svg.append("g")
-                    .attr("class", "y axis")
-                    .call(yAxis)
-                    .append("text")
-                    .attr("transform", "rotate(-90)")
-                    .attr("y", 6)
-                    .attr("dy", ".71em")
-                    .style("text-anchor", "end")
-                    .text("Value ($)");
+                var w = d3.select(elemName).style("width");
+                var widthlen = w.length;
 
-                svg.selectAll("bar")
-                    .data(data)
-                    .enter().append("rect")
-                    .style("fill", "steelblue")
-                    .attr("x", function (d) {
-                        return x(d.date);
+                var margin = {top: 70, right: 70, bottom: 70, left: 70};
+
+                var height = 600 - margin.top - margin.bottom,
+                    width = parseInt(w.slice(0, widthlen - 2)) - margin.right - margin.left,
+                    barWidth = 50,
+                    barOffset = 10;
+
+                var tooltip = d3.select('body')
+                    .append('div')
+                    .classed('d3-tooltip', true)
+                    .style(
+                        {
+                            'position': 'absolute',
+                            'padding': '0 10px',
+                            'background': 'white',
+                            'opacity': 0
+                        });
+
+                var yScale = d3.scale.linear()
+                    .domain([0, d3.max(bardata, function (d) {
+                        return d.total;
+                    })])
+                    .range([0, height]);
+
+                var xScale = d3.scale.ordinal()
+                    .domain(bardata.map(function (d) {
+                        return d.date;
+                    }))
+                    .rangeBands([0, width], 0.1, 1);
+
+                var chart = d3.select(elemName)
+                    .append('svg')
+                    .style('background', '#fff')
+                    .attr('width', width + margin.right + margin.left)
+                    .attr('height', height + margin.top + margin.bottom)
+                    .append('g')
+                    .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
+                    .selectAll('rect').data(bardata)
+                    .enter().append('rect')
+                    .style('fill', "#fb5e58")
+                    .attr('width', xScale.rangeBand())
+                    .attr('height', 0)
+                    .attr('x', function (d, i) {
+                        return xScale(d.date);
                     })
-                    .attr("width", x.rangeBand())
-                    .attr("y", function (d) {
-                        return y(d.value);
+                    .attr('y', height)
+                    .on('mouseover', function (d) {
+
+                        setTimeout(function () {
+                            tooltip.transition()
+                                .style('opacity', 0)
+                        }, 3000);
+
+                        tooltip.transition()
+                            .style('opacity', 0.9);
+
+                        tooltip.html(d.total)
+                            .style({
+                                'left': (d3.event.pageX - 35) + 'px',
+                                'top': (d3.event.pageY - 30) + 'px'
+                            });
+
+                        d3.select(this)
+                            .transition().duration(100)
+                            .style('opacity', 0.5);
                     })
-                    .attr("height", function (d) {
-                        return height - y(d.value);
+                    .on('mouseout', function (d) {
+                        d3.select(this)
+                            .transition().duration(100)
+                            .style('opacity', 1);
+
+                        tooltip.style('visibility', 'none');
+
                     });
+                chart.transition()
+                    .attr('height', function (d) {
+                        return yScale(d.total);
+                    })
+                    .attr('y', function (d) {
+                        return height - yScale(d.total);
+                    })
+                    .delay(function (d, i) {
+                        return i * 10;
+                    })
+                    .duration(1000)
+                    .ease('elastic');
+
+
+                var guideScale = d3.scale.linear()
+                    .domain([0, d3.max(bardata, function (d) {
+                        return d.total;
+                    })])
+                    .range([height, 0]);
+
+                var axis = d3.svg.axis()
+                    .scale(guideScale)
+                    .orient('left')
+                    .ticks(10);
+
+                var hAxis = d3.svg.axis()
+                    .scale(xScale)
+                    .orient('bottom')
+                    .ticks(30);
+
+                var guide = d3.select('svg').append('g');
+
+                axis(guide);
+
+                guide
+                    .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
+                    .selectAll('path')
+                    .style({'fill': 'none', 'stroke': '#000'});
+                guide.selectAll('line')
+                    .style({'stroke': '#000'});
+
+                var hGuide = d3.select('svg').append('g');
+
+                hAxis(hGuide);
+
+                hGuide
+                    .attr('transform', 'translate(' + margin.left + ', ' + (height + margin.top) + ')')
+                    .selectAll('path')
+                    .style({'fill': 'none', 'stroke': '#000'});
+                hGuide.selectAll('line')
+                    .style({'stroke': '#000'});
+
 
             };
-
-            profile.set(1);
 
         })
 })();
