@@ -23,8 +23,8 @@
             var i = 0,
                 duration = 750;
 
-            storyService.getUserByRequest(function(err,data){
-                if(err){
+            storyService.getUserByRequest(function (err, data) {
+                if (err) {
                     console.log(err);
                 } else {
                     ctrl.profile = data[0];
@@ -115,10 +115,18 @@
                         break;
                     case 5:
                         peer.disconnect();
-                        MiscService.customAlertJumbo("Master has disconnected. Redirecting to Story Page");
+                        MiscService.customAlertJumbo("Master has disconnected. Redirecting!");
                         setTimeout(function () {
                             location.pathname = "/stories";
                         }, 3500);
+                        break;
+                    case 6:
+                        peer.disconnect();
+                        MiscService.customAlertJumbo("Master published the story. Redirecting!");
+                        setTimeout(function () {
+                            location.pathname = "/"+ctrl.joinID+"/story";
+                        }, 3500);
+                        break;
                     default:
                         console.log("Block code unrecognized, doing nothing");
                 }
@@ -564,9 +572,9 @@
             //setTimeout(ctrl.initTree, 3000);
 
             window.addEventListener("beforeunload", function (e) {
-                var toSend = MiscService.createPacket(5,null,null);
+                var toSend = MiscService.createPacket(5, null, null);
                 toSend.myid = peer.id;
-                for(var i = 0; i < conn.length; i++){
+                for (var i = 0; i < conn.length; i++) {
                     conn[i].send(MiscService.stringify(toSend));
                 }
                 peer.disconnect();

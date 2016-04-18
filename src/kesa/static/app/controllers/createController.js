@@ -10,6 +10,7 @@
 
             ctrl.createID = id;
             ctrl.title = "";
+            ctrl.is_complete = false;
             var treeData = null;
 
             var root, currentNode, tree, diagonal, svg;
@@ -407,6 +408,12 @@
                             .classed("col-xs-5", true)
                             .text("edit branch")
                             .on("click", ctrl.editBranch);
+
+                        cont.append("div")
+                            .classed("edit-branch-button", true)
+                            .classed("col-xs-5", true)
+                            .text("Publish Story")
+                            .on("click", ctrl.Publish);
                     }
 
 
@@ -636,8 +643,25 @@
 
             };
 
+            this.Publish = function(){
+                storyService.setComplete(ctrl.createID,function(err,data){
+                    if(err){
+                        console.log(err);
+                    } else {
+                        ctrl.is_complete = true;
+                        location.pathname = "/"+ctrl.createID+"/story";
+                    }
+                });
+            };
+
             window.addEventListener("beforeunload", function (e) {
-                var toSend = MiscService.createPacket(5, null, null);
+                var toSend = null;
+                if(ctrl.is_complete){
+                    toSend = MiscService.createPacket(6, null, null);
+                } else {
+                    toSend = MiscService.createPacket(5, null, null);
+                }
+
                 toSend.myid = peer.id;
                 for (var i = 0; i < conn.length; i++) {
                     conn[i].send(MiscService.stringify(toSend));
