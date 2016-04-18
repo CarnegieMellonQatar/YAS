@@ -71,8 +71,6 @@
             var username = profile.url.substring(1, profile.url.indexOf("profile") - 1);
             profile.uname = username;
 
-            var username = profile.url.substring(1, profile.url.indexOf("profile") - 1);
-
             storyService.getUserByName(username, function (err, data) {
                 if (err) {
                     console.log(err);
@@ -88,15 +86,6 @@
                             var i = 0;
                             for (i = 0; i < data.length; i++) {
                                 profile.stories.push(data[i]);
-
-                                storyService.getLikes(data[i], function (err, data, stories) {
-                                    if (err) {
-                                        console.log(err);
-                                    }
-                                    else {
-                                        stories.fields.likes = data.length;
-                                    }
-                                });
 
                                 storyService.getContributors(data[i], function (err, data, stories) {
                                     if (err) {
@@ -187,6 +176,7 @@
                 }
                 else {
                     profile.userCount = data;
+                    console.log(profile.userCount);
                 }
             });
 

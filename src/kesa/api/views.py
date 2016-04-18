@@ -51,7 +51,7 @@ def getMaxChild(nodeList):
 def getDates(likesList):
     for i in likesList:
         i['date'] = str(i['date'])
-        #print i['date']
+        # print i['date']
     return likesList
 
 
@@ -169,7 +169,7 @@ def story(request, id):
                 if (s.user == request.user):
                     response = render(request, 'api/writingowner.html')
                 else:
-                    if(s.is_open):
+                    if (s.is_open):
                         response = render(request, 'api/writingguest.html')
                     else:
                         response = render(request, 'api/error.html')
@@ -320,6 +320,7 @@ def getUserByName(request, username):
     data = serializers.serialize('json', [user])
     return HttpResponse(data, content_type="application/json")
 
+
 @login_required
 def getUserByID(request, uid):
     user = User.objects.get(id=uid)
@@ -329,7 +330,7 @@ def getUserByID(request, uid):
 @login_required
 def getUserByID(request, uid):
     user = User.objects.get(id=uid)
-    name = user.name
+    name = user.username
     return HttpResponse(json.dumps(name), content_type="application/json")
 
 
@@ -616,11 +617,11 @@ def addContribution(request, uid, sid):
     data = {}
     s = Story.objects.get(id=sid)
     u = User.objects.get(id=uid)
-    if int(request.user.id) == int(s.user.id) :
-        c = Contributors.objects.filter(user=u,\
+    if int(request.user.id) == int(s.user.id):
+        c = Contributors.objects.filter(user=u, \
                                         story=s)
-        if(len(c) == 0):
-            c = Contributors(user=u,\
+        if (len(c) == 0):
+            c = Contributors(user=u, \
                              story=s)
             c.save()
             data['result'] = 'true'
@@ -630,6 +631,7 @@ def addContribution(request, uid, sid):
         data['result'] = 'false'
     return HttpResponse(json.dumps(data), content_type="application/json")
 
+
 @login_required
 @csrf_exempt
 def getGraphAnalytics(request, username, numDays):
@@ -638,7 +640,7 @@ def getGraphAnalytics(request, username, numDays):
         user = User.objects.get(username=str(username))
         stories = Story.objects.filter(user=user)
         likes = Likes.objects.filter(story__in=stories, date__gte=datetime.now() - timedelta(days=int(numDays))).values(
-            'date').annotate(total=Count('date'))
+                'date').annotate(total=Count('date'))
         # print likes
         likes = list(getDates(likes))
         # data = serializers.serialize('json', likes)
@@ -682,7 +684,7 @@ def getGenericAnalytics(request, username):
         else:
             fan = "You have no fans!!"
         contributor = Contributors.objects.filter(story__in=stories).values('user').annotate(
-            total=Count('user')).order_by('-total')
+                total=Count('user')).order_by('-total')
         if len(contributor) != 0:
             contributor = contributor[0]
             contributor = contributor['user']
@@ -705,82 +707,57 @@ def getGenericAnalytics(request, username):
 @login_required
 @csrf_exempt
 def totalLikes(request, username):
-    if request.user.username == str(username):
-        user = User.objects.get(username=str(username))
-        stories = Story.objects.filter(user=user)
-        count = Likes.objects.filter(story__in=stories).count()
-        result = {}
-        result['likes'] = count
-        return HttpResponse(json.dumps(result), content_type="application/json")
-    else:
-        data = {}
-        data['result'] = False
-        return HttpResponse(json.dumps(data), content_type="application/json")
+    user = User.objects.get(username=str(username))
+    stories = Story.objects.filter(user=user)
+    count = Likes.objects.filter(story__in=stories).count()
+    result = {}
+    result['likes'] = count
+    return HttpResponse(json.dumps(result), content_type="application/json")
 
 
 @login_required
 @csrf_exempt
 def totalReads(request, username):
-    if request.user.username == str(username):
-        user = User.objects.get(username=str(username))
-        stories = Story.objects.filter(user=user).values_list('read')
-        count = sumCount(stories)
-        # print stories
-        result = {}
-        result['totalReads'] = count
-        return HttpResponse(json.dumps(result), content_type="application/json")
-    else:
-        data = {}
-        data['result'] = False
-        return HttpResponse(json.dumps(data), content_type="application/json")
+    user = User.objects.get(username=str(username))
+    stories = Story.objects.filter(user=user).values_list('read')
+    count = sumCount(stories)
+    # print stories
+    result = {}
+    result['totalReads'] = count
+    return HttpResponse(json.dumps(result), content_type="application/json")
 
 
 @login_required
 @csrf_exempt
 def totalContributors(request, username):
-    if request.user.username == str(username):
-        user = User.objects.get(username=str(username))
-        stories = Story.objects.filter(user=user)
-        count = Contributors.objects.filter(story__in=stories).count()
-        result = {}
-        result['contributors'] = count
-        return HttpResponse(json.dumps(result), content_type="application/json")
-    else:
-        data = {}
-        data['result'] = False
-        return HttpResponse(json.dumps(data), content_type="application/json")
+    user = User.objects.get(username=str(username))
+    stories = Story.objects.filter(user=user)
+    count = Contributors.objects.filter(story__in=stories).count()
+    result = {}
+    result['contributors'] = count
+    return HttpResponse(json.dumps(result), content_type="application/json")
 
 
 @login_required
 @csrf_exempt
 def likedStories(request, username):
-    if request.user.username == str(username):
-        user = User.objects.get(username=str(username))
-        likes = Likes.objects.filter(user=user).values_list('story')
-        stories = Story.objects.filter(id__in=likes)
-        result = {}
-        result = serializers.serialize('json', stories)
-        return HttpResponse(result, content_type="application/json")
-    else:
-        data = {}
-        data['result'] = False
-        return HttpResponse(json.dumps(data), content_type="application/json")
+    user = User.objects.get(username=str(username))
+    likes = Likes.objects.filter(user=user).values_list('story')
+    stories = Story.objects.filter(id__in=likes)
+    result = {}
+    result = serializers.serialize('json', stories)
+    return HttpResponse(result, content_type="application/json")
 
 
 @login_required
 @csrf_exempt
 def contributedStories(request, username):
-    if request.user.username == str(username):
-        user = User.objects.get(username=str(username))
-        contributions = Contributors.objects.filter(user=user).values_list('story')
-        stories = Story.objects.filter(id__in=contributions)
-        result = {}
-        result = serializers.serialize('json', stories)
-        return HttpResponse(result, content_type="application/json")
-    else:
-        data = {}
-        data['result'] = False
-        return HttpResponse(json.dumps(data), content_type="application/json")
+    user = User.objects.get(username=str(username))
+    contributions = Contributors.objects.filter(user=user).values_list('story')
+    stories = Story.objects.filter(id__in=contributions)
+    result = {}
+    result = serializers.serialize('json', stories)
+    return HttpResponse(result, content_type="application/json")
 
 
 @login_required
