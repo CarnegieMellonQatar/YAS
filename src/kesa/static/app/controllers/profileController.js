@@ -2,10 +2,12 @@
     "use strict";
 
     angular.module('storyTeller')
-        .controller('profileController', function (storyService, $location, $scope) {
+        .controller('profileController', function (storyService, $location, $scope, $window) {
 
             var profile = this;
             profile.url = location.pathname;
+            profile.profilePicText = "Edit Profile Picture";
+            profile.uploadPic = false;
             profile.stories = [];
             profile.haveMore = true;
             profile.user = "";
@@ -25,6 +27,15 @@
 
             profile.firstTime = true;
             profile.currentTab = 0;
+
+            profile.showDropZone = function(){
+                if(profile.uploadPic == false){
+                    profile.uploadPic = true;
+                }
+                else{
+                    profile.uploadPic = false;
+                }
+            };
 
             profile.set = function (i) {
                 profile.currentTab = i;
@@ -76,7 +87,9 @@
                 if(err){
                     console.log(err);
                 } else {
+                    // console.log(profile.me);
                     profile.me = data[0];
+                    // console.log(profile.me.fields.username);
                 }
             });
 
@@ -184,7 +197,7 @@
                 }
                 else {
                     profile.userCount = data;
-                    console.log(profile.userCount);
+                    // console.log(profile.userCount);
                 }
             });
 
@@ -335,6 +348,8 @@
                         if (data.result != 'false') {
                             profile.image = {};
                             $scope.add_image_form2.$setPristine();
+                            profile.uploadPic = false;
+                            $window.location.href = profile.url;
                         }
                         else {
                             alert("Not Authorized");
