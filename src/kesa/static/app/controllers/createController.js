@@ -31,6 +31,7 @@
                 }
                 else {
                     treeData = [data];
+                    console.log(data);
 
                     storyService.setOpen(ctrl.createID, function (err, data) {
                         if (err) {
@@ -105,25 +106,20 @@
                             "name": response.name,
                             "body": response.body
                         };
-                        console.log(response.parentid);
-                        MiscService.addRemoteBranchr(root, newBranch, response.parentid);
+                        MiscService.addRemoteBranchr(root, newBranch, response.branchid);
+                        var contact = MiscService.findContactNoder(root, response.branchid);
 
-                        var contact = MiscService.findContactNoder(root, response.parentid);
-
-                        console.log(contact);
-                        console.log(root);
                         if (contact.some) {
                             ctrl.update(contact.obj, false, false);
 
-                            var oldlength = contact.obj.children.length;
-                            storyService.addToStory(ctrl.createID, oldlength, contact.obj.branchid, response, function (err, data, length, contact) {
+                            storyService.addToStory(ctrl.createID, contact.obj.branchid, response, function (err, data, contact) {
                                 if (err) {
                                     console.log("error in getting data");
                                 } else {
-                                    currentNode.children[currentNode.children.length - 1].branchid = data["result"];
-
+                                    currentNode.children[currentNode.children.length - 1].branchid = parseInt(data["result"]);
                                     var toSend = MiscService.createPacket(4, null, data["result"]);
                                     toSend.myid = peer.id;
+                                    toSend.parentid = contact.parentid;
 
                                     contact.peer.send(MiscService.stringify(toSend));
 
@@ -141,7 +137,7 @@
                         break;
                     case 2:
                         // Edit a branch
-                        contact = MiscService.findContactNoder(root, response.currentid);
+                        contact = MiscService.findContactNoder(root, response.branchid);
                         contact.obj.name = response.name;
                         contact.obj.body = response.body;
 
@@ -203,7 +199,6 @@
                     index = index + 1;
 
                     var initJSON = {};
-                    console.log("sending initial data structure");
                     initJSON.initRoot = MiscService.toJSON(root);
                     initJSON.title = ctrl.title;
                     initJSON.action = 3;
@@ -231,8 +226,6 @@
                         conn.forEach(function (element) {
                             if (!element.gotData) {
                                 element.send(MiscService.stringify(initJSON));
-                                console.log("Send to " + element.peer);
-                                console.log(element);
                             }
                         });
                     }, 2000);
@@ -435,6 +428,7 @@
                 if (sendToPeers) {
                     conn.forEach(function (element) {
                         var toSend = MiscService.createPacket(action, specialNode, source.id);
+                        toSend.branchid = source.branchid;
                         element.send(MiscService.stringify(toSend));
                     });
                 }
@@ -472,12 +466,11 @@
                 var specialNode = {"name": obj.name, "body": obj.body, "parentid": currentNode.id, "action": 0};
                 ctrl.update(currentNode, true, true, 0, specialNode);
 
-                var oldlength = currentNode.children.length;
-                storyService.addToStory(ctrl.createID, oldlength, currentNode.branchid, null, function (err, data, length, contact) {
+                storyService.addToStory(ctrl.createID, currentNode.branchid, null, function (err, data, contact) {
                     if (err) {
                         console.log("error in getting data");
                     } else {
-                        currentNode.children[currentNode.children.length - 1].branchid = data["result"];
+                        currentNode.children[currentNode.children.length - 1].branchid = parseInt(data["result"]);
                     }
                 });
             };
