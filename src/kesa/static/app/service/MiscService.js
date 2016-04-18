@@ -10,6 +10,13 @@
             }, 3000);
         };
 
+        this.customAlertJumbo = function (string) {
+            $("body").append('<div class="custom-alert-jumbo animated fadeInLeftBig">' + string + '</div>');
+            setTimeout(function () {
+                //$(".custom-alert-jumbo").remove();
+            }, 3000);
+        };
+
         this.stringify = function (obj, replacer, spaces, cycleReplacer) {
             return JSON.stringify(obj, srvc.serializer(replacer, cycleReplacer), spaces)
         };
@@ -120,6 +127,13 @@
                     toSend.name = specialNode.name;
                     toSend.body = specialNode.body;
                     toSend.currentid = id;
+                    break;
+                case 4:
+                    toSend.branchid = id;
+                    break;
+                case 5:
+                    break;
+                case 6:
                     break;
                 default:
                     console.log("Cannot handle this case!!");

@@ -9,8 +9,9 @@
             var ctrl = this;
 
             ctrl.joinID = id;
-            ctrl.title = "dddd";
-
+            ctrl.title = "";
+            ctrl.canAdd = true;
+            ctrl.profile = null;
             var root, currentNode, tree, diagonal, svg;
 
             var peer = null;
@@ -22,12 +23,25 @@
             var i = 0,
                 duration = 750;
 
+            storyService.getUserByRequest(function (err, data) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    ctrl.profile = data[0];
+                }
+            });
+
             this.join = function () {
                 peer = new Peer({host: 'storypeerserver.herokuapp.com', secure: true, port: 443});
 
                 peer.on('open', function (id) {
                     console.log("My id is: " + id);
                     ctrl.connect(ctrl.joinID);
+                });
+
+                peer.on('connection', function (connec) {
+                    conn.push(connec);
+                    index = index + 1;
                 });
 
             };
@@ -95,6 +109,24 @@
                         $scope.$apply();
                         ctrl.initTree(treeData);
                         break;
+                    case 4:
+                        currentNode.branchid = response.branchid;
+                        ctrl.canAdd = !ctrl.canAdd;
+                        break;
+                    case 5:
+                        peer.disconnect();
+                        MiscService.customAlertJumbo("Master has disconnected. Redirecting!");
+                        setTimeout(function () {
+                            location.pathname = "/stories";
+                        }, 3500);
+                        break;
+                    case 6:
+                        peer.disconnect();
+                        MiscService.customAlertJumbo("Master published the story. Redirecting!");
+                        setTimeout(function () {
+                            location.pathname = "/"+ctrl.joinID+"/story";
+                        }, 3500);
+                        break;
                     default:
                         console.log("Block code unrecognized, doing nothing");
                 }
@@ -105,20 +137,19 @@
                 conn.push(peer.connect(id));
                 index = index + 1;
 
-                conn[index].on('data', function (data) {
-                    var response = JSON.parse(data);
-                    ctrl.applyChanges(response);
-                    console.log(response);
+                conn[index].on('open', function () {
+
+                    conn[index].on('data', function (data) {
+                        var response = JSON.parse(data);
+                        ctrl.applyChanges(response);
+                    });
                 });
             };
 
             this.update = function (source, sendToPeers, changeCurrentNode, action, specialNode) {
 
-                //console.log(root);
-
                 var cont = d3.select(".story-container");
 
-                //console.log(closed);
                 if (closed) {
                     cont.classed("col-xs-4", true)
                         .classed("animated", true)
@@ -179,7 +210,7 @@
                 nodeUpdate.select("circle")
                     .attr("r", 10)
                     .style("fill", function (d) {
-                        return d._children ? "#fb5e58" : "#fff";
+                        return d._children ? "#D11C24" : "#fff";
                     });
 
                 nodeUpdate.select("text")
@@ -299,6 +330,8 @@
                     conn.forEach(function (element) {
                         console.log(root);
                         var toSend = MiscService.createPacket(action, specialNode, source.id);
+                        toSend.myid = peer.id;
+                        toSend.user = ctrl.profile.pk;
                         element.send(MiscService.stringify(toSend));
                     });
                 }
@@ -322,23 +355,25 @@
             this.addBranch = function () {
                 // If not leaf
                 var obj = {};
-                if (currentNode.children) {
-                    obj = {
-                        "name": "Empty Branch",
-                        "body": "Add something here!"
-                    };
-                    currentNode.children.push(obj);
-                } else {
-                    obj = {
-                        "name": "Empty Branch",
-                        "body": "Add something here!"
-                    };
-                    //console.log(obj);
-                    currentNode.children = [];
-                    currentNode.children.push(obj);
+                if (ctrl.canAdd) {
+                    ctrl.canAdd = !ctrl.canAdd;
+                    if (currentNode.children) {
+                        obj = {
+                            "name": "Empty Branch",
+                            "body": "Add something here!"
+                        };
+                        currentNode.children.push(obj);
+                    } else {
+                        obj = {
+                            "name": "Empty Branch",
+                            "body": "Add something here!"
+                        };
+                        currentNode.children = [];
+                        currentNode.children.push(obj);
+                    }
+                    var specialNode = {"name": obj.name, "body": obj.body, "parentid": currentNode.id, "action": 0};
+                    ctrl.update(currentNode, true, true, 0, specialNode);
                 }
-                var specialNode = {"name": obj.name, "body": obj.body, "parentid": currentNode.id, "action": 0};
-                ctrl.update(currentNode, true, true, 0, specialNode);
             };
 
             this.deleteBranchr = function (parent, branch, id) {
@@ -536,5 +571,13 @@
             ctrl.join();
             //setTimeout(ctrl.initTree, 3000);
 
+            window.addEventListener("beforeunload", function (e) {
+                var toSend = MiscService.createPacket(5, null, null);
+                toSend.myid = peer.id;
+                for (var i = 0; i < conn.length; i++) {
+                    conn[i].send(MiscService.stringify(toSend));
+                }
+                peer.disconnect();
+            });
         })
 })();

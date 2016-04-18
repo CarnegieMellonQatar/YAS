@@ -10,7 +10,7 @@
 
             ctrl.createID = id;
             ctrl.title = "";
-
+            ctrl.is_complete = false;
             var treeData = null;
 
             var root, currentNode, tree, diagonal, svg;
@@ -22,6 +22,7 @@
             var closed = false;
             var editMode = false;
 
+
             var i = 0,
                 duration = 750;
 
@@ -30,7 +31,6 @@
                     console.log(err);
                 }
                 else {
-                    console.log(data);
                     treeData = [data];
 
                     storyService.setOpen(ctrl.createID, function (err, data) {
@@ -56,7 +56,6 @@
                                 }
                             ];
 
-                        console.log("JSON object is undefined or null or is empty");
                     }
 
                     // Setting up the graph canvas
@@ -121,11 +120,22 @@
                             ctrl.update(contact.obj, false, false);
 
                             var oldlength = contact.obj.children.length;
-                            storyService.addToStory(ctrl.createID, oldlength, contact.obj.branchid, function (err, data, length) {
+                            storyService.addToStory(ctrl.createID, oldlength, contact.obj.branchid, response, function (err, data, length, contact) {
                                 if (err) {
                                     console.log(err);
                                 } else {
                                     currentNode.children[length - 1].branchid = data["result"];
+
+                                    var toSend = MiscService.createPacket(4, null, data["result"]);
+                                    toSend.myid = peer.id;
+
+                                    contact.peer.send(MiscService.stringify(toSend));
+
+                                    storyService.addContribution(response.user, ctrl.createID, function (err, data) {
+                                        if (err) {
+                                            console.log(err);
+                                        }
+                                    });
                                 }
                             });
 
@@ -141,7 +151,7 @@
                         contact.obj.body = response.body;
 
                         if (contact.some) {
-                            storyService.editStory(ctrl.createID, contact.obj.branchid, contact.obj, function (err, data) {
+                            storyService.editStory(ctrl.createID, contact.obj.branchid, contact.obj, response, function (err, data, response) {
                                 if (err) {
                                     console.log(err);
                                 } else {
@@ -150,12 +160,25 @@
                                         if (contact.obj.id == currentNode.id) {
                                             ctrl.click(currentNode);
                                         }
+                                        storyService.addContribution(response.user, ctrl.createID, function (err, data) {
+                                            if (err) {
+                                                console.log(err);
+                                            }
+                                        });
                                     }
                                 }
                             });
                         } else {
                             console.error("should not be here");
                         }
+                        break;
+                    case 5:
+                        var arr = conn.filter(function (element) {
+                            return (element.peer === response.myid);
+                        });
+                        var currentindex = conn.indexOf(arr[0]);
+                        conn = conn.splice(0, currentindex).concat(conn.splice(currentindex + 1, index + 1));
+                        index = index - 1;
                         break;
                     default:
                         console.log("Block code unrecognized, doing nothing");
@@ -184,44 +207,22 @@
                     var currentIndex = index;
                     conn[currentIndex].on('data', function (data) {
                         var response = JSON.parse(data);
+                        response.peer = conn[currentIndex];
                         ctrl.applyChanges(response);
 
                         // Pass on the information to all other peers
                         conn.forEach(function (element) {
                             if (element.peer !== conn[currentIndex].peer) {
-                                console.log("sending to " + element.peer);
                                 element.send(data);
                             }
                         });
                     });
 
-                    peer.on("disconnected", function (connec) {
-                        var index = conn.indexOf(connec);
-                        conn = conn.splice(0, index).concat(conn.splice(index + 1, conn.length));
-                        console.log(conn);
-                    });
-
-                    peer.on("destroyed", function (connec) {
-                        var index = conn.indexOf(connec);
-                        conn = conn.splice(0, index).concat(conn.splice(index + 1, conn.length));
-                        console.log(conn);
-                    });
 
                     // Send the newly connected peer the stringified JSON root
                     setTimeout(function () {
                         conn[index].send(MiscService.stringify(initJSON));
                     }, 2000);
-                });
-
-                peer.on('close', function (connec) {
-                    console.log("asdasd");
-                    storyService.setClosed(data.id, function (err, data) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            console.log(data);
-                        }
-                    });
                 });
             };
 
@@ -408,6 +409,12 @@
                             .classed("col-xs-5", true)
                             .text("edit branch")
                             .on("click", ctrl.editBranch);
+
+                        cont.append("div")
+                            .classed("edit-branch-button", true)
+                            .classed("col-xs-5", true)
+                            .text("Publish Story")
+                            .on("click", ctrl.Publish);
                     }
 
 
@@ -460,7 +467,7 @@
                 ctrl.update(currentNode, true, true, 0, specialNode);
 
                 var oldlength = currentNode.children.length;
-                storyService.addToStory(ctrl.createID, oldlength, currentNode.branchid, function (err, data, length) {
+                storyService.addToStory(ctrl.createID, oldlength, currentNode.branchid, null, function (err, data, length, contact) {
                     if (err) {
                         console.log(err);
                     } else {
@@ -491,13 +498,11 @@
             this.deleteBranch = function () {
                 if (currentNode === root) {
                     MiscService.customAlert("<strong>Node is the root,</strong> cannot delete the root");
-                    console.log("Node is the root, cannot delete the root");
                 } else {
                     storyService.deleteBranch(ctrl.createID, currentNode.branchid, function (err, data) {
                         if (err) {
                             console.log(err);
                         } else {
-                            console.log(data);
                             if (data["result"] === 'true') {
                                 ctrl.deleteBranchr(null, root, currentNode.id);
                                 ctrl.update(currentNode, true, false, 1, null);
@@ -505,8 +510,6 @@
                             }
                         }
                     });
-
-
                 }
             };
 
@@ -528,7 +531,7 @@
                 editMode = false;
 
 
-                storyService.editStory(ctrl.createID, currentNode.branchid, currentNode, function (err, data) {
+                storyService.editStory(ctrl.createID, currentNode.branchid, currentNode, response, function (err, data, response) {
                     if (err) {
                         console.log(err);
                     } else {
@@ -641,6 +644,39 @@
 
             };
 
+            this.Publish = function(){
+                storyService.setComplete(ctrl.createID,function(err,data){
+                    if(err){
+                        console.log(err);
+                    } else {
+                        ctrl.is_complete = true;
+                        location.pathname = "/"+ctrl.createID+"/story";
+                    }
+                });
+            };
 
+            window.addEventListener("beforeunload", function (e) {
+                var toSend = null;
+                if(ctrl.is_complete){
+                    toSend = MiscService.createPacket(6, null, null);
+                } else {
+                    toSend = MiscService.createPacket(5, null, null);
+                }
+
+                toSend.myid = peer.id;
+                for (var i = 0; i < conn.length; i++) {
+                    conn[i].send(MiscService.stringify(toSend));
+                }
+                peer.disconnect();
+
+                storyService.setClosed(ctrl.createID, function (err, data) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log(data);
+                    }
+                });
+            });
         })
-})();
+})
+();

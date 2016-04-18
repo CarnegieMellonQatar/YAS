@@ -139,6 +139,7 @@
                     });
             };
 
+            // Get user object by username
             service.getUserByID = function (uid, callback) {
                 $http.get('/api/' + uid + '/getUserByID/')
                     .success(function (data, status) {
@@ -337,17 +338,17 @@
                     });
             };
 
-            service.addToStory = function (sid, length, bid, callback) {
+            service.addToStory = function (sid, length, bid, contact, callback) {
                 $http.post('/api/addToStory/' + sid + '/' + bid + '/')
                     .success(function (data, status) {
-                        callback(null, data, length);
+                        callback(null, data, length, contact);
                     })
                     .error(function (error, status) {
-                        callback(error, null, null);
+                        callback(error, null, null, contact);
 
                     });
             };
-    
+
             service.addToReadLater = function (uid, story, callback) {
                 $http.post('/api/' + uid + '/addToReadLater/' + story.pk + '/')
                     .success(function (data, status) {
@@ -438,7 +439,7 @@
                     });
             };
 
-            service.editStory = function (sid, bid, node, callback) {
+            service.editStory = function (sid, bid, node, response, callback) {
                 var formdata = new FormData();
 
                 formdata.append('name', node.name);
@@ -455,12 +456,22 @@
 
                 $http(request)
                     .success(function (data, status) {
+                        callback(null, data, response);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null, null);
+                    });
+            };
+
+            service.addContribution = function (uid, sid, callback) {
+                $http.post('/api/' + uid + '/addContribution/' + sid + '/')
+                    .success(function (data, status) {
                         callback(null, data);
                     })
                     .error(function (error, status) {
                         callback(error, null);
                     });
-            }
+            };
 
         });
 })();
