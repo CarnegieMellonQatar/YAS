@@ -4,83 +4,106 @@
 {% if request.user.is_authenticated %}
 <div class="stories-section" ng-controller="storyController as storyController" ng-cloak>
     <div class="switch-buttons">
-        <a ng-class="{chosen: storyController.enabled}" class="story-active-switch-button" ng-click="storyController.changeTabs(true)">
+        <a ng-class="{chosen: storyController.enabled}" class="story-active-switch-button"
+           ng-click="storyController.changeTabs(true)">
             <i class="fa fa-check fa-2x" aria-hidden="true"></i>
         </a>
-        <a ng-class="{chosen: !storyController.enabled}" class="story-active-switch-button" ng-click="storyController.changeTabs(false)">
+        <a ng-class="{chosen: !storyController.enabled}" class="story-active-switch-button"
+           ng-click="storyController.changeTabs(false)">
             <i class="fa fa-pencil fa-2x" aria-hidden="true"></i>
         </a>
     </div>
     <div class="story-list" ng-show="storyController.enabled">
-        <div class="story-entry" ng-repeat="story in storyController.completeStories">
-            <a href="/{$ story.fields.userInfo.fields.username $}/profile">
-                <div class="story-entry-author"> {$ story.fields.userInfo.fields.username $}</div>
-            </a>
-            <a href="/{$ story.pk $}/story">
-                <div class="story-entry-title">{$ story.fields.title $}</div>
-            </a>
-            <div class="story-entry-stats">
-                <div class="story-entry-likes" data-toggle="tooltip" title="likes">
-                    <i class="fa fa-heart fa-2x" aria-hidden="true" ng-show="story.fields.isLiked" ng-click="storyController.unlike(story)"></i>
-                    <i class="fa fa-heart-o fa-2x" aria-hidden="true" ng-hide="story.fields.isLiked" ng-click="storyController.like(story)"></i>
-                    <span class="faint-sub">{$ story.fields.likes $}</span>
+        <div class="story-entry row" ng-repeat="story in storyController.completeStories">
+            <div class="col-xs-1">
+                <img class="story-profile-pic img-circle" ng-src="/api/img/{$ story.fields.userInfo.fields.username$}">
+            </div>
+            <div class="col-xs-4 story-row">
+                <a href="/{$ story.fields.userInfo.fields.username $}/profile">
+                    <div class="story-entry-author"> {$ story.fields.userInfo.fields.username $}</div>
+                </a>
+                <a href="/{$ story.pk $}/story">
+                    <div class="story-entry-title">{$ story.fields.title $}</div>
+                </a>
+                <div class="story-entry-stats">
+                    <div class="story-entry-likes" data-toggle="tooltip" title="likes">
+                        <i class="fa fa-heart fa-2x" aria-hidden="true" ng-show="story.fields.isLiked"
+                           ng-click="storyController.unlike(story)"></i>
+                        <i class="fa fa-heart-o fa-2x" aria-hidden="true" ng-hide="story.fields.isLiked"
+                           ng-click="storyController.like(story)"></i>
+                        <span class="faint-sub">{$ story.fields.likes $}</span>
+                    </div>
+                    <div class="story-entry-contributors" data-toggle="tooltip" title="contributors">
+                        <i class="fa fa-user fa-2x" aria-hidden="true"></i>
+                        <span class="faint-sub">{$ story.fields.contributors $}</span>
+                    </div>
+                    <div class="story-entry-contributors read-icon" data-toggle="tooltip" title="reads">
+                        <i class="fa fa-book fa-2x" aria-hidden="true"></i>
+                        <span class="faint-sub">{$ story.fields.read $}</span>
+                    </div>
                 </div>
-                <div class="story-entry-contributors" data-toggle="tooltip" title="contributors">
-                    <i class="fa fa-user fa-2x" aria-hidden="true"></i>
-                    <span class="faint-sub">{$ story.fields.contributors $}</span>
-                </div>
-                <div class="story-entry-contributors" data-toggle="tooltip" title="reads">
-                    <i class="fa fa-book fa-2x" aria-hidden="true"></i>
-                    <span class="faint-sub">{$ story.fields.read $}</span>
-                </div>
-                <div class="story-entry-contributors" data-toggle="tooltip" title="readlater">
-                    <i class="fa fa-bookmark fa-2x" aria-hidden="true" ng-show="story.fields.isBookmarked" ng-click="storyController.unbookmark(story)"></i>
-                    <i class="fa fa-bookmark-o fa-2x" aria-hidden="true" ng-hide="story.fields.isBookmarked" ng-click="storyController.bookmark(story)"></i>
-                </div>
-                <!--<div class="story-entry-completed">-->
-                <!--{$ storyController.isComplete(story.fields.is_complete) $}-->
-                <!--</div>-->
+            </div>
+            <div class="col-xs-5">
+                <a class="start-reading-button" href="/{$ story.pk $}/story" ng-if="story.fields.is_complete">Start Reading!</a>
+            </div>
+            <div class="story-entry-contributors bookmark-icon" data-toggle="tooltip" title="readlater">
+                <i class="fa fa-bookmark fa-2x" aria-hidden="true" ng-show="story.fields.isBookmarked"
+                   ng-click="storyController.unbookmark(story)"></i>
+                <i class="fa fa-bookmark-o fa-2x" aria-hidden="true" ng-hide="story.fields.isBookmarked"
+                   ng-click="storyController.bookmark(story)"></i>
             </div>
             <!--<hr class="small">-->
         </div>
 
-        <button class="story-show-more center-button" ng-show="storyController.haveMoreComplete && storyController.enabled"
+        <button class="story-show-more center-button"
+                ng-show="storyController.haveMoreComplete && storyController.enabled"
                 ng-click="storyController.getMoreCompleteStories()">Show More
         </button>
     </div>
     <div class="story-list" ng-hide="storyController.enabled">
-        <div class="story-entry" ng-repeat="story in storyController.uncompleteStories">
-            <a href="/{$ story.fields.userInfo.fields.username $}/profile">
-                <div class="story-entry-author">{$story.fields.userInfo.fields.username $}</div>
-            </a>
-            <a href="/{$ story.pk $}/story">
-                <div class="story-entry-title">{$ story.fields.title $}</div>
-            </a>
-            <div class="story-entry-stats">
-                <div class="story-entry-likes" data-toggle="tooltip" title="likes">
-                    <i class="fa fa-heart fa-2x" aria-hidden="true" ng-show="story.fields.isLiked" ng-click="storyController.unlike(story)"></i>
-                    <i class="fa fa-heart-o fa-2x" aria-hidden="true" ng-hide="story.fields.isLiked" ng-click="storyController.like(story)"></i>
-                    <span class="faint-sub">{$ story.fields.likes $}</span>
-                </div>
-                <div class="story-entry-contributors" data-toggle="tooltip" title="contributors">
-                    <i class="fa fa-user fa-2x" aria-hidden="true"></i>
-                    <span class="faint-sub">{$ story.fields.contributors $}</span>
-                </div>
-                <div class="story-entry-contributors" data-toggle="tooltip" title="reads">
-                    <i class="fa fa-book fa-2x" aria-hidden="true"></i>
-                    <span class="faint-sub">{$ story.fields.read $}</span>
-                </div>
-                <div class="story-entry-contributors" data-toggle="tooltip" title="readlater">
-                    <i class="fa fa-bookmark fa-2x" aria-hidden="true" ng-show="story.fields.isBookmarked" ng-click="storyController.unbookmark(story)"></i>
-                    <i class="fa fa-bookmark-o fa-2x" aria-hidden="true" ng-hide="story.fields.isBookmarked" ng-click="storyController.bookmark(story)"></i>
+        <div class="story-entry row" ng-repeat="story in storyController.uncompleteStories">
+            <div class="col-xs-1">
+                <img class="story-profile-pic img-circle" ng-src="/api/img/{$ story.fields.userInfo.fields.username$}">
+            </div>
+            <div class="col-xs-4 story-row">
+                <a href="/{$ story.fields.userInfo.fields.username $}/profile">
+                    <div class="story-entry-author">{$story.fields.userInfo.fields.username $}</div>
+                </a>
+                <a href="/{$ story.pk $}/story">
+                    <div class="story-entry-title">{$ story.fields.title $}</div>
+                </a>
+                <div class="story-entry-stats">
+                    <div class="story-entry-likes" data-toggle="tooltip" title="likes">
+                        <i class="fa fa-heart fa-2x" aria-hidden="true" ng-show="story.fields.isLiked"
+                           ng-click="storyController.unlike(story)"></i>
+                        <i class="fa fa-heart-o fa-2x" aria-hidden="true" ng-hide="story.fields.isLiked"
+                           ng-click="storyController.like(story)"></i>
+                        <span class="faint-sub">{$ story.fields.likes $}</span>
+                    </div>
+                    <div class="story-entry-contributors" data-toggle="tooltip" title="contributors">
+                        <i class="fa fa-user fa-2x" aria-hidden="true"></i>
+                        <span class="faint-sub">{$ story.fields.contributors $}</span>
+                    </div>
+                    <div class="story-entry-contributors" data-toggle="tooltip" title="reads">
+                        <i class="fa fa-book fa-2x" aria-hidden="true"></i>
+                        <span class="faint-sub">{$ story.fields.read $}</span>
+                    </div>
                 </div>
             </div>
-            <div ng-if="!storyController.isComplete(story.fields.is_complete)">
-                <a class="story-join" href="/{$ story.pk $}/story">Join the writing session!</a>
+            <div class="col-xs-5">
+                <a class="story-join" href="/{$ story.pk $}/story" ng-if="story.fields.is_open">Join the writing session!</a>
+                <a class="start-reading-button" href="/{$ story.pk $}/story" ng-if="story.fields.is_complete">Start Reading!</a>
+            </div>
+            <div class="story-entry-contributors bookmark-icon" data-toggle="tooltip" title="readlater">
+                <i class="fa fa-bookmark fa-2x" aria-hidden="true" ng-show="story.fields.isBookmarked"
+                   ng-click="storyController.unbookmark(story)"></i>
+                <i class="fa fa-bookmark-o fa-2x" aria-hidden="true" ng-hide="story.fields.isBookmarked"
+                   ng-click="storyController.bookmark(story)"></i>
             </div>
             <!--<h2>Status: {$ storyController.isComplete(story.fields.is_complete) $}</h2>-->
         </div>
-        <button class="story-show-more center-button" ng-show="storyController.haveMoreIncomplete && !storyController.enabled"
+        <button class="story-show-more center-button"
+                ng-show="storyController.haveMoreIncomplete && !storyController.enabled"
                 ng-click="storyController.getMoreInCompleteStories()">Show More
         </button>
     </div>

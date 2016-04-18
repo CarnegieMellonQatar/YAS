@@ -12,6 +12,10 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 body {
   line-height: 1; }
 
+body::selection {
+  background: #1A1F58;
+  color: white; }
+
 a {
   -webkit-transition: all .35s;
   -moz-transition: all .35s;
@@ -89,7 +93,7 @@ hr.med {
 
   .container {
     width: 100%; } }
-.btn-classic, .story-active-switch-button, .story-active-switch-button:hover, .story-nav-add, .story-nav-add:hover, .story-join, .story-join:hover, .story-choice-button, .story-choice-button:hover, .story-show-more {
+.btn-classic, .story-active-switch-button, .story-active-switch-button:hover, .story-nav-add, .story-nav-add:hover, .story-join, .story-join:hover, .start-reading-button, .start-reading-button:hover, .story-choice-button, .story-choice-button:hover, .story-show-more, .profile-delete-story-button, .profile-delete-story-button:hover {
   text-align: center;
   display: inline-block;
   padding: 1.2em 1.4em;
@@ -477,16 +481,24 @@ header .header-content .header-content-inner p {
   color: #fb5e58; }
 
 .story-join {
-  position: absolute;
-  top: 30%;
-  right: 4%;
   background-color: #fb5e58;
-  color: white; }
+  color: white;
+  margin: 50px 20px auto auto; }
 
 .story-join:hover {
   border-color: #fb5e58;
   background-color: white;
   color: #fb5e58; }
+
+.start-reading-button {
+  background-color: #1A1F58;
+  color: white;
+  margin: 50px 20px auto auto; }
+
+.start-reading-button:hover {
+  border-color: #1A1F58;
+  background-color: white;
+  color: #1A1F58; }
 
 .story-list {
   background: transparent;
@@ -543,7 +555,7 @@ header .header-content .header-content-inner p {
 
 .story-entry-contributors, .profile-story-entry-contributors {
   transition: all 0.25s;
-  cursor: pointer;
+  cursor: default;
   margin-left: 20px;
   color: #b0c905; }
 
@@ -602,6 +614,40 @@ header .header-content .header-content-inner p {
   color: #2D6CA5;
   border-color: #2D6CA5; }
 
+.story-profile-pic {
+  width: 120px;
+  height: 120px;
+  margin-left: 15px;
+  margin-top: 15px; }
+
+.story-row {
+  margin-left: 20px; }
+
+.bookmark-icon {
+  color: #0A2933;
+  position: absolute;
+  right: 40px;
+  bottom: 20px;
+  cursor: pointer; }
+
+.read-icon {
+  cursor: default; }
+
+.float-bot {
+  animation: bot_float 1s infinite alternate; }
+
+@keyframes bot_float {
+  from {
+    -webkit-transform: translateY(-7px);
+    transform: translateY(-7px); }
+  to {
+    -webkit-transform: translateY(7px);
+    transform: translateY(7px); } }
+.story-choice-container {
+  margin-left: 300px;
+  margin-right: 300px;
+  margin-bottom: 50px; }
+
 .dashboard-container {
   margin-top: 50px;
   background: #F1F1F1; }
@@ -621,12 +667,28 @@ header .header-content .header-content-inner p {
   margin-left: 25px;
   margin-top: 25px; }
 
+.mini-profile-pic {
+  width: 100px;
+  height: 100px;
+  margin-left: 15px;
+  margin-top: 15px; }
+
 .main-username {
   color: #fb5e58;
   font-weight: 700;
   margin-top: 75px;
   font-size: 64px;
   margin-left: -50px; }
+
+.profile-delete-story-button {
+  background-color: #D11C24;
+  color: white;
+  margin: 50px 20px auto auto; }
+
+.profile-delete-story-button:hover {
+  border-color: #D11C24;
+  background-color: white;
+  color: #D11C24; }
 
 .fa-heart {
   color: #D11C24; }
@@ -666,7 +728,7 @@ header .header-content .header-content-inner p {
   opacity: 1;
   border-bottom: 4px solid #fb5e58; }
 
-.profile-story-list {
+.profile-story-list, .profile-liked-stories {
   margin: auto;
   background: transparent;
   width: 80%;
@@ -685,5 +747,30 @@ header .header-content .header-content-inner p {
 .analytics-header {
   margin-top: 50px;
   margin-left: 50px; }
+
+.stat-header {
+  margin-top: 25px;
+  margin-left: 25px; }
+
+.profile-top-fan-container {
+  margin: 50px;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  position: relative; }
+
+.profile-top-contributor-container {
+  margin: 50px;
+  margin-left: 75px;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  position: relative; }
+
+.mini-profile-title {
+  margin: 50px 20px auto auto;
+  color: #2D6CA5;
+  font-weight: 200;
+  font-size: 32px; }
 
 /*# sourceMappingURL=main.css.map */

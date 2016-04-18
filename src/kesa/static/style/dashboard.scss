@@ -21,12 +21,34 @@
   margin-top: 25px;
 }
 
+.mini-profile-pic {
+  width: 100px;
+  height: 100px;
+  margin-left: 15px;
+  margin-top: 15px;
+}
+
 .main-username {
   color: $primary-light-color;
   font-weight: 700;
   margin-top: 75px;
   font-size: $font-size-large;
   margin-left: -50px;
+}
+
+.profile-delete-story-button {
+  @extend .btn-classic;
+  background-color: $fail;
+  color: white;
+  margin: 50px 20px auto auto;
+}
+
+.profile-delete-story-button:hover {
+  @extend .btn-classic;
+  border-color: $fail;
+  background-color: white;
+  color: $fail;
+
 }
 
 .fa-heart {
@@ -83,6 +105,10 @@
   overflow-y: scroll;
 }
 
+.profile-liked-stories {
+  @extend .profile-story-list;
+}
+
 .profile-story-entry {
   @extend .story-entry;
 }
@@ -125,4 +151,33 @@
 .analytics-header {
   margin-top: 50px;
   margin-left: 50px;
+}
+
+.stat-header {
+  margin-top: 25px;
+  margin-left: 25px;
+}
+
+.profile-top-fan-container {
+  margin: 50px;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .04);
+  border: 1px solid rgba(0, 0, 0, .09);
+  position: relative;
+}
+
+.profile-top-contributor-container {
+  margin: 50px;
+  margin-left: 75px;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .04);
+  border: 1px solid rgba(0, 0, 0, .09);
+  position: relative;
+}
+
+.mini-profile-title {
+  margin: 50px 20px auto auto;
+  color: $primary-dark-color;
+  font-weight: 200;
+  font-size: $font-size-med;
 }

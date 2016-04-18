@@ -15,12 +15,14 @@
             ctrl.currentNodes = [];
 
             ctrl.currentNode = "";
-            ctrl.currentIndex = 0;
+            ctrl.animatedIndex = 0;
+            ctrl.currentAnimation = 0;
 
             ctrl.loaded = false;
-
-
+            $scope.nochoices = true;
             $scope.animating = true;
+            $scope.finalNode = false;
+
             var hold = false;
 
             storyService.getStory(id, function (err, data) {
@@ -28,6 +30,7 @@
                     console.log(err);
                 }
                 else {
+                    console.log(data);
                     ctrl.storyTree = data;
                     ctrl.updateCurrentChoices(ctrl.storyTree);
                     storyService.addSReads(data.id, function (err, data) {
@@ -38,6 +41,7 @@
                     ctrl.loaded = true;
                 }
             });
+
 
             ctrl.accumNodes = function (node) {
                 if (node.children) {
@@ -73,6 +77,7 @@
                 } else {
                     ctrl.currentChoices = [];
                     ctrl.currentNodes.push(node.body);
+                    $scope.finalNode = true;
                 }
 
                 storyService.addBReads(node.branchid, function (err, data) {
@@ -82,81 +87,97 @@
                 });
             };
 
-            ctrl.updateCurrentChoices = function (node) {
-                ctrl.updateCurrentChoicesr(node);
-                ctrl.currentNode = ctrl.currentNodes[ctrl.currentIndex];
-                console.log(ctrl.currentNode);
-
-                var check = ctrl.currentIndex + 1;
-                if (ctrl.currentNodes[check]) {
-                    ctrl.nextNode = true;
+            ctrl.updateLastNode = function () {
+                if (ctrl.currentNodes[ctrl.animatedIndex + 1]) {
+                    $scope.lastNode = false;
                 } else {
-                    ctrl.nextNode = false;
+                    $scope.lastNode = true;
                 }
-                $(".story-node").last().after('<div class="story-node"></div>');
-
-                ctrl.injectCurrentNode(ctrl.currentNode, 50);
             };
 
-            ctrl.updateCurrentNode = function () {
-                ctrl.currentIndex++;
-                ctrl.currentNode = ctrl.currentNodes[ctrl.currentIndex];
+            ctrl.updateCurrentChoices = function (node) {
+
+                ctrl.currentNodes = [];
+                ctrl.updateCurrentChoicesr(node);
+                $scope.animating = true;
+                ctrl.currentNode = ctrl.currentNodes[0];
+                console.log(ctrl.currentNode);
+
+                ctrl.animatedIndex = 0;
+
+                ctrl.updateLastNode();
+                ctrl.currentChoicesIsEmpty();
+
+                //$(".story-node").last().after('<div class="story-node"></div>');
+                ctrl.currentAnimation = Math.floor((Math.random() * 1000000000000) + 1);
+
+                ctrl.injectCurrentNode(ctrl.currentNode, 50, ctrl.currentAnimation);
+                ctrl.loaded = true;
+                console.log(ctrl.currentChoices);
+                console.log($scope.lastNode);
+                console.log($scope.nochoices);
+
             };
 
             ctrl.currentChoicesIsEmpty = function () {
                 if (ctrl.currentChoices.length === 0) {
-                    return true;
+                    $scope.nochoices = true;
                 } else {
-                    return false;
+                    $scope.nochoices = false;
                 }
             };
 
-            ctrl.injectCurrentNode = function (body, delay) {
+            ctrl.injectCurrentNode = function (body, delay, currentAni) {
                 var delayInit = 200;
                 var charList = [];
 
                 for (var i = 0; i < body.length; i++) {
                     charList.push(body.charAt(i));
                 }
-
-                charList.forEach(function (c) {
+                charList.forEach(function (c, i) {
                     setTimeout(function () {
-                        if ($scope.animating == true) {
-                            console.log("true");
-                            $(".story-node").last().append(c);
+                        if ($scope.animating == true && currentAni == ctrl.currentAnimation) {
+                            $('.story-center-container').children().last().append(c);
+                            if (i == (body.length - 1)) {
+                                $scope.animating = false;
+                                $scope.$apply();
+                                $('.story-center-container').children().last().append("<hr class='small'>");
+                            }
                         }
                     }, delayInit);
                     delayInit += delay;
                 });
             };
 
-            //var body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in orci vel tellus ullamcorper mollis. Sed eget tincidunt ex, in elementum risus. In vel velit quam. Proin nec augue venenatis, condimentum libero quis, tristique lectus. Fusce varius, dui id eleifend dignissim, ligula massa ullamcorper augue, ut ultrices tortor arcu eget nibh. Maecenas massa nunc, pharetra sed dolor a, blandit tempus enim. Fusce maximus est et odio elementum pellentesque. Curabitur mollis quis eros vel consequat. Vestibulum nec feugiat orci. Donec sit amet volutpat lectus";
-            //
-            //ctrl.injectCurrentNode(body, 50);
-
             $scope.$on("spacePressed", function (event, args) {
                 console.log($scope.animating);
-
+                var storyDiv = $('.story-center-container');
                 if ($scope.animating == true) {
                     // Skip the animation and load the choice buttons
                     $scope.animating = false;
                     $scope.$apply();
-
-                    $(".story-node").last().html('').append(ctrl.currentNode);
-                    ctrl.currentIndex++;
-                } else if ($scope.animating == false && ctrl.nextNode == true) {
-                    // Go to the next node if any exists
-                    $scope.animating = true;
+                    storyDiv.children().last().html('').append(ctrl.currentNode);
+                    storyDiv.children().last().append("<hr class='small'>");
+                    storyDiv.append("<div class='story-node'></div>");
+                } else if ($scope.animating == false) {
+                    if (!$scope.lastNode) {
+                        console.log("last node");
+                        ctrl.animatedIndex++;
+                        ctrl.currentNode = ctrl.currentNodes[ctrl.animatedIndex];
+                        ctrl.updateLastNode();
+                        storyDiv.append("<div class='story-node'></div>");
+                        ctrl.currentAnimation = Math.floor((Math.random() * 1000000000000) + 1);
+                        ctrl.injectCurrentNode(ctrl.currentNode, 50, ctrl.currentAnimation);
+                        $scope.animating = true;
+                        $scope.$apply();
+                    }
+                }
+                if (!ctrl.currentNode.children) {
+                    $scope.finalNode = true;
                     $scope.$apply();
-
-                    ctrl.updateCurrentNode();
-
-                    $(".story-node").last().after('<div class="story-node"></div>');
-
-                    console.log(ctrl.currentNodes);
-                    ctrl.injectCurrentNode(ctrl.currentNode, 50);
                 }
             });
+
 
             // http://stackoverflow.com/questions/9098901/how-to-disable-repetitive-keydown-in-jquery
             // http://stackoverflow.com/questions/2249203/check-if-the-spacebar-is-being-pressed-and-the-mouse-is-moving-at-the-same-time

@@ -180,17 +180,11 @@
                     initJSON.initRoot = MiscService.toJSON(root);
                     initJSON.title = ctrl.title;
                     initJSON.action = 3;
+
                     var currentIndex = index;
                     conn[currentIndex].on('data', function (data) {
                         var response = JSON.parse(data);
                         ctrl.applyChanges(response);
-
-                        //console.log(data);
-                        //root = JSON.parse(data);
-                        //currentNode = root;
-                        //console.log("Got Something!");
-                        //console.log(root);
-                        //ctrl.update(root, false);
 
                         // Pass on the information to all other peers
                         conn.forEach(function (element) {

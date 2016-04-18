@@ -49,11 +49,10 @@
 
 .story-join {
   @extend .btn-classic;
-  position: absolute;
-  top: 30%;
-  right: 4%;
   background-color: $primary-light-color;
   color: white;
+  margin: 50px 20px auto auto;
+
 }
 
 .story-join:hover {
@@ -62,6 +61,21 @@
   background-color: white;
   color: $primary-light-color;
   //float: right;
+}
+
+.start-reading-button {
+  @extend .btn-classic;
+  background-color: $secondary-dark-color;
+  color: white;
+  margin: 50px 20px auto auto;
+}
+
+.start-reading-button:hover {
+  @extend .btn-classic;
+  border-color: $secondary-dark-color;
+  background-color: white;
+  color: $secondary-dark-color;
+
 }
 
 .story-list {
@@ -129,7 +143,7 @@
 
 .story-entry-contributors {
   transition: all 0.25s;
-  cursor: pointer;
+  cursor: default;
   margin-left: 20px;
   color: $success;
 }
@@ -191,8 +205,8 @@
 }
 
 .center-button {
-  margin:auto;
-  width:100%;
+  margin: auto;
+  width: 100%;
 }
 
 .story-show-more {
@@ -204,4 +218,48 @@
   background-color: white;
   color: $primary-dark-color;
   border-color: $primary-dark-color;
+}
+
+.story-profile-pic {
+  width: 120px;
+  height: 120px;
+  margin-left: 15px;
+  margin-top: 15px;
+}
+
+.story-row {
+  margin-left: 20px;
+}
+
+.bookmark-icon {
+  color: $secondary-black;
+  position: absolute;
+  right: 40px;
+  bottom: 20px;
+  cursor: pointer;
+}
+
+.read-icon {
+  cursor: default;
+}
+
+.float-bot {
+  animation: bot_float 1s infinite alternate
+}
+
+@keyframes bot_float {
+  from {
+    -webkit-transform: translateY(-7px);
+    transform: translateY(-7px);
+  }
+  to {
+    -webkit-transform: translateY(7px);
+    transform: translateY(7px);
+  }
+}
+
+.story-choice-container {
+  margin-left: 300px;
+  margin-right: 300px;
+  margin-bottom: 50px;
 }

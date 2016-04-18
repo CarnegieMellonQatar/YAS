@@ -312,6 +312,11 @@ def getUserByName(request, username):
     data = serializers.serialize('json', [user])
     return HttpResponse(data, content_type="application/json")
 
+@login_required
+def getUserByID(request, uid):
+    user = User.objects.get(id=uid)
+    return HttpResponse(json.dumps(user.username), content_type="application/json")
+
 
 @login_required
 def getUserStories(request, uid, sid, n):
