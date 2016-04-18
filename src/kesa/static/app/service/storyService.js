@@ -349,13 +349,13 @@
                     });
             };
 
-            service.addToStory = function (sid, length, bid, contact, callback) {
+            service.addToStory = function (sid, bid, contact, callback) {
                 $http.post('/api/addToStory/' + sid + '/' + bid + '/')
                     .success(function (data, status) {
-                        callback(null, data, length, contact);
+                        callback(null, data, contact);
                     })
                     .error(function (error, status) {
-                        callback(error, null, null, contact);
+                        callback(error, null, contact);
 
                     });
             };
