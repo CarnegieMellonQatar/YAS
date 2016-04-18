@@ -51,7 +51,7 @@ def getMaxChild(nodeList):
 def getDates(likesList):
     for i in likesList:
         i['date'] = str(i['date'])
-        print i['date']
+        #print i['date']
     return likesList
 
 

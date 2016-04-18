@@ -133,6 +133,8 @@
                     break;
                 case 5:
                     break;
+                case 6:
+                    break;
                 default:
                     console.log("Cannot handle this case!!");
             }
