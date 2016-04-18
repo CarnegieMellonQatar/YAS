@@ -58,7 +58,6 @@
         this.toJSON = function (root) {
             var retObj;
             retObj = srvc.toJSONr(root);
-            console.log(retObj);
             return retObj;
         };
 
@@ -88,6 +87,7 @@
             } else if (branch.children) {
                 var countFail = 0;
                 var objFound = {};
+
                 branch.children.forEach(function (d) {
                     var ret = srvc.findContactNoder(d, id);
                     if (ret.some === true) {
@@ -131,12 +131,8 @@
                 case 4:
                     toSend.branchid = id;
                     break;
-                case 5:
-                    break;
-                case 6:
-                    break;
                 default:
-                    console.log("Cannot handle this case!!");
+                    //console.log("Cannot handle this case!!");
             }
             return toSend;
         };
