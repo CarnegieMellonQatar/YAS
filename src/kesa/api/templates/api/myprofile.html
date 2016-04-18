@@ -5,13 +5,19 @@
     <div class="user-container">
         <div class="row">
             <div class="col-xs-3">
-                <img class="main-profile-pic img-circle" ng-src="/api/img/{$pc.uname$}">
-                <div ng-click="pc.showDropZone()"> {$ pc.profilePicText $} </div>
-                <div class="dnd" id="draganddrop" ng-init="pc.createDragNDropZone()" ng-show = "pc.uploadPic">
-                    <form class="complex_form" id="add_image_form2" name="add_image_form2" ng-submit="pc.addImageDND()">
-                        <div dropzone="dropzoneConfig" class="dropzone"></div>
-                        <input type="submit" class="btn" value="Add The Image" />
-                    </form>
+                <div class="pic-container">
+                    <img class="main-profile-pic img-circle" ng-src="/api/img/{$pc.uname$}">
+                    <div class="pp-button" ng-click="pc.showDropZone()" ng-if="!pc.uploadPic"> {$ pc.profilePicText
+                        $}
+                    </div>
+                    <div class="dnd" id="draganddrop" ng-init="pc.createDragNDropZone()" ng-if="pc.uploadPic">
+                        <form class="complex_form" id="add_image_form2" name="add_image_form2"
+                              ng-submit="pc.addImageDND()">
+                            <div dropzone="dropzoneConfig" class="dropzone dz"></div>
+                            <input type="submit" class="btn add-pp-button" value="Add The Image"
+                                   ng-if="pc.uploadPic"/>
+                        </form>
+                    </div>
                 </div>
             </div>
             <div class="col-xs-9">
@@ -53,7 +59,7 @@
             </div>
         </div>
     </div>
-    <div class="profile-story-list" ng-show="pc.isSet(0) && pc.stories !== []">
+    <div class="profile-story-list" ng-if="pc.isSet(0) && !pc.isEmpty()">
         <h1>Your Stories</h1>
         <div class="profile-story-entry row" ng-repeat="story in pc.stories">
             <div class="col-xs-1">
@@ -70,7 +76,7 @@
                 </a>
                 <div class="profile-story-entry-stats">
                     <div class="profile-story-entry-likes" data-toggle="tooltip" title="likes">
-                        <i class="fa fa-heart fa-2x" aria-hidden="true" ng-show="story.fields.isLiked"
+                        <i class="fa fa-heart fa-2x" aria-hidden="true" ng-if="story.fields.isLiked"
                            ng-click="pc.unlike(story)"></i>
                         <i class="fa fa-heart-o fa-2x" aria-hidden="true" ng-hide="story.fields.isLiked"
                            ng-click="pc.like(story)"></i>
@@ -90,9 +96,10 @@
                 <a class="profile-delete-story-button" ng-click="pc.deleteStory(story)">Delete</a>
                 <a class="start-reading-button" href="/{$ story.pk $}/story" ng-if="story.fields.is_complete">Start
                     Reading!</a>
+                <a class="start-reading-button" ng-click="pc.changeToWriting(story)">Start Writing!</a>
             </div>
             <div class="story-entry-contributors bookmark-icon" data-toggle="tooltip" title="readlater">
-                <i class="fa fa-bookmark fa-2x" aria-hidden="true" ng-show="story.fields.isBookmarked"
+                <i class="fa fa-bookmark fa-2x" aria-hidden="true" ng-if="story.fields.isBookmarked"
                    ng-click="pc.unbookmark(story)"></i>
                 <i class="fa fa-bookmark-o fa-2x" aria-hidden="true" ng-hide="story.fields.isBookmarked"
                    ng-click="pc.bookmark(story)"></i>
@@ -102,18 +109,40 @@
             </div>
         </div>
     </div>
-    <div class="profile-story-list" ng-show="pc.isSet(0) && pc.stories === []">
+    <div class="profile-story-list" ng-if="pc.isSet(0) && pc.isEmpty()">
         <h1 class="analytics-header"> No Stories here!</h1>
     </div>
-    <div class="profile-analytics" ng-show="pc.isSet(1) && pc.graphAnalytics !== []">
+    <div class="profile-story-list" ng-if="pc.isSet(2) && pc.likedList.length === 0">
+        <h1 class="analytics-header"> You haven't liked anything!</h1>
+    </div>
+    <div class="profile-story-list" ng-if="pc.isSet(3) && pc.userContStories.length === 0">
+        <h1 class="analytics-header"> You haven't contributed to anything! </h1>
+    </div>
+    <div class="profile-story-list" ng-if="pc.isSet(1) && !pc.isEmpty()">
         <h1 class="analytics-header">Analytics</h1>
+        <div class="graph-tab-container">
+            <div class="row">
+                <div class="col-xs-4 graph-tab"
+                     ng-class="{'tab-selected': pc.isSetGraph(0)}"
+                     ng-click="pc.setGraph(0)"> Past 30 days
+                </div>
+                <div class="col-xs-4 graph-tab"
+                     ng-class="{'tab-selected': pc.isSetGraph(1)}"
+                     ng-click="pc.setGraph(1)"> Past 60 days
+                </div>
+                <div class="col-xs-4 graph-tab"
+                     ng-class="{'tab-selected': pc.isSetGraph(2)}"
+                     ng-click="pc.setGraph(2)"> Past 90 days
+                </div>
+            </div>
+        </div>
         <div id="barGraph"></div>
     </div>
-    <div class="profile-analytics" ng-show="pc.isSet(1) && pc.graphAnalytics === []">
-        <h1 class="analytics-header">No analytics for your story</h1>
+    <div class="profile-story-list" ng-if="pc.isSet(1) && pc.isEmpty()">
+        <h1 class="analytics-header">No analytics for your stories</h1>
     </div>
     <div>
-        <div class="row" ng-show="pc.isSet(1)">
+        <div class="row" ng-if="pc.isSet(1) && !pc.isEmpty()">
             <div ng-if="pc.storyAnalytics.contributor" class="col-xs-5 profile-top-contributor-container">
                 <h2 class="stat-header">Top Contributor</h2>
                 <div class="row">
@@ -157,7 +186,7 @@
         </div>
     </div>
 
-    <div class="profile-liked-stories" ng-show="pc.isSet(2)">
+    <div class="profile-liked-stories" ng-if="pc.isSet(2) && pc.likedList.length !== 0">
         <h1>Liked stories</h1>
         <div class="profile-story-entry row" ng-repeat="story in pc.likedList">
             <div class="col-xs-1">
@@ -172,7 +201,7 @@
                 <div class="story-entry-title">{$ story.fields.title $}</div>
                 <div class="profile-story-entry-stats">
                     <div class="profile-story-entry-likes" data-toggle="tooltip" title="likes">
-                        <i class="fa fa-heart fa-2x" aria-hidden="true" ng-show="story.fields.isLiked"
+                        <i class="fa fa-heart fa-2x" aria-hidden="true" ng-if="story.fields.isLiked"
                            ng-click="pc.unlike(story)"></i>
                         <i class="fa fa-heart-o fa-2x" aria-hidden="true" ng-hide="story.fields.isLiked"
                            ng-click="pc.like(story)"></i>
@@ -193,14 +222,14 @@
                     Reading!</a>
             </div>
             <div class="story-entry-contributors bookmark-icon" data-toggle="tooltip" title="readlater">
-                <i class="fa fa-bookmark fa-2x" aria-hidden="true" ng-show="story.fields.isBookmarked"
+                <i class="fa fa-bookmark fa-2x" aria-hidden="true" ng-if="story.fields.isBookmarked"
                    ng-click="pc.unbookmark(story)"></i>
                 <i class="fa fa-bookmark-o fa-2x" aria-hidden="true" ng-hide="story.fields.isBookmarked"
                    ng-click="pc.bookmark(story)"></i>
             </div>
         </div>
     </div>
-    <div class="profile-liked-stories" ng-show="pc.isSet(3)">
+    <div class="profile-liked-stories" ng-if="pc.isSet(3) && pc.userContStories.length !== 0">
         <h1>Contributions</h1>
         <div class="profile-story-entry row" ng-repeat="story in pc.userContStories">
             <div class="col-xs-1">
@@ -215,7 +244,7 @@
                 <div class="story-entry-title">{$ story.fields.title $}</div>
                 <div class="profile-story-entry-stats">
                     <div class="profile-story-entry-likes" data-toggle="tooltip" title="likes">
-                        <i class="fa fa-heart fa-2x" aria-hidden="true" ng-show="story.fields.isLiked"
+                        <i class="fa fa-heart fa-2x" aria-hidden="true" ng-if="story.fields.isLiked"
                            ng-click="pc.unlike(story)"></i>
                         <i class="fa fa-heart-o fa-2x" aria-hidden="true" ng-hide="story.fields.isLiked"
                            ng-click="pc.like(story)"></i>
@@ -236,7 +265,7 @@
                     Reading!</a>
             </div>
             <div class="story-entry-contributors bookmark-icon" data-toggle="tooltip" title="readlater">
-                <i class="fa fa-bookmark fa-2x" aria-hidden="true" ng-show="story.fields.isBookmarked"
+                <i class="fa fa-bookmark fa-2x" aria-hidden="true" ng-if="story.fields.isBookmarked"
                    ng-click="pc.unbookmark(story)"></i>
                 <i class="fa fa-bookmark-o fa-2x" aria-hidden="true" ng-hide="story.fields.isBookmarked"
                    ng-click="pc.bookmark(story)"></i>

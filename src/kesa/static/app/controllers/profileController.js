@@ -6,7 +6,7 @@
 
             var profile = this;
             profile.url = location.pathname;
-            profile.profilePicText = "Edit Profile Picture";
+            profile.profilePicText = "Change Profile Picture";
             profile.uploadPic = false;
             profile.stories = [];
             profile.haveMore = true;
@@ -17,6 +17,8 @@
             profile.contName = "";
             profile.fanName = "";
             profile.graphAnalytics = {};
+            profile.graphAnalytics1 = {};
+            profile.graphAnalytics2 = {};
             profile.storyAnalytics = {};
 
             profile.totalReads = 0;
@@ -25,7 +27,11 @@
             profile.userContStories = [];
             profile.likedList = [];
 
+            profile.graphTab = 0;
+
             profile.firstTime = true;
+            profile.firstTime1 = true;
+            profile.firstTime2 = true;
             profile.currentTab = 0;
 
             var root, currentNode, tree, diagonal, svg;
@@ -33,18 +39,78 @@
             var i = 0,
                 duration = 750;
 
-            profile.showDropZone = function(){
-                if(profile.uploadPic == false){
+
+            profile.showDropZone = function () {
+                if (profile.uploadPic == false) {
                     profile.uploadPic = true;
                 }
-                else{
+                else {
                     profile.uploadPic = false;
+                }
+            };
+
+            profile.setGraph = function (i) {
+                profile.graphTab = i;
+                if (i == 0) {
+                    if (profile.firstTime) {
+                        storyService.getGraphAnalytics(profile.uname, 30, function (err, data) {
+                            if (err) {
+                                console.log("error in getting data")
+                            }
+                            else {
+                                //profile.graphAnalytics = data;
+                                profile.graphAnalytics = data;
+                                $('#barGraph').html('');
+                                profile.initBarGraph('#barGraph');
+                            }
+                        });
+                        profile.firstTime = false;
+                    } else {
+                        $('#barGraph').html('');
+                        profile.initBarGraph('#barGraph');
+                    }
+                } else if (i == 1) {
+                    if (profile.firstTime1) {
+                        storyService.getGraphAnalytics(profile.uname, 60, function (err, data) {
+                            if (err) {
+                                console.log("error in getting data")
+                            }
+                            else {
+                                console.log(data);
+                                //profile.graphAnalytics1 = data;
+                                profile.graphAnalytics = data;
+                                $('#barGraph').html('');
+                                profile.initBarGraph('#barGraph');
+                            }
+                        });
+                        profile.firstTime1 = false;
+                    } else {
+                        $('#barGraph').html('');
+                        profile.initBarGraph('#barGraph');
+                    }
+                } else if (i == 2 && profile.firstTime2) {
+                    if (profile.firstTime2) {
+                        storyService.getGraphAnalytics(profile.uname, 90, function (err, data) {
+                            if (err) {
+                                console.log("error in getting data")
+                            }
+                            else {
+                                profile.graphAnalytics = data;
+                                $('#barGraph').html('');
+                                profile.initBarGraph('#barGraph');
+                            }
+                        });
+                        profile.firstTime2 = false;
+                    } else {
+                        $('#barGraph').html('');
+                        profile.initBarGraph('#barGraph');
+                    }
                 }
             };
 
             profile.set = function (i) {
                 profile.currentTab = i;
-                if (i == 1 && profile.firstTime) {
+                if (i == 1 && profile.firstTime && !profile.isEmpty()) {
                     storyService.getGraphAnalytics(profile.uname, 30, function (err, data) {
                         if (err) {
                             console.log("error in getting data")
@@ -85,11 +151,19 @@
                 }
             };
 
+            profile.isSetGraph = function (i) {
+                if (profile.graphTab == i) {
+                    return true;
+                } else {
+                    return false;
+                }
+            };
+
             var username = profile.url.substring(1, profile.url.indexOf("profile") - 1);
             profile.uname = username;
 
-            storyService.getUserByRequest(function(err,data){
-                if(err){
+            storyService.getUserByRequest(function (err, data) {
+                if (err) {
                     console.log(err);
                 } else {
                     // console.log(profile.me);
@@ -110,6 +184,7 @@
                         }
                         else {
                             var i = 0;
+                                console.log(data);
                             for (i = 0; i < data.length; i++) {
                                 profile.stories.push(data[i]);
 
@@ -501,6 +576,17 @@
                 });
             };
 
+            profile.changeToWriting = function(story){
+                console.log(story);
+                storyService.setIncomplete(story, function(err,data,story){
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        location.pathname = "/"+story.pk+"/story";
+                    }
+                });
+            };
+
             profile.initBarGraph = function (elemName) {
 
                 var bardata = [];
@@ -828,7 +914,7 @@
             $scope.revealTree = function (sid) {
                 $('.modal').modal('show');
                 $('.modal').on('hidden.bs.modal', function (e) {
-                   $('.modal-content').html('');
+                    $('.modal-content').html('');
                 });
                 storyService.getStory(sid, function (err, data) {
                     if (err) {
@@ -840,6 +926,14 @@
                         profile.initTree(treeData, ".modal-content");
                     }
                 });
+            };
+
+            profile.isEmpty = function() {
+                if (profile.stories.length === 0) {
+                    return true;
+                } else {
+                    return false;
+                }
             };
 
         })
