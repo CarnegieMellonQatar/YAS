@@ -1,7 +1,6 @@
 {% extends "api/index.html" %}
 
 {% block content %}
-{% if request.user.is_authenticated %}
 <div class="stories-section" ng-controller="storyController as storyController" ng-cloak>
     <div class="switch-buttons">
         <a ng-class="{chosen: storyController.enabled}" class="story-active-switch-button"
@@ -109,7 +108,6 @@
                 <i class="fa fa-bookmark-o fa-2x" aria-hidden="true" ng-hide="story.fields.isBookmarked"
                    ng-click="storyController.bookmark(story)"></i>
             </div>
-            <!--<h2>Status: {$ storyController.isComplete(story.fields.is_complete) $}</h2>-->
         </div>
         <button class="story-show-more center-button"
                 ng-show="storyController.haveMoreIncomplete && !storyController.enabled"
@@ -117,15 +115,4 @@
         </button>
     </div>
 </div>
-{% else %}
-<br/>
-<br/>
-<br/>
-<h1> Stories</h1>
-<br/>
-<h2> Write stories for people with people</h2>
-<br/>
-<br/>
-<br/>
-{% endif %}
 {% endblock %}

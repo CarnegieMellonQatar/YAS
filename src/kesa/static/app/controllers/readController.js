@@ -4,7 +4,7 @@
     angular.module('storyTeller')
         .controller('readController', function (storyService, $scope) {
             var id = location.pathname.substring(1, location.pathname.indexOf("story") - 1);
-            console.log("Read controller initialized to the ID " + id);
+
             var ctrl = this;
 
             ctrl.readID = id;
@@ -37,7 +37,6 @@
                             console.log("error in getting data");
                         }
                     });
-                    console.log(ctrl.storyTree);
                     ctrl.loaded = true;
                 }
             });
@@ -70,7 +69,6 @@
                         });
 
                         ctrl.currentNodes.push(node.body);
-                        console.log(ctrl.currentNodes);
                     } else {
                         ctrl.currentChoices = null;
                     }
@@ -101,21 +99,16 @@
                 ctrl.updateCurrentChoicesr(node);
                 $scope.animating = true;
                 ctrl.currentNode = ctrl.currentNodes[0];
-                console.log(ctrl.currentNode);
 
                 ctrl.animatedIndex = 0;
 
                 ctrl.updateLastNode();
                 ctrl.currentChoicesIsEmpty();
 
-                //$(".story-node").last().after('<div class="story-node"></div>');
                 ctrl.currentAnimation = Math.floor((Math.random() * 1000000000000) + 1);
 
                 ctrl.injectCurrentNode(ctrl.currentNode, 50, ctrl.currentAnimation);
                 ctrl.loaded = true;
-                console.log(ctrl.currentChoices);
-                console.log($scope.lastNode);
-                console.log($scope.nochoices);
 
             };
 
@@ -150,7 +143,6 @@
             };
 
             $scope.$on("spacePressed", function (event, args) {
-                console.log($scope.animating);
                 var storyDiv = $('.story-center-container');
                 if ($scope.animating === true) {
                     // Skip the animation and load the choice buttons
@@ -161,7 +153,6 @@
                     storyDiv.append("<div class='story-node'></div>");
                 } else if ($scope.animating === false) {
                     if (!$scope.lastNode) {
-                        console.log("last node");
                         ctrl.animatedIndex++;
                         ctrl.currentNode = ctrl.currentNodes[ctrl.animatedIndex];
                         ctrl.updateLastNode();
