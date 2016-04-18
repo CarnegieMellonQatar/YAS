@@ -45,6 +45,7 @@
             var obj = {};
             obj.name = branch.name;
             obj.body = branch.body;
+            obj.branchid = branch.branchid;
             if (branch.children) {
                 obj.children = [];
                 branch.children.forEach(function (d) {
@@ -61,7 +62,7 @@
         };
 
         this.addRemoteBranchr = function (branch, newBranch, id) {
-            if (branch.id == id) {
+            if (branch.branchid === id) {
                 if (branch.children) {
                     branch.children.push(newBranch);
                 } else {
@@ -81,12 +82,11 @@
         };
 
         this.findContactNoder = function (branch, id) {
-            if (branch.id == id) {
+            if (branch.branchid === id) {
                 return {"some": true, "obj": branch};
             } else if (branch.children) {
                 var countFail = 0;
                 var objFound = {};
-
                 branch.children.forEach(function (d) {
                     var ret = srvc.findContactNoder(d, id);
                     if (ret.some === true) {
