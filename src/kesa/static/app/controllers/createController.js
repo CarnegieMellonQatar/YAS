@@ -28,14 +28,14 @@
 
             storyService.getStory(id, function (err, data) {
                 if (err) {
-                    console.log(err);
+                    console.log("error in getting data");
                 }
                 else {
                     treeData = [data];
 
                     storyService.setOpen(ctrl.createID, function (err, data) {
                         if (err) {
-                            console.log(err);
+                            console.log("error in getting data");
                         } else {
                             console.log(data);
                         }
@@ -122,7 +122,7 @@
                             var oldlength = contact.obj.children.length;
                             storyService.addToStory(ctrl.createID, oldlength, contact.obj.branchid, response, function (err, data, length, contact) {
                                 if (err) {
-                                    console.log(err);
+                                    console.log("error in getting data");
                                 } else {
                                     currentNode.children[length - 1].branchid = data["result"];
 
@@ -133,7 +133,7 @@
 
                                     storyService.addContribution(response.user, ctrl.createID, function (err, data) {
                                         if (err) {
-                                            console.log(err);
+                                            console.log("error in getting data");
                                         }
                                     });
                                 }
@@ -153,7 +153,7 @@
                         if (contact.some) {
                             storyService.editStory(ctrl.createID, contact.obj.branchid, contact.obj, response, function (err, data, response) {
                                 if (err) {
-                                    console.log(err);
+                                    console.log("error in getting data");
                                 } else {
                                     if (data["result"] === "true") {
                                         ctrl.update(contact.obj, false, false, 0, null);
@@ -162,7 +162,7 @@
                                         }
                                         storyService.addContribution(response.user, ctrl.createID, function (err, data) {
                                             if (err) {
-                                                console.log(err);
+                                                console.log("error in getting data");
                                             }
                                         });
                                     }
@@ -360,7 +360,7 @@
                         .text("x")
                         .on("click", ctrl.removeSide);
 
-                    if (editMode == true) {
+                    if (editMode === true) {
                         cont.append("textarea")
                             .classed("expanding", true)
                             .classed("title-edit", true)
@@ -428,7 +428,7 @@
                         var toSend = MiscService.createPacket(action, specialNode, source.id);
                         console.log("=============Sending Packet=============");
                         console.log(toSend);
-                        element.send(MiscService.stringify(toSend))
+                        element.send(MiscService.stringify(toSend));
                     });
                 }
             };
@@ -469,7 +469,7 @@
                 var oldlength = currentNode.children.length;
                 storyService.addToStory(ctrl.createID, oldlength, currentNode.branchid, null, function (err, data, length, contact) {
                     if (err) {
-                        console.log(err);
+                        console.log("error in getting data");
                     } else {
                         currentNode.children[length - 1].branchid = data["result"];
                     }
@@ -501,7 +501,7 @@
                 } else {
                     storyService.deleteBranch(ctrl.createID, currentNode.branchid, function (err, data) {
                         if (err) {
-                            console.log(err);
+                            console.log("error in getting data");
                         } else {
                             if (data["result"] === 'true') {
                                 ctrl.deleteBranchr(null, root, currentNode.id);
@@ -533,7 +533,7 @@
 
                 storyService.editStory(ctrl.createID, currentNode.branchid, currentNode, response, function (err, data, response) {
                     if (err) {
-                        console.log(err);
+                        console.log("error in getting data");
                     } else {
                         if (data["result"] === "true") {
                             ctrl.update(currentNode, true, true, 2, specialNode);
@@ -644,20 +644,20 @@
 
             };
 
-            this.Publish = function(){
-                storyService.setComplete(ctrl.createID,function(err,data){
-                    if(err){
-                        console.log(err);
+            this.Publish = function () {
+                storyService.setComplete(ctrl.createID, function (err, data) {
+                    if (err) {
+                        console.log("error in getting data");
                     } else {
                         ctrl.is_complete = true;
-                        location.pathname = "/"+ctrl.createID+"/story";
+                        location.pathname = "/" + ctrl.createID + "/story";
                     }
                 });
             };
 
             window.addEventListener("beforeunload", function (e) {
                 var toSend = null;
-                if(ctrl.is_complete){
+                if (ctrl.is_complete) {
                     toSend = MiscService.createPacket(6, null, null);
                 } else {
                     toSend = MiscService.createPacket(5, null, null);
@@ -671,12 +671,12 @@
 
                 storyService.setClosed(ctrl.createID, function (err, data) {
                     if (err) {
-                        console.log(err);
+                        console.log("error in getting data");
                     } else {
                         console.log(data);
                     }
                 });
             });
-        })
+        });
 })
 ();

@@ -26,12 +26,43 @@
             profile.firstTime = true;
             profile.currentTab = 0;
 
+            /************* CallBack Functions ***************/
+            profile.gI = function (err, data, stories) {
+                if (err) {
+                    console.log("error in getting data");
+                }
+                else {
+                    stories.fields.userInfo = JSON.parse(data['u'])[0];
+
+                    if (data['rl'] === 'true') {
+                        stories.fields.isBookmarked = true;
+                    } else {
+                        stories.fields.isBookmarked = false;
+                    }
+
+                    var liked = JSON.parse(data['l']);
+                    stories.fields.likes = liked.length;
+                    var isLiked = liked.reduce(
+                        function (pV, cV, cI, array) {
+                            if (pV) {
+                                return pV;
+                            } else {
+                                return (cV.fields.user === profile.me.pk);
+                            }
+                        }, false);
+                    stories.fields.isLiked = isLiked;
+
+                    stories.fields.contributors = JSON.parse(data['c']).length;
+                }
+            };
+            /**************************************************/
+
             profile.set = function (i) {
                 profile.currentTab = i;
                 if (i == 1 && profile.firstTime) {
                     storyService.getGraphAnalytics(profile.uname, 30, function (err, data) {
                         if (err) {
-                            console.log("error in getting data")
+                            console.log("error in getting data");
                         }
                         else {
                             profile.graphAnalytics = data;
@@ -41,7 +72,7 @@
 
                     storyService.getUserByID(profile.storyAnalytics.contributor, function (err, data) {
                         if (err) {
-                            console.log("error in getting data")
+                            console.log("error in getting data");
                         }
                         else {
                             profile.contName = data;
@@ -50,7 +81,7 @@
 
                     storyService.getUserByID(profile.storyAnalytics.fan, function (err, data) {
                         if (err) {
-                            console.log("error in getting data")
+                            console.log("error in getting data");
                         }
                         else {
                             profile.fanName = data;
@@ -72,8 +103,8 @@
             var username = profile.url.substring(1, profile.url.indexOf("profile") - 1);
             profile.uname = username;
 
-            storyService.getUserByRequest(function(err,data){
-                if(err){
+            storyService.getUserByRequest(function (err, data) {
+                if (err) {
                     console.log(err);
                 } else {
                     profile.me = data[0];
@@ -95,46 +126,9 @@
                             for (i = 0; i < data.length; i++) {
                                 profile.stories.push(data[i]);
 
-                                storyService.getContributors(data[i], function (err, data, stories) {
-                                    if (err) {
-                                        console.log(err);
-                                    }
-                                    else {
-                                        stories.fields.contributors = data.length;
-                                    }
-                                });
-
-                                storyService.getLikes(data[i], function (err, data, stories) {
-                                    if (err) {
-                                        console.log(err);
-                                    }
-                                    else {
-                                        stories.fields.likes = data.length;
-                                        var isLiked = data.reduce(
-                                            function (pV, cV, cI, array) {
-                                                if (pV) {
-                                                    return pV;
-                                                } else {
-                                                    return (cV.fields.user === profile.me.pk);
-                                                }
-                                            }, false);
-                                        stories.fields.isLiked = isLiked;
-                                    }
-                                });
-
-                                storyService.getReadLaterStory(data[i], function (err, data, stories) {
-                                    if (err) {
-                                        console.log(err);
-                                    }
-                                    else {
-                                        if (data['result'] === 'true') {
-                                            stories.fields.isBookmarked = true;
-                                        } else {
-                                            stories.fields.isBookmarked = false;
-                                        }
-                                    }
-                                });
+                                storyService.getInfo(data[i],profile.gI);
                             }
+                            console.log(data);
                         }
                     });
 
@@ -160,7 +154,7 @@
 
             storyService.getStoryAnalytics(profile.uname, function (err, data) {
                 if (err) {
-                    console.log("error in getting data")
+                    console.log("error in getting data");
                 }
                 else {
                     profile.storyAnalytics = data;
@@ -171,7 +165,7 @@
 
             storyService.getTotalLikes(profile.uname, function (err, data) {
                 if (err) {
-                    console.log("error in getting data")
+                    console.log("error in getting data");
                 }
                 else {
                     profile.userLikes = data;
@@ -180,7 +174,7 @@
 
             storyService.getTotalContributors(profile.uname, function (err, data) {
                 if (err) {
-                    console.log("error in getting data")
+                    console.log("error in getting data");
                 }
                 else {
                     profile.userCount = data;
@@ -190,109 +184,33 @@
 
             storyService.getTotalContributions(profile.uname, function (err, data) {
                 if (err) {
-                    console.log("error in getting data")
+                    console.log("error in getting data");
                 }
                 else {
                     profile.userContStories = data;
                     var i = 0;
                     for (i = 0; i < data.length; i++) {
-                        storyService.getContributors(data[i], function (err, data, stories) {
-                            if (err) {
-                                console.log(err);
-                            }
-                            else {
-                                stories.fields.contributors = data.length;
-                            }
-                        });
-
-                        storyService.getLikes(data[i], function (err, data, stories) {
-                            if (err) {
-                                console.log(err);
-                            }
-                            else {
-                                stories.fields.likes = data.length;
-                                var isLiked = data.reduce(
-                                    function (pV, cV, cI, array) {
-                                        if (pV) {
-                                            return pV;
-                                        } else {
-                                            return (cV.fields.user === profile.me.pk);
-                                        }
-                                    }, false);
-                                stories.fields.isLiked = isLiked;
-                            }
-                        });
-
-                        storyService.getReadLaterStory(data[i], function (err, data, stories) {
-                            if (err) {
-                                console.log(err);
-                            }
-                            else {
-                                if (data['result'] === 'true') {
-                                    stories.fields.isBookmarked = true;
-                                } else {
-                                    stories.fields.isBookmarked = false;
-                                }
-                            }
-                        });
+                        storyService.getInfo(data[i],profile.gI);
                     }
                 }
             });
 
             storyService.getLikedStories(profile.uname, function (err, data) {
                 if (err) {
-                    console.log("error in getting data")
+                    console.log("error in getting data");
                 }
                 else {
                     profile.likedList = data;
                     var i = 0;
                     for (i = 0; i < data.length; i++) {
-                        storyService.getContributors(data[i], function (err, data, stories) {
-                            if (err) {
-                                console.log(err);
-                            }
-                            else {
-                                stories.fields.contributors = data.length;
-                            }
-                        });
-
-                        storyService.getLikes(data[i], function (err, data, stories) {
-                            if (err) {
-                                console.log(err);
-                            }
-                            else {
-                                stories.fields.likes = data.length;
-                                var isLiked = data.reduce(
-                                    function (pV, cV, cI, array) {
-                                        if (pV) {
-                                            return pV;
-                                        } else {
-                                            return (cV.fields.user === profile.me.pk);
-                                        }
-                                    }, false);
-                                stories.fields.isLiked = isLiked;
-                            }
-                        });
-
-                        storyService.getReadLaterStory(data[i], function (err, data, stories) {
-                            if (err) {
-                                console.log(err);
-                            }
-                            else {
-                                if (data['result'] === 'true') {
-                                    stories.fields.isBookmarked = true;
-                                } else {
-                                    stories.fields.isBookmarked = false;
-                                }
-                            }
-                        });
+                        storyService.getInfo(data[i],profile.gI);
                     }
                 }
             });
 
             storyService.getTotalReads(profile.uname, function (err, data) {
                 if (err) {
-                    console.log("error in getting data")
+                    console.log("error in getting data");
                 }
                 else {
                     profile.totalReads = data;
@@ -348,7 +266,7 @@
                 var last = profile.stories[profile.stories.length - 1];
                 storyService.getUserStories(profile.user.pk, last.pk, 10, function (err, data) {
                     if (err) {
-                        console.log(err);
+                        console.log("error in getting data");
                     }
                     else {
                         var i = 0;
@@ -360,45 +278,7 @@
                         for (i = 0; i < data.length; i++) {
                             profile.stories.push(data[i]);
 
-                            storyService.getContributors(data[i], function (err, data, stories) {
-                                if (err) {
-                                    console.log(err);
-                                }
-                                else {
-                                    stories.fields.contributors = data.length;
-                                }
-                            });
-
-                            storyService.getLikes(data[i], function (err, data, stories) {
-                                if (err) {
-                                    console.log(err);
-                                }
-                                else {
-                                    stories.fields.likes = data.length;
-                                    var isLiked = data.reduce(
-                                        function (pV, cV, cI, array) {
-                                            if (pV) {
-                                                return pV;
-                                            } else {
-                                                return (cV.fields.user === profile.me.pk);
-                                            }
-                                        }, false);
-                                    stories.fields.isLiked = isLiked;
-                                }
-                            });
-
-                            storyService.getReadLaterStory(data[i], function (err, data, stories) {
-                                if (err) {
-                                    console.log(err);
-                                }
-                                else {
-                                    if (data['result'] === 'true') {
-                                        stories.fields.isBookmarked = true;
-                                    } else {
-                                        stories.fields.isBookmarked = false;
-                                    }
-                                }
-                            });
+                            storyService.getInfo(data[i],profile.gI);
                         }
                     }
                 });
@@ -421,7 +301,7 @@
             profile.deleteStory = function (element) {
                 storyService.deleteStory(element.pk, function (err, data) {
                     if (err) {
-                        console.log(err)
+                        console.log("error in getting data");
                     } else {
                         if (data["result"] === "true") {
                             var index = profile.stories.indexOf(element);
@@ -434,7 +314,7 @@
             profile.bookmark = function (data) {
                 storyService.addToReadLater(profile.me.pk, data, function (err, data, cstory) {
                     if (err) {
-                        console.log(err);
+                        console.log("error in getting data");
                     } else {
                         if (data["result"] === "true") {
                             cstory.fields.isBookmarked = true;
@@ -446,7 +326,7 @@
             profile.unbookmark = function (data) {
                 storyService.removeFromReadLater(profile.me.pk, data, function (err, data, cstory) {
                     if (err) {
-                        console.log(err);
+                        console.log("error in getting data");
                     } else {
                         if (data["result"] === "true") {
                             cstory.fields.isBookmarked = false;
@@ -458,7 +338,7 @@
             profile.like = function (data) {
                 storyService.Like(profile.me.pk, data, function (err, data, cstory) {
                     if (err) {
-                        console.log(err);
+                        console.log("error in getting data");
                     } else {
                         if (data["result"] === "true") {
                             cstory.fields.isLiked = true;
@@ -471,7 +351,7 @@
             profile.unlike = function (data) {
                 storyService.Unlike(profile.me.pk, data, function (err, data, cstory) {
                     if (err) {
-                        console.log(err);
+                        console.log("error in getting data");
                     } else {
                         if (data["result"] === "true") {
                             cstory.fields.isLiked = false;
@@ -558,7 +438,7 @@
 
                         setTimeout(function () {
                             tooltip.transition()
-                                .style('opacity', 0)
+                                .style('opacity', 0);
                         }, 3000);
 
                         tooltip.transition()
@@ -637,5 +517,6 @@
 
             };
 
-        })
+
+        });
 })();

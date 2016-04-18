@@ -25,7 +25,7 @@
 
             storyService.getUserByRequest(function (err, data) {
                 if (err) {
-                    console.log(err);
+                    console.log("error in getting data");
                 } else {
                     ctrl.profile = data[0];
                 }
@@ -276,7 +276,7 @@
                         .text("x")
                         .on("click", ctrl.removeSide);
 
-                    if (editMode == true) {
+                    if (editMode === true) {
                         cont.append("textarea")
                             .classed("expanding", true)
                             .classed("title-edit", true)
@@ -579,5 +579,5 @@
                 }
                 peer.disconnect();
             });
-        })
+        });
 })();

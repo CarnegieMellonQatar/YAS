@@ -18,7 +18,7 @@
         };
 
         this.stringify = function (obj, replacer, spaces, cycleReplacer) {
-            return JSON.stringify(obj, srvc.serializer(replacer, cycleReplacer), spaces)
+            return JSON.stringify(obj, srvc.serializer(replacer, cycleReplacer), spaces);
         };
 
         this.serializer = function (replacer, cycleReplacer) {
@@ -26,7 +26,7 @@
 
             if (cycleReplacer == null) cycleReplacer = function (key, value) {
                 if (stack[0] === value) return "[Circular ~]";
-                return "[Circular ~." + keys.slice(0, stack.indexOf(value)).join(".") + "]"
+                return "[Circular ~." + keys.slice(0, stack.indexOf(value)).join(".") + "]";
             };
 
             return function (key, value) {
@@ -34,12 +34,12 @@
                     var thisPos = stack.indexOf(this);
                     ~thisPos ? stack.splice(thisPos + 1) : stack.push(this);
                     ~thisPos ? keys.splice(thisPos, Infinity, key) : keys.push(key);
-                    if (~stack.indexOf(value)) value = cycleReplacer.call(this, key, value)
+                    if (~stack.indexOf(value)) value = cycleReplacer.call(this, key, value);
                 }
                 else stack.push(value);
 
-                return replacer == null ? value : replacer.call(this, key, value)
-            }
+                return replacer == null ? value : replacer.call(this, key, value);
+            };
         };
 
         this.toJSONr = function (branch) {

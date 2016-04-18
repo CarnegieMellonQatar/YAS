@@ -46,7 +46,7 @@
         <h1>Stories</h1>
         <div class="profile-story-entry row" ng-repeat="story in pc.stories">
             <div class="col-xs-1">
-                <a href="/{$ story.fields.user $}/profile">
+                <a href="/{$ story.fields.userInfo.fields.username $}/profile">
                     <img class="story-profile-pic img-circle" ng-src="/api/img/{$ story.fields.user $}">
                 </a>
             </div>
@@ -94,7 +94,7 @@
         <h1>Liked stories</h1>
         <div class="profile-story-entry row" ng-repeat="story in pc.likedList">
             <div class="col-xs-1">
-                <a href="/{$ story.fields.user $}/profile">
+                <a href="/{$ story.fields.userInfo.fields.username $}/profile">
                     <img class="story-profile-pic img-circle" ng-src="/api/img/{$ story.fields.user $}">
                 </a>
             </div>
@@ -137,7 +137,7 @@
         <h1>Contributions</h1>
         <div class="profile-story-entry row" ng-repeat="story in pc.userContStories">
             <div class="col-xs-1">
-                <a href="/{$ story.fields.user $}/profile">
+                <a href="/{$ story.fields.userInfo.fields.username $}/profile">
                     <img class="story-profile-pic img-circle" ng-src="/api/img/{$ story.fields.user $}">
                 </a>
             </div>
