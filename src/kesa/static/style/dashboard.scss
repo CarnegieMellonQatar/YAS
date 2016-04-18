@@ -103,6 +103,7 @@
   background: transparent;
   width: 80%;
   overflow-y: scroll;
+  position: relative;
 }
 
 .profile-liked-stories {
@@ -180,4 +181,11 @@
   color: $primary-dark-color;
   font-weight: 200;
   font-size: $font-size-med;
+}
+
+.analytics-tree {
+  position: absolute;
+  bottom: 5px;
+  cursor: pointer;
+  right: 13%;
 }

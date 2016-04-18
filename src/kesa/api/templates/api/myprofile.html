@@ -48,29 +48,6 @@
     </div>
     <div class="profile-story-list" ng-show="pc.isSet(0) && pc.stories !== []">
         <h1>Your Stories</h1>
-        <!--<div class="profile-story-entry" ng-repeat="story in pc.stories">-->
-        <!--<a href="/{$ story.fields.userInfo.fields.username $}/profile">-->
-        <!--<div class="profile-story-entry-author"> {$ story.fields.userInfo.fields.username $}</div>-->
-        <!--</a>-->
-        <!--<a href="/{$ story.pk $}/story">-->
-        <!--<div class="story-entry-title">{$ story.fields.title $}</div>-->
-        <!--</a>-->
-        <!--<div class="profile-story-entry-stats">-->
-        <!--<div class="profile-story-entry-likes" data-toggle="tooltip" title="likes">-->
-        <!--<i class="fa fa-heart fa-2x" aria-hidden="true"></i>-->
-        <!--<span class="faint-sub">{$ story.fields.likes $}</span>-->
-        <!--</div>-->
-        <!--<div class="profile-story-entry-contributors" data-toggle="tooltip" title="contributors">-->
-        <!--<i class="fa fa-user fa-2x" aria-hidden="true"></i>-->
-        <!--<span class="faint-sub">{$ story.fields.contributors $}</span>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--<button class="profile-delete-story-button" ng-click="pc.deleteStory(story)">Delete</button>-->
-        <!--<div class="col-xs-5" ng-if="!storyController.isComplete(story.fields.is_complete)">-->
-        <!--<a class="story-join" href="/{$ story.pk $}/story">Join the writing session!</a>-->
-        <!--<a class="start-reading-button" href="/{$ story.pk $}/story">Start Reading!</a>-->
-        <!--</div>-->
-        <!--</div>-->
         <div class="profile-story-entry row" ng-repeat="story in pc.stories">
             <div class="col-xs-1">
                 <a href="/{$ story.fields.user $}/profile">
@@ -112,6 +89,9 @@
                    ng-click="pc.unbookmark(story)"></i>
                 <i class="fa fa-bookmark-o fa-2x" aria-hidden="true" ng-hide="story.fields.isBookmarked"
                    ng-click="pc.bookmark(story)"></i>
+            </div>
+            <div class="analytics-tree" ng-click="">
+                show analytics for story <span> &#xffec; </span>
             </div>
         </div>
     </div>
