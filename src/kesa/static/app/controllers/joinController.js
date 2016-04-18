@@ -60,7 +60,7 @@
                         if (contact.some) {
                             ctrl.update(contact.obj, false, false, 0, null);
                         } else {
-                            console.error("should not be here");
+                            console.log("should not be here");
                         }
                         break;
                     case 1:
@@ -77,7 +77,7 @@
                                 ctrl.update(contact.obj.parent, false, false, 1, null);
                             }
                         } else {
-                            console.error("should not be here");
+                            console.log("should not be here");
                         }
                         break;
                     case 2:
@@ -88,8 +88,9 @@
 
                         if (contact.some) {
                             ctrl.update(contact.obj, false, false, 0, null);
+                            console.log(root);
                         } else {
-                            console.error("should not be here");
+                            console.log("should not be here");
                         }
                         break;
                     case 3:
@@ -98,6 +99,12 @@
                         $scope.title = response.title;
                         $scope.$apply();
                         ctrl.initTree(treeData);
+                        conn.forEach(function (element) {
+                            var toSend = MiscService.createPacket(3, null, null);
+                            toSend.myid = peer.id;
+                            toSend.user = ctrl.profile.pk;
+                            element.send(MiscService.stringify(toSend));
+                        });
                         break;
                     case 4:
                         currentNode.branchid = response.branchid;
@@ -132,6 +139,18 @@
                     conn[index].on('data', function (data) {
                         var response = JSON.parse(data);
                         ctrl.applyChanges(response);
+                    });
+
+                    conn[index].on('disconnected', function (data){
+                        console.log("random");
+                    });
+
+                    conn[index].on('destroyed', function (data){
+                        console.log("random1");
+                    });
+
+                    conn[index].on('close', function (data){
+                        console.log("random2");
                     });
                 });
             };
@@ -317,6 +336,9 @@
 
                 if (sendToPeers) {
                     conn.forEach(function (element) {
+                        console.log(specialNode);
+                        console.log(root);
+                        console.log(source.id);
                         var toSend = MiscService.createPacket(action, specialNode, source.id);
                         toSend.myid = peer.id;
                         toSend.user = ctrl.profile.pk;

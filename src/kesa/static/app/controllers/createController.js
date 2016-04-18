@@ -105,11 +105,13 @@
                             "name": response.name,
                             "body": response.body
                         };
-
+                        console.log(response.parentid);
                         MiscService.addRemoteBranchr(root, newBranch, response.parentid);
 
                         var contact = MiscService.findContactNoder(root, response.parentid);
 
+                        console.log(contact);
+                        console.log(root);
                         if (contact.some) {
                             ctrl.update(contact.obj, false, false);
 
@@ -118,7 +120,7 @@
                                 if (err) {
                                     console.log("error in getting data");
                                 } else {
-                                    currentNode.children[length - 1].branchid = data["result"];
+                                    currentNode.children[currentNode.children.length - 1].branchid = data["result"];
 
                                     var toSend = MiscService.createPacket(4, null, data["result"]);
                                     toSend.myid = peer.id;
@@ -132,9 +134,8 @@
                                     });
                                 }
                             });
-
                         } else {
-                            console.error("should not be here");
+                            console.log("should not be here");
                         }
 
                         break;
@@ -163,7 +164,15 @@
                                 }
                             });
                         } else {
-                            console.error("should not be here");
+                            console.log("should not be here");
+                        }
+                        break;
+                    case 3:
+                        var arr = conn.filter(function (element) {
+                            return (element.peer === response.myid);
+                        });
+                        if (arr.length === 1) {
+                            arr[0].gotData = true;
                         }
                         break;
                     case 5:
@@ -190,6 +199,7 @@
 
                 peer.on('connection', function (connec) {
                     conn.push(connec);
+                    connec.gotData = false;
                     index = index + 1;
 
                     var initJSON = {};
@@ -201,23 +211,33 @@
                     var currentIndex = index;
                     conn[currentIndex].on('data', function (data) {
                         var response = JSON.parse(data);
-                        response.peer = conn[currentIndex];
+                        conn.filter(function (element) {
+                            return element.peer === response.myid;
+                        });
+                        var tempindex = conn.indexOf(conn[0]);
+                        response.peer = conn[tempindex];
                         ctrl.applyChanges(response);
 
                         // Pass on the information to all other peers
                         conn.forEach(function (element) {
-                            if (element.peer !== conn[currentIndex].peer) {
+                            if (element.peer !== response.myid) {
                                 element.send(data);
                             }
                         });
                     });
 
 
-                    // Send the newly connected peer the stringified JSON root
-                    setTimeout(function () {
-                        conn[index].send(MiscService.stringify(initJSON));
+                    setInterval(function () {
+                        conn.forEach(function (element) {
+                            if (!element.gotData) {
+                                element.send(MiscService.stringify(initJSON));
+                                console.log("Send to " + element.peer);
+                                console.log(element);
+                            }
+                        });
                     }, 2000);
                 });
+
             };
 
             this.update = function (source, sendToPeers, changeCurrentNode, action, specialNode) {
@@ -457,7 +477,7 @@
                     if (err) {
                         console.log("error in getting data");
                     } else {
-                        currentNode.children[length - 1].branchid = data["result"];
+                        currentNode.children[currentNode.children.length - 1].branchid = data["result"];
                     }
                 });
             };
@@ -517,7 +537,7 @@
                 editMode = false;
 
 
-                storyService.editStory(ctrl.createID, currentNode.branchid, currentNode, response, function (err, data, response) {
+                storyService.editStory(ctrl.createID, currentNode.branchid, currentNode, null, function (err, data, response) {
                     if (err) {
                         console.log("error in getting data");
                     } else {
