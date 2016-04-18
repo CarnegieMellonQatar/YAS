@@ -63,7 +63,7 @@
         <h1>Your Stories</h1>
         <div class="profile-story-entry row" ng-repeat="story in pc.stories">
             <div class="col-xs-1">
-                <a href="/{$ story.fields.user $}/profile">
+                <a href="/{$ story.fields.userInfo.fields.username $}/profile">
                     <img class="story-profile-pic img-circle" ng-src="/api/img/{$ story.fields.user $}">
                 </a>
             </div>
@@ -147,12 +147,12 @@
                 <h2 class="stat-header">Top Contributor</h2>
                 <div class="row">
                     <div class="col-xs-3">
-                        <a href="/{$ story.fields.user $}/profile">
+                        <a href="/{$ pc.contName $}/profile">
                             <img class="mini-profile-pic img-circle"
                                  ng-src="/api/img/{$pc.storyAnalytics.contributor$}">
                         </a>
                     </div>
-                    <a href="/{$ pc.storyAnalytics.contributor $}/profile">
+                    <a href="/{$ pc.contName $}/profile">
                         <div class="col-xs-7 mini-profile-title">
                             {$ pc.contName $}
                         </div>
@@ -167,12 +167,12 @@
                 <h2 class="stat-header">Top fan</h2>
                 <div class="row">
                     <div class="col-xs-3">
-                        <a href="/{$ story.fields.user $}/profile">
+                        <a href="/{$ pc.fanName $}/profile">
                             <img class="mini-profile-pic img-circle"
-                                 ng-src="/api/img/{$pc.storyAnalytics.contributor$}">
+                                 ng-src="/api/img/{$ pc.storyAnalytics.fan $}">
                         </a>
                     </div>
-                    <a href="/{$ pc.storyAnalytics.fan $}/profile">
+                    <a href="/{$ pc.fanName $}/profile">
                         <div class="col-xs-7 mini-profile-title">
                             {$ pc.fanName $}
                         </div>
@@ -190,7 +190,7 @@
         <h1>Liked stories</h1>
         <div class="profile-story-entry row" ng-repeat="story in pc.likedList">
             <div class="col-xs-1">
-                <a href="/{$ story.fields.user $}/profile">
+                <a href="/{$ story.fields.userInfo.fields.username $}/profile">
                     <img class="story-profile-pic img-circle" ng-src="/api/img/{$ story.fields.user $}">
                 </a>
             </div>
@@ -233,7 +233,7 @@
         <h1>Contributions</h1>
         <div class="profile-story-entry row" ng-repeat="story in pc.userContStories">
             <div class="col-xs-1">
-                <a href="/{$ story.fields.user $}/profile">
+                <a href="/{$ story.fields.userInfo.fields.username $}/profile">
                     <img class="story-profile-pic img-circle" ng-src="/api/img/{$ story.fields.user $}">
                 </a>
             </div>

@@ -5,7 +5,6 @@
         .controller('createController', function (MiscService, $location, storyService) {
             var id = location.pathname.substring(1, location.pathname.indexOf("story") - 1);
 
-            console.log("Create controller initialized to the ID " + id);
             var ctrl = this;
 
             ctrl.createID = id;
@@ -28,16 +27,14 @@
 
             storyService.getStory(id, function (err, data) {
                 if (err) {
-                    console.log(err);
+                    console.log("error in getting data");
                 }
                 else {
                     treeData = [data];
 
                     storyService.setOpen(ctrl.createID, function (err, data) {
                         if (err) {
-                            console.log(err);
-                        } else {
-                            console.log(data);
+                            console.log("error in getting data");
                         }
                     });
 
@@ -100,9 +97,6 @@
             });
 
             this.applyChanges = function (response) {
-                //ctrl.update(root, false);
-                console.log("=============Received Packet=============");
-                console.log(response);
                 switch (response.action) {
                     case 0:
                         // Add a branch
@@ -111,20 +105,22 @@
                             "name": response.name,
                             "body": response.body
                         };
-
+                        console.log(response.parentid);
                         MiscService.addRemoteBranchr(root, newBranch, response.parentid);
 
                         var contact = MiscService.findContactNoder(root, response.parentid);
 
+                        console.log(contact);
+                        console.log(root);
                         if (contact.some) {
                             ctrl.update(contact.obj, false, false);
 
                             var oldlength = contact.obj.children.length;
                             storyService.addToStory(ctrl.createID, oldlength, contact.obj.branchid, response, function (err, data, length, contact) {
                                 if (err) {
-                                    console.log(err);
+                                    console.log("error in getting data");
                                 } else {
-                                    currentNode.children[length - 1].branchid = data["result"];
+                                    currentNode.children[currentNode.children.length - 1].branchid = data["result"];
 
                                     var toSend = MiscService.createPacket(4, null, data["result"]);
                                     toSend.myid = peer.id;
@@ -133,14 +129,13 @@
 
                                     storyService.addContribution(response.user, ctrl.createID, function (err, data) {
                                         if (err) {
-                                            console.log(err);
+                                            console.log("error in getting data");
                                         }
                                     });
                                 }
                             });
-
                         } else {
-                            console.error("should not be here");
+                            console.log("should not be here");
                         }
 
                         break;
@@ -153,7 +148,7 @@
                         if (contact.some) {
                             storyService.editStory(ctrl.createID, contact.obj.branchid, contact.obj, response, function (err, data, response) {
                                 if (err) {
-                                    console.log(err);
+                                    console.log("error in getting data");
                                 } else {
                                     if (data["result"] === "true") {
                                         ctrl.update(contact.obj, false, false, 0, null);
@@ -162,14 +157,22 @@
                                         }
                                         storyService.addContribution(response.user, ctrl.createID, function (err, data) {
                                             if (err) {
-                                                console.log(err);
+                                                console.log("error in getting data");
                                             }
                                         });
                                     }
                                 }
                             });
                         } else {
-                            console.error("should not be here");
+                            console.log("should not be here");
+                        }
+                        break;
+                    case 3:
+                        var arr = conn.filter(function (element) {
+                            return (element.peer === response.myid);
+                        });
+                        if (arr.length === 1) {
+                            arr[0].gotData = true;
                         }
                         break;
                     case 5:
@@ -196,6 +199,7 @@
 
                 peer.on('connection', function (connec) {
                     conn.push(connec);
+                    connec.gotData = false;
                     index = index + 1;
 
                     var initJSON = {};
@@ -207,30 +211,39 @@
                     var currentIndex = index;
                     conn[currentIndex].on('data', function (data) {
                         var response = JSON.parse(data);
-                        response.peer = conn[currentIndex];
+                        conn.filter(function (element) {
+                            return element.peer === response.myid;
+                        });
+                        var tempindex = conn.indexOf(conn[0]);
+                        response.peer = conn[tempindex];
                         ctrl.applyChanges(response);
 
                         // Pass on the information to all other peers
                         conn.forEach(function (element) {
-                            if (element.peer !== conn[currentIndex].peer) {
+                            if (element.peer !== response.myid) {
                                 element.send(data);
                             }
                         });
                     });
 
 
-                    // Send the newly connected peer the stringified JSON root
-                    setTimeout(function () {
-                        conn[index].send(MiscService.stringify(initJSON));
+                    setInterval(function () {
+                        conn.forEach(function (element) {
+                            if (!element.gotData) {
+                                element.send(MiscService.stringify(initJSON));
+                                console.log("Send to " + element.peer);
+                                console.log(element);
+                            }
+                        });
                     }, 2000);
                 });
+
             };
 
             this.update = function (source, sendToPeers, changeCurrentNode, action, specialNode) {
 
                 var cont = d3.select(".story-container");
 
-                //console.log(closed);
                 if (closed) {
                     cont.classed("col-xs-4", true)
                         .classed("animated", true)
@@ -242,9 +255,6 @@
                 // Compute the new tree layout.
                 var nodes = tree.nodes(root),
                     links = tree.links(nodes);
-
-                //console.log(nodes);
-                //console.log(links);
 
                 // Normalize for fixed-depth.
                 nodes.forEach(function (d) {
@@ -360,7 +370,7 @@
                         .text("x")
                         .on("click", ctrl.removeSide);
 
-                    if (editMode == true) {
+                    if (editMode === true) {
                         cont.append("textarea")
                             .classed("expanding", true)
                             .classed("title-edit", true)
@@ -419,16 +429,13 @@
 
 
                     currentNode = source;
-                    //console.log(source);
                     closed = false;
                 }
 
                 if (sendToPeers) {
                     conn.forEach(function (element) {
                         var toSend = MiscService.createPacket(action, specialNode, source.id);
-                        console.log("=============Sending Packet=============");
-                        console.log(toSend);
-                        element.send(MiscService.stringify(toSend))
+                        element.send(MiscService.stringify(toSend));
                     });
                 }
             };
@@ -459,7 +466,6 @@
                         "name": "Empty Branch",
                         "body": "Add something here!"
                     };
-                    //console.log(obj);
                     currentNode.children = [];
                     currentNode.children.push(obj);
                 }
@@ -469,9 +475,9 @@
                 var oldlength = currentNode.children.length;
                 storyService.addToStory(ctrl.createID, oldlength, currentNode.branchid, null, function (err, data, length, contact) {
                     if (err) {
-                        console.log(err);
+                        console.log("error in getting data");
                     } else {
-                        currentNode.children[length - 1].branchid = data["result"];
+                        currentNode.children[currentNode.children.length - 1].branchid = data["result"];
                     }
                 });
             };
@@ -501,7 +507,7 @@
                 } else {
                     storyService.deleteBranch(ctrl.createID, currentNode.branchid, function (err, data) {
                         if (err) {
-                            console.log(err);
+                            console.log("error in getting data");
                         } else {
                             if (data["result"] === 'true') {
                                 ctrl.deleteBranchr(null, root, currentNode.id);
@@ -531,9 +537,9 @@
                 editMode = false;
 
 
-                storyService.editStory(ctrl.createID, currentNode.branchid, currentNode, response, function (err, data, response) {
+                storyService.editStory(ctrl.createID, currentNode.branchid, currentNode, null, function (err, data, response) {
                     if (err) {
-                        console.log(err);
+                        console.log("error in getting data");
                     } else {
                         if (data["result"] === "true") {
                             ctrl.update(currentNode, true, true, 2, specialNode);
@@ -644,20 +650,20 @@
 
             };
 
-            this.Publish = function(){
-                storyService.setComplete(ctrl.createID,function(err,data){
-                    if(err){
-                        console.log(err);
+            this.Publish = function () {
+                storyService.setComplete(ctrl.createID, function (err, data) {
+                    if (err) {
+                        console.log("error in getting data");
                     } else {
                         ctrl.is_complete = true;
-                        location.pathname = "/"+ctrl.createID+"/story";
+                        location.pathname = "/" + ctrl.createID + "/story";
                     }
                 });
             };
 
             window.addEventListener("beforeunload", function (e) {
                 var toSend = null;
-                if(ctrl.is_complete){
+                if (ctrl.is_complete) {
                     toSend = MiscService.createPacket(6, null, null);
                 } else {
                     toSend = MiscService.createPacket(5, null, null);
@@ -671,12 +677,10 @@
 
                 storyService.setClosed(ctrl.createID, function (err, data) {
                     if (err) {
-                        console.log(err);
-                    } else {
-                        console.log(data);
+                        console.log("error in getting data");
                     }
                 });
             });
-        })
+        });
 })
 ();

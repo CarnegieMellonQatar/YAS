@@ -52,6 +52,17 @@
             };
 
             // Gets back the user objects that have contributed to a story
+            service.getInfo = function (story, callback) {
+                $http.get('/api/getInfo/' + story.pk + '/')
+                    .success(function (data, status) {
+                        callback(null, data, story);
+                    })
+                    .error(function (error, status) {
+                        callback(error, null, story);
+                    });
+            };
+
+            // Gets back the user objects that have contributed to a story
             service.getReadLaterStory = function (story, callback) {
                 $http.get('/api/getReadLaterStory/' + story.pk + '/')
                     .success(function (data, status) {
@@ -459,7 +470,7 @@
                         callback(null, data, response);
                     })
                     .error(function (error, status) {
-                        callback(error, null, null);
+                        callback(error, null);
                     });
             };
 

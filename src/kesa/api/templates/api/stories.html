@@ -1,7 +1,6 @@
 {% extends "api/index.html" %}
 
 {% block content %}
-{% if request.user.is_authenticated %}
 <div class="stories-section" ng-controller="storyController as storyController" ng-cloak>
     <div class="switch-buttons">
         <a ng-class="{chosen: storyController.enabled}" class="story-active-switch-button"
@@ -16,7 +15,10 @@
     <div class="story-list" ng-show="storyController.enabled">
         <div class="story-entry row" ng-repeat="story in storyController.completeStories">
             <div class="col-xs-1">
-                <img class="story-profile-pic img-circle" ng-src="/api/img/{$ story.fields.userInfo.fields.username$}">
+                <a href="/{$ story.fields.userInfo.fields.username $}/profile">
+                    <img class="story-profile-pic img-circle"
+                         ng-src="/api/img/{$ story.fields.userInfo.fields.username$}">
+                </a>
             </div>
             <div class="col-xs-4 story-row">
                 <a href="/{$ story.fields.userInfo.fields.username $}/profile">
@@ -44,7 +46,8 @@
                 </div>
             </div>
             <div class="col-xs-5">
-                <a class="start-reading-button" href="/{$ story.pk $}/story" ng-if="story.fields.is_complete">Start Reading!</a>
+                <a class="start-reading-button" href="/{$ story.pk $}/story" ng-if="story.fields.is_complete">Start
+                    Reading!</a>
             </div>
             <div class="story-entry-contributors bookmark-icon" data-toggle="tooltip" title="readlater">
                 <i class="fa fa-bookmark fa-2x" aria-hidden="true" ng-show="story.fields.isBookmarked"
@@ -63,7 +66,10 @@
     <div class="story-list" ng-hide="storyController.enabled">
         <div class="story-entry row" ng-repeat="story in storyController.uncompleteStories">
             <div class="col-xs-1">
-                <img class="story-profile-pic img-circle" ng-src="/api/img/{$ story.fields.userInfo.fields.username$}">
+                <a href="/{$ story.fields.userInfo.fields.username $}/profile">
+                    <img class="story-profile-pic img-circle"
+                         ng-src="/api/img/{$ story.fields.userInfo.fields.username$}">
+                </a>
             </div>
             <div class="col-xs-4 story-row">
                 <a href="/{$ story.fields.userInfo.fields.username $}/profile">
@@ -91,8 +97,10 @@
                 </div>
             </div>
             <div class="col-xs-5">
-                <a class="story-join" href="/{$ story.pk $}/story" ng-if="story.fields.is_open">Join the writing session!</a>
-                <a class="start-reading-button" href="/{$ story.pk $}/story" ng-if="story.fields.is_complete">Start Reading!</a>
+                <a class="story-join" href="/{$ story.pk $}/story" ng-if="story.fields.is_open">Join the writing
+                    session!</a>
+                <a class="start-reading-button" href="/{$ story.pk $}/story" ng-if="story.fields.is_complete">Start
+                    Reading!</a>
             </div>
             <div class="story-entry-contributors bookmark-icon" data-toggle="tooltip" title="readlater">
                 <i class="fa fa-bookmark fa-2x" aria-hidden="true" ng-show="story.fields.isBookmarked"
@@ -100,7 +108,6 @@
                 <i class="fa fa-bookmark-o fa-2x" aria-hidden="true" ng-hide="story.fields.isBookmarked"
                    ng-click="storyController.bookmark(story)"></i>
             </div>
-            <!--<h2>Status: {$ storyController.isComplete(story.fields.is_complete) $}</h2>-->
         </div>
         <button class="story-show-more center-button"
                 ng-show="storyController.haveMoreIncomplete && !storyController.enabled"
@@ -108,15 +115,4 @@
         </button>
     </div>
 </div>
-{% else %}
-<br/>
-<br/>
-<br/>
-<h1> Stories</h1>
-<br/>
-<h2> Write stories for people with people</h2>
-<br/>
-<br/>
-<br/>
-{% endif %}
 {% endblock %}
