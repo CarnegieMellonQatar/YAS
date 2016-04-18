@@ -105,7 +105,7 @@
 
             storyService.getUserByRequest(function (err, data) {
                 if (err) {
-                    console.log(err);
+                    console.log("error in getting data");
                 } else {
                     profile.me = data[0];
                 }
@@ -113,13 +113,13 @@
 
             storyService.getUserByName(username, function (err, data) {
                 if (err) {
-                    console.log(err);
+                    console.log("error in getting data");
                 }
                 else {
                     profile.user = data[0];
                     storyService.getUserStories(profile.user.pk, 0, 10, function (err, data) {
                         if (err) {
-                            console.log(err);
+                            console.log("error in getting data");
                         }
                         else {
                             var i = 0;
@@ -127,14 +127,13 @@
                                 profile.stories.push(data[i]);
 
                                 storyService.getInfo(data[i],profile.gI);
-                            }
-                            console.log(data);
+                            };
                         }
                     });
 
                     storyService.getNumContributors(profile.user.pk, function (err, data) {
                         if (err) {
-                            console.log(err);
+                            console.log("error in getting data");
                         }
                         else {
                             profile.user.fields.contributions = data;
@@ -143,7 +142,7 @@
 
                     storyService.getNumStories(profile.user.pk, function (err, data) {
                         if (err) {
-                            console.log(err);
+                            console.log("error in getting data");
                         }
                         else {
                             profile.user.fields.stories = data;
@@ -178,7 +177,6 @@
                 }
                 else {
                     profile.userCount = data;
-                    console.log(profile.userCount);
                 }
             });
 

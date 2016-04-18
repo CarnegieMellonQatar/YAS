@@ -5,7 +5,6 @@
         .controller('joinController', function (MiscService, $location, storyService, $scope) {
             var id = location.pathname.substring(1, location.pathname.indexOf("story") - 1);
 
-            console.log("Join controller initialized to the ID " + id);
             var ctrl = this;
 
             ctrl.joinID = id;
@@ -35,7 +34,6 @@
                 peer = new Peer({host: 'storypeerserver.herokuapp.com', secure: true, port: 443});
 
                 peer.on('open', function (id) {
-                    console.log("My id is: " + id);
                     ctrl.connect(ctrl.joinID);
                 });
 
@@ -47,9 +45,6 @@
             };
 
             this.applyChanges = function (response) {
-                //ctrl.update(root, false);
-                console.log("=============Received Packet=============");
-                console.log(response);
                 var contact;
                 switch (response.action) {
                     case 0:
@@ -74,14 +69,9 @@
                         ctrl.deleteBranchr(null, root, response.currentid);
 
                         if (contact.some) {
-                            console.log(contact);
-                            console.log(currentNode);
                             if (contact.obj.id == currentNode.id) {
-                                console.log("here1");
                                 MiscService.customAlert("Master has deleted your current node, sorry");
-                                console.log("here2");
                                 ctrl.update(contact.obj.parent, false, false, 1, null);
-                                console.log("here3");
                                 ctrl.click(currentNode.parent);
                             } else {
                                 ctrl.update(contact.obj.parent, false, false, 1, null);
@@ -322,13 +312,11 @@
 
 
                     currentNode = source;
-                    //console.log(source);
                     closed = false;
                 }
 
                 if (sendToPeers) {
                     conn.forEach(function (element) {
-                        console.log(root);
                         var toSend = MiscService.createPacket(action, specialNode, source.id);
                         toSend.myid = peer.id;
                         toSend.user = ctrl.profile.pk;
@@ -394,17 +382,6 @@
                     return 0;
                 }
             };
-
-            //this.deleteBranch = function () {
-            //    if (currentNode === root) {
-            //        MiscService.customAlert("<strong>Node is the root,</strong> cannot delete the root");
-            //        console.log("Node is the root, cannot delete the root");
-            //    } else {
-            //        ctrl.deleteBranchr(null, root, currentNode.id);
-            //        ctrl.click(currentNode.parent);
-            //        ctrl.update(currentNode.parent);
-            //    }
-            //};
 
             this.editBranch = function () {
                 editMode = !editMode;

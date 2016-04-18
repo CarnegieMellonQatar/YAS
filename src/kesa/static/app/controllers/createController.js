@@ -5,7 +5,6 @@
         .controller('createController', function (MiscService, $location, storyService) {
             var id = location.pathname.substring(1, location.pathname.indexOf("story") - 1);
 
-            console.log("Create controller initialized to the ID " + id);
             var ctrl = this;
 
             ctrl.createID = id;
@@ -36,8 +35,6 @@
                     storyService.setOpen(ctrl.createID, function (err, data) {
                         if (err) {
                             console.log("error in getting data");
-                        } else {
-                            console.log(data);
                         }
                     });
 
@@ -100,9 +97,6 @@
             });
 
             this.applyChanges = function (response) {
-                //ctrl.update(root, false);
-                console.log("=============Received Packet=============");
-                console.log(response);
                 switch (response.action) {
                     case 0:
                         // Add a branch
@@ -230,7 +224,6 @@
 
                 var cont = d3.select(".story-container");
 
-                //console.log(closed);
                 if (closed) {
                     cont.classed("col-xs-4", true)
                         .classed("animated", true)
@@ -242,9 +235,6 @@
                 // Compute the new tree layout.
                 var nodes = tree.nodes(root),
                     links = tree.links(nodes);
-
-                //console.log(nodes);
-                //console.log(links);
 
                 // Normalize for fixed-depth.
                 nodes.forEach(function (d) {
@@ -419,15 +409,12 @@
 
 
                     currentNode = source;
-                    //console.log(source);
                     closed = false;
                 }
 
                 if (sendToPeers) {
                     conn.forEach(function (element) {
                         var toSend = MiscService.createPacket(action, specialNode, source.id);
-                        console.log("=============Sending Packet=============");
-                        console.log(toSend);
                         element.send(MiscService.stringify(toSend));
                     });
                 }
@@ -459,7 +446,6 @@
                         "name": "Empty Branch",
                         "body": "Add something here!"
                     };
-                    //console.log(obj);
                     currentNode.children = [];
                     currentNode.children.push(obj);
                 }
@@ -672,8 +658,6 @@
                 storyService.setClosed(ctrl.createID, function (err, data) {
                     if (err) {
                         console.log("error in getting data");
-                    } else {
-                        console.log(data);
                     }
                 });
             });
