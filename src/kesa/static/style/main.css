@@ -783,4 +783,8 @@ header .header-content .header-content-inner p {
   cursor: pointer;
   right: 13%; }
 
+.modal-content {
+  width: 900px;
+  overflow-y: scroll; }
+
 /*# sourceMappingURL=main.css.map */

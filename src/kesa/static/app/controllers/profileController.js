@@ -25,6 +25,12 @@
             profile.firstTime = true;
             profile.currentTab = 0;
 
+            var root, currentNode, tree, diagonal, svg;
+
+            var i = 0,
+                duration = 750;
+
+
             profile.set = function (i) {
                 profile.currentTab = i;
                 if (i == 1 && profile.firstTime) {
@@ -532,15 +538,190 @@
 
             };
 
-            profile.revealTree = function() {
+            this.update = function (source, elem) {
+
+
+                // Compute the new tree layout.
+                var nodes = tree.nodes(root),
+                    links = tree.links(nodes);
+
+                // Normalize for fixed-depth.
+                nodes.forEach(function (d) {
+                    d.y = d.depth * 90;
+                });
+
+                // Update the nodes…
+                var node = svg.selectAll("g.node")
+                    .data(nodes, function (d) {
+                        return d.id || (d.id = ++i);
+                    });
+
+                // Enter any new nodes at the parent's previous position.
+                var nodeEnter = node.enter().append("g")
+                    .attr("class", "node")
+                    .attr("transform", function (d) {
+                        return "translate(" + source.x0 + "," + source.y0 + ")";
+                    });
+
+                nodeEnter.append("circle")
+                    .attr("r", 1e-6)
+                    .style("fill", function (d) {
+                        return d._children ? "lightsteelblue" : "#fff";
+                    });
+
+                nodeEnter.append("text")
+                    .attr("x", function (d) {
+                        return d.children || d._children ? -13 : 13;
+                    })
+                    .attr("dy", ".35em")
+                    .attr("text-anchor", function (d) {
+                        return d.children || d._children ? "end" : "start";
+                    })
+                    .text(function (d) {
+                        return d.name;
+                    })
+                    .style("fill-opacity", 1e-6);
+
+                // Transition nodes to their new position.
+                var nodeUpdate = node.transition()
+                    .duration(duration)
+                    .attr("transform", function (d) {
+                        return "translate(" + d.x + "," + d.y + ")";
+                    });
+
+                nodeUpdate.select("circle")
+                    .attr("r", 10)
+                    .style("fill", function (d) {
+                        return d._children ? "#fb5e58" : "#fff";
+                    });
+
+                nodeUpdate.select("text")
+                    .style("fill-opacity", 1)
+                    .text(function (d) {
+                        return d.name;
+                    });
+
+                // Transition exiting nodes to the parent's new position.
+                var nodeExit = node.exit().transition()
+                    .duration(duration)
+                    .attr("transform", function (d) {
+                        return "translate(" + source.x + "," + source.y + ")";
+                    })
+                    .remove();
+
+                nodeExit.select("circle")
+                    .attr("r", 1e-6);
+
+                nodeExit.select("text")
+                    .style("fill-opacity", 1e-6);
+
+                // Update the links…
+                var link = svg.selectAll("path.link")
+                    .data(links, function (d) {
+                        return d.target.id;
+                    });
+
+                // Enter any new links at the parent's previous position.
+                link.enter().insert("path", "g")
+                    .attr("class", "link")
+                    .attr("d", function (d) {
+                        var o = {x: source.x0, y: source.y0};
+                        return diagonal({source: o, target: o});
+                    });
+
+                // Transition links to their new position.
+                link.transition()
+                    .duration(duration)
+                    .attr("d", diagonal);
+
+                // Transition exiting nodes to the parent's new position.
+                link.exit().transition()
+                    .duration(duration)
+                    .attr("d", function (d) {
+                        var o = {x: source.x, y: source.y};
+                        return diagonal({source: o, target: o});
+                    })
+                    .remove();
+
+                // Stash the old positions for transition.
+                nodes.forEach(function (d) {
+                    d.x0 = d.x;
+                    d.y0 = d.y;
+                });
 
             };
 
-            $(".analyticsTree").click(function () {
-                $("#book").slideDown("slow", function () {
-                    // Animation complete.
+            profile.findPos = function (obj) {
+                var curtop = 0;
+                if (obj.offsetParent) {
+                    do {
+                        curtop += obj.offsetTop;
+                    } while (obj = obj.offsetParent);
+                    return [curtop];
+                }
+            };
+
+            profile.click = function (d, elem) {
+                currentNode._children = null;
+                if (d.children) {
+                    d._children = [{"somev": "hello"}];
+                } else {
+                    d._children = [{"somev": "hello"}];
+                }
+                window.scroll(0, profile.findPos(d));
+                profile.update(d, elem);
+            };
+
+
+            profile.initTree = function (treeData, elem) {
+                // Source http://bl.ocks.org/d3noob/8375092
+
+                var margin = {top: 50, right: 80, bottom: 80, left: 80},
+                    width = 900 - margin.right - margin.left,
+                    height = 800 - margin.top - margin.bottom;
+
+                tree = d3.layout.tree()
+                    .size([width, height]);
+
+                diagonal = d3.svg.diagonal()
+                    .projection(function (d) {
+                        return [d.x, d.y];
+                    });
+
+                svg = d3.select(elem).append("svg")
+                    .attr("width", width + margin.right + margin.left)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                root = treeData[0];
+                root.x0 = height / 2;
+                root.y0 = 0;
+                currentNode = root;
+
+                profile.click(root, elem);
+                profile.update(root, elem);
+
+                // TODO: Not certain what this is, figure it out
+                d3.select(self.frameElement).style("height", "500px");
+            };
+
+            $scope.revealTree = function (sid) {
+                $('.modal').modal('show');
+                $('.modal').on('hidden.bs.modal', function (e) {
+                   $('.modal-content').html('');
                 });
-            });
+                storyService.getStory(sid, function (err, data) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        var treeData = [data];
+                        console.log(treeData);
+                        profile.initTree(treeData, ".modal-content");
+                    }
+                });
+            };
 
         })
 })();
