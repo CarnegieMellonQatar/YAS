@@ -65,9 +65,7 @@ def getMinChild(nodeList):
 
 def recuesive_get_max_path(node, nlist):
     children = node.get_children()
-    # if len(children) == 0:
     if node.is_leaf_node():
-        # print node.id
         nlist.append(node.id)
     else:
         nlist.append(node.id)
@@ -77,12 +75,9 @@ def recuesive_get_max_path(node, nlist):
 
 def recuesive_get_min_path(node, nlist):
     children = node.get_children()
-    # if len(children) == 0:
     if node.is_leaf_node():
-        # print node.id
         nlist.append(node.id)
     else:
-        # print node.id
         nlist.append(node.id)
         nextNode = getMinChild(children)
         recuesive_get_min_path(nextNode, nlist)
@@ -656,9 +651,7 @@ def getGraphAnalytics(request, username, numDays):
         stories = Story.objects.filter(user=user)
         likes = Likes.objects.filter(story__in=stories, date__gte=datetime.now() - timedelta(days=int(numDays))).values(
                 'date').annotate(total=Count('date'))
-        # print likes
         likes = list(getDates(likes))
-        # data = serializers.serialize('json', likes)
         return HttpResponse(json.dumps(likes), content_type="application/json")
     else:
         data['user'] = request.user.username
@@ -706,9 +699,6 @@ def getGenericAnalytics(request, username):
         else:
             contributor = "You have no contributors!!"
         result = {}
-        # result['fan'] = serializers.serialize('json',User.objects.filter(id = fan))
-        # result['contributor'] = serializers.serialize('json',User.objects.filter(id = contributor)) 
-        # print json.loads(serializers.serialize('json',User.objects.filter(id = contributor)))
         result['fan'] = fan
         result['contributor'] = contributor
         s = getStoryAnalysis(stories)
@@ -736,7 +726,6 @@ def totalReads(request, username):
     user = User.objects.get(username=str(username))
     stories = Story.objects.filter(user=user).values_list('read')
     count = sumCount(stories)
-    # print stories
     result = {}
     result['totalReads'] = count
     return HttpResponse(json.dumps(result), content_type="application/json")
@@ -777,7 +766,6 @@ def contributedStories(request, username):
 
 @login_required
 @csrf_exempt
-# Functions to populate the database with garbage values to get analatics
 def removeFromReadLater(request, uid, sid):
     data = {}
     if request.user.id == int(uid):
@@ -792,6 +780,8 @@ def removeFromReadLater(request, uid, sid):
         data['result'] = 'false'
     return HttpResponse(json.dumps(data), content_type="application/json")
 
+
+# Functions to populate the database with garbage values to get analatics
 
 def makeBodies(numBodies, length):
     smallestChar = 32
@@ -867,7 +857,6 @@ def makeStories(user, n):
                   user=user)
         g.save()
         user1 = getRandomUser()
-        # makeGraph(g, user1, 1)
         s = Story(user=user, \
                   title=str(user.id) + " " + str(i), \
                   graph=g, \

@@ -13,7 +13,6 @@
         this.customAlertJumbo = function (string) {
             $("body").append('<div class="custom-alert-jumbo animated fadeInLeftBig">' + string + '</div>');
             setTimeout(function () {
-                //$(".custom-alert-jumbo").remove();
             }, 3000);
         };
 

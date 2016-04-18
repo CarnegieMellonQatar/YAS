@@ -48,6 +48,6 @@ urlpatterns = [
     url(r'^(?P<username>\w+)/analytics/generic/$', views.getGenericAnalytics, name='getGenericAnalytics'),
     url(r'^(?P<uid>\d+)/addToReadLater/(?P<sid>\d+)/$', views.addToReadLater, name='addToReadLater'),
     url(r'^(?P<uid>\d+)/removeFromReadLater/(?P<sid>\d+)/$', views.removeFromReadLater, name='removeFromReadLater'),
-    url(r'^makeUsers/(?P<n>\d+)/$', views.makeUsers, name='makeUsers'),
-    url(r'^populateLikes/$', views.populateLikes, name='populateLikes'),
+    # url(r'^makeUsers/(?P<n>\d+)/$', views.makeUsers, name='makeUsers'),
+    # url(r'^populateLikes/$', views.populateLikes, name='populateLikes'),
 ]
