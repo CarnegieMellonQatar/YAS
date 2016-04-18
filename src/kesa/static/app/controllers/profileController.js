@@ -532,5 +532,15 @@
 
             };
 
+            profile.revealTree = function() {
+
+            };
+
+            $(".analyticsTree").click(function () {
+                $("#book").slideDown("slow", function () {
+                    // Animation complete.
+                });
+            });
+
         })
 })();

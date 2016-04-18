@@ -735,7 +735,8 @@ header .header-content .header-content-inner p {
   margin: auto;
   background: transparent;
   width: 80%;
-  overflow-y: scroll; }
+  overflow-y: scroll;
+  position: relative; }
 
 .profile-analytics {
   margin: auto;
@@ -775,5 +776,11 @@ header .header-content .header-content-inner p {
   color: #2D6CA5;
   font-weight: 200;
   font-size: 32px; }
+
+.analytics-tree {
+  position: absolute;
+  bottom: 5px;
+  cursor: pointer;
+  right: 13%; }
 
 /*# sourceMappingURL=main.css.map */
