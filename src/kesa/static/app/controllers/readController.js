@@ -51,7 +51,6 @@
                         ctrl.updateCurrentChoicesr(node);
                     }
                 } else {
-                    //ctrl.currentNodes.push(node.body);
                     ctrl.updateCurrentChoicesr(node);
                 }
             };

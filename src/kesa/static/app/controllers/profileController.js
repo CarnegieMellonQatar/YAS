@@ -77,7 +77,6 @@
                             }
                             else {
                                 console.log(data);
-                                //profile.graphAnalytics1 = data;
                                 profile.graphAnalytics = data;
                                 $('#barGraph').html('');
                                 profile.initBarGraph('#barGraph');
@@ -197,9 +196,7 @@
                 if (err) {
                     console.log("error in getting data");
                 } else {
-                    // console.log(profile.me);
                     profile.me = data[0];
-                    // console.log(profile.me.fields.username);
                 }
             });
 
@@ -343,7 +340,6 @@
                     else {
                         if (data.result != 'false') {
                             profile.image = {};
-                            $scope.add_image_form2.$setPristine();
                             profile.uploadPic = false;
                             $window.location.href = profile.url;
                         }
@@ -468,10 +464,6 @@
             profile.initBarGraph = function (elemName) {
 
                 var bardata = [];
-
-                //for (var i = 0; i < 30; i++) {
-                //    bardata.push(Math.random() * 100);
-                //}
 
                 profile.graphAnalytics.forEach(function (d, i) {
                     var e = {};
