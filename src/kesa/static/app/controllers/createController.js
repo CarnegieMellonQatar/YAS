@@ -31,6 +31,7 @@
                 }
                 else {
                     treeData = [data];
+                    console.log(data);
 
                     storyService.setOpen(ctrl.createID, function (err, data) {
                         if (err) {
@@ -99,33 +100,35 @@
             this.applyChanges = function (response) {
                 switch (response.action) {
                     case 0:
-                        // Add a branch
-                        var newBranch =
-                        {
-                            "name": response.name,
-                            "body": response.body
-                        };
-                        console.log(response.parentid);
-                        MiscService.addRemoteBranchr(root, newBranch, response.parentid);
 
-                        var contact = MiscService.findContactNoder(root, response.parentid);
-
+                        console.log(response);
+                        var contact = MiscService.findContactNoder(root, response.branchid);
                         console.log(contact);
-                        console.log(root);
+
                         if (contact.some) {
                             ctrl.update(contact.obj, false, false);
+                            // Add a branch
+                            var newBranch =
+                            {
+                                "name": response.name,
+                                "body": response.body
+                            };
+                            MiscService.addRemoteBranchr(root, newBranch, response.branchid);
 
-                            var oldlength = contact.obj.children.length;
-                            storyService.addToStory(ctrl.createID, oldlength, contact.obj.branchid, response, function (err, data, length, contact) {
+                            console.log(response.branchid);
+                            console.log(root);
+
+                            storyService.addToStory(ctrl.createID, contact.obj.branchid, response, function (err, data, contact1) {
                                 if (err) {
                                     console.log("error in getting data");
                                 } else {
-                                    currentNode.children[currentNode.children.length - 1].branchid = data["result"];
-
-                                    var toSend = MiscService.createPacket(4, null, data["result"]);
+                                    console.log(parseInt(data["result"]));
+                                    contact.obj.children[contact.obj.children.length - 1].branchid = parseInt(data["result"]);
+                                    var toSend = MiscService.createPacket(4, {"localid": 3}, data["result"]);
                                     toSend.myid = peer.id;
+                                    toSend.parentid = contact1.parentid;
 
-                                    contact.peer.send(MiscService.stringify(toSend));
+                                    contact1.peer.send(MiscService.stringify(toSend));
 
                                     storyService.addContribution(response.user, ctrl.createID, function (err, data) {
                                         if (err) {
@@ -140,12 +143,14 @@
 
                         break;
                     case 2:
+                        console.log(response.branchid);
                         // Edit a branch
-                        contact = MiscService.findContactNoder(root, response.currentid);
-                        contact.obj.name = response.name;
-                        contact.obj.body = response.body;
+                        contact = MiscService.findContactNoder(root, response.branchid);
 
                         if (contact.some) {
+                            contact.obj.name = response.name;
+                            contact.obj.body = response.body;
+                            console.log(contact.obj);
                             storyService.editStory(ctrl.createID, contact.obj.branchid, contact.obj, response, function (err, data, response) {
                                 if (err) {
                                     console.log("error in getting data");
@@ -203,7 +208,6 @@
                     index = index + 1;
 
                     var initJSON = {};
-                    console.log("sending initial data structure");
                     initJSON.initRoot = MiscService.toJSON(root);
                     initJSON.title = ctrl.title;
                     initJSON.action = 3;
@@ -231,8 +235,6 @@
                         conn.forEach(function (element) {
                             if (!element.gotData) {
                                 element.send(MiscService.stringify(initJSON));
-                                console.log("Send to " + element.peer);
-                                console.log(element);
                             }
                         });
                     }, 2000);
@@ -242,6 +244,7 @@
 
             this.update = function (source, sendToPeers, changeCurrentNode, action, specialNode) {
 
+                console.log(root);
                 var cont = d3.select(".story-container");
 
                 if (closed) {
@@ -435,6 +438,7 @@
                 if (sendToPeers) {
                     conn.forEach(function (element) {
                         var toSend = MiscService.createPacket(action, specialNode, source.id);
+                        toSend.branchid = specialNode.branchid;
                         element.send(MiscService.stringify(toSend));
                     });
                 }
@@ -469,15 +473,22 @@
                     currentNode.children = [];
                     currentNode.children.push(obj);
                 }
-                var specialNode = {"name": obj.name, "body": obj.body, "parentid": currentNode.id, "action": 0};
-                ctrl.update(currentNode, true, true, 0, specialNode);
 
-                var oldlength = currentNode.children.length;
-                storyService.addToStory(ctrl.createID, oldlength, currentNode.branchid, null, function (err, data, length, contact) {
+                storyService.addToStory(ctrl.createID, currentNode.branchid, null, function (err, data, contact) {
                     if (err) {
                         console.log("error in getting data");
                     } else {
-                        currentNode.children[currentNode.children.length - 1].branchid = data["result"];
+                        currentNode.children[currentNode.children.length - 1].branchid = parseInt(data["result"]);
+                        console.log(parseInt(data["result"]));
+                        var specialNode =
+                        {
+                            "name": obj.name,
+                            "body": obj.body,
+                            "parentbranchid": currentNode.branchid,
+                            "action": 0,
+                            "branchid": parseInt(data["result"])
+                        };
+                        ctrl.update(currentNode, true, true, 0, specialNode);
                     }
                 });
             };
@@ -511,7 +522,7 @@
                         } else {
                             if (data["result"] === 'true') {
                                 ctrl.deleteBranchr(null, root, currentNode.id);
-                                ctrl.update(currentNode, true, false, 1, null);
+                                ctrl.update(currentNode, true, false, 1, {"branchid": currentNode.branchid});
                                 ctrl.click(currentNode.parent);
                             }
                         }
@@ -532,7 +543,8 @@
                     "name": currentNode.name,
                     "body": currentNode.body,
                     "currentid": currentNode.id,
-                    "action": 2
+                    "action": 2,
+                    "branchid": currentNode.branchid
                 };
                 editMode = false;
 

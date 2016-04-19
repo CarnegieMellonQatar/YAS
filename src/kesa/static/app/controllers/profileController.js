@@ -17,6 +17,9 @@
             profile.contName = "";
             profile.fanName = "";
             profile.graphAnalytics = {};
+            profile.graph0 = {};
+            profile.graph1 = {};
+            profile.graph2 = {};
             profile.graphAnalytics1 = {};
             profile.graphAnalytics2 = {};
             profile.storyAnalytics = {};
@@ -58,7 +61,8 @@
                                 console.log("error in getting data")
                             }
                             else {
-                                //profile.graphAnalytics = data;
+                                profile.graph0 = data;
+                                console.log(profile.graph0);
                                 profile.graphAnalytics = data;
                                 $('#barGraph').html('');
                                 profile.initBarGraph('#barGraph');
@@ -66,6 +70,8 @@
                         });
                         profile.firstTime = false;
                     } else {
+                        profile.graphAnalytics = profile.graph0;
+                        console.log(profile.graph0);
                         $('#barGraph').html('');
                         profile.initBarGraph('#barGraph');
                     }
@@ -76,8 +82,7 @@
                                 console.log("error in getting data")
                             }
                             else {
-                                console.log(data);
-                                //profile.graphAnalytics1 = data;
+                                profile.graph1 = data;
                                 profile.graphAnalytics = data;
                                 $('#barGraph').html('');
                                 profile.initBarGraph('#barGraph');
@@ -85,16 +90,18 @@
                         });
                         profile.firstTime1 = false;
                     } else {
+                        profile.graphAnalytics = profile.graph1;
                         $('#barGraph').html('');
                         profile.initBarGraph('#barGraph');
                     }
-                } else if (i == 2 && profile.firstTime2) {
+                } else if (i == 2) {
                     if (profile.firstTime2) {
                         storyService.getGraphAnalytics(profile.uname, 90, function (err, data) {
                             if (err) {
                                 console.log("error in getting data")
                             }
                             else {
+                                profile.graph2 = data;
                                 profile.graphAnalytics = data;
                                 $('#barGraph').html('');
                                 profile.initBarGraph('#barGraph');
@@ -102,6 +109,7 @@
                         });
                         profile.firstTime2 = false;
                     } else {
+                        profile.graphAnalytics = profile.graph2;
                         $('#barGraph').html('');
                         profile.initBarGraph('#barGraph');
                     }
@@ -142,15 +150,8 @@
             profile.set = function (i) {
                 profile.currentTab = i;
                 if (i == 1 && profile.firstTime && !profile.isEmpty()) {
-                    storyService.getGraphAnalytics(profile.uname, 30, function (err, data) {
-                        if (err) {
-                            console.log("error in getting data");
-                        }
-                        else {
-                            profile.graphAnalytics = data;
-                            profile.initBarGraph('#barGraph', profile.graphAnalytics);
-                        }
-                    });
+
+                    profile.setGraph(0);
 
                     storyService.getUserByID(profile.storyAnalytics.contributor, function (err, data) {
                         if (err) {
@@ -170,7 +171,10 @@
                         }
                     });
 
-                    profile.firstTime = false;
+                    //profile.firstTime = false;
+                } else if (i == 1 && !profile.firstTime && !profile.isEmpty()) {
+                    profile.firstTime = true;
+                    profile.setGraph(0);
                 }
             };
 
@@ -197,9 +201,7 @@
                 if (err) {
                     console.log("error in getting data");
                 } else {
-                    // console.log(profile.me);
                     profile.me = data[0];
-                    // console.log(profile.me.fields.username);
                 }
             });
 
@@ -343,7 +345,6 @@
                     else {
                         if (data.result != 'false') {
                             profile.image = {};
-                            $scope.add_image_form2.$setPristine();
                             profile.uploadPic = false;
                             $window.location.href = profile.url;
                         }
@@ -468,10 +469,6 @@
             profile.initBarGraph = function (elemName) {
 
                 var bardata = [];
-
-                //for (var i = 0; i < 30; i++) {
-                //    bardata.push(Math.random() * 100);
-                //}
 
                 profile.graphAnalytics.forEach(function (d, i) {
                     var e = {};

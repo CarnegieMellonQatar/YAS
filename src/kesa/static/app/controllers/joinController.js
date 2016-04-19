@@ -11,6 +11,8 @@
             ctrl.title = "";
             ctrl.canAdd = true;
             ctrl.profile = null;
+            ctrl.waitingNode = null;
+
             var root, currentNode, tree, diagonal, svg;
 
             var peer = null;
@@ -46,16 +48,23 @@
 
             this.applyChanges = function (response) {
                 var contact;
+                console.log(response);
+                console.log(root);
                 switch (response.action) {
                     case 0:
                         // Add a branch
                         var newBranch =
                         {
                             "name": response.name,
-                            "body": response.body
+                            "body": response.body,
+                            "branchid": response.branchid
                         };
-                        MiscService.addRemoteBranchr(root, newBranch, response.parentid);
-                        contact = MiscService.findContactNoder(root, response.parentid);
+
+                        console.log(response.branchid);
+                        console.log(response.parentbranchid);
+
+                        MiscService.addRemoteBranchr(root, newBranch, response.parentbranchid);
+                        contact = MiscService.findContactNoder(root, response.parentbranchid);
 
                         if (contact.some) {
                             ctrl.update(contact.obj, false, false, 0, null);
@@ -65,16 +74,18 @@
                         break;
                     case 1:
                         // Delete a branch
-                        contact = MiscService.findContactNoder(root, response.currentid);
-                        ctrl.deleteBranchr(null, root, response.currentid);
+                        console.log('deleting branch ' + response.branchid);
+                        contact = MiscService.findContactNoder(root, response.branchid);
+                        console.log(contact);
 
                         if (contact.some) {
-                            if (contact.obj.id == currentNode.id) {
+                            if (contact.obj.branchid == currentNode.branchid) {
                                 MiscService.customAlert("Master has deleted your current node, sorry");
-                                ctrl.update(contact.obj.parent, false, false, 1, null);
-                                ctrl.click(currentNode.parent);
+                                ctrl.deleteBranchr(null, root, response.branchid);
+                                //ctrl.update(currentNode.parent, false, false, 1, null);
+                                //ctrl.click(currentNode.parent);
                             } else {
-                                ctrl.update(contact.obj.parent, false, false, 1, null);
+                                ctrl.deleteBranchr(null, root, response.branchid);
                             }
                         } else {
                             console.log("should not be here");
@@ -82,13 +93,14 @@
                         break;
                     case 2:
                         // Edit a branch
-                        contact = MiscService.findContactNoder(root, response.currentid);
+                        contact = MiscService.findContactNoder(root, response.branchid);
                         contact.obj.name = response.name;
                         contact.obj.body = response.body;
 
                         if (contact.some) {
-                            ctrl.update(contact.obj, false, false, 0, null);
-                            console.log(root);
+                            if (contact.obj.branchid == currentNode.branchid) {
+                                ctrl.click(currentNode);
+                            }
                         } else {
                             console.log("should not be here");
                         }
@@ -107,8 +119,8 @@
                         });
                         break;
                     case 4:
-                        currentNode.branchid = response.branchid;
-                        ctrl.canAdd = !ctrl.canAdd;
+                        ctrl.waitingNode.children[currentNode.children.length - 1].branchid = parseInt(response.branchid);
+                        ctrl.canAdd = true;
                         break;
                     case 5:
                         peer.disconnect();
@@ -121,7 +133,7 @@
                         peer.disconnect();
                         MiscService.customAlertJumbo("Master published the story. Redirecting!");
                         setTimeout(function () {
-                            location.pathname = "/"+ctrl.joinID+"/story";
+                            location.pathname = "/" + ctrl.joinID + "/story";
                         }, 3500);
                         break;
                     default:
@@ -139,18 +151,6 @@
                     conn[index].on('data', function (data) {
                         var response = JSON.parse(data);
                         ctrl.applyChanges(response);
-                    });
-
-                    conn[index].on('disconnected', function (data){
-                        console.log("random");
-                    });
-
-                    conn[index].on('destroyed', function (data){
-                        console.log("random1");
-                    });
-
-                    conn[index].on('close', function (data){
-                        console.log("random2");
                     });
                 });
             };
@@ -336,11 +336,16 @@
 
                 if (sendToPeers) {
                     conn.forEach(function (element) {
-                        console.log(specialNode);
-                        console.log(root);
-                        console.log(source.id);
+                        console.log("sending packet " + action);
+                        console.log("source branch id is " + source.branchid);
                         var toSend = MiscService.createPacket(action, specialNode, source.id);
+                        if (currentNode.children) {
+                            toSend.childid = currentNode.children[0].id;
+                        } else {
+                            toSend.childid = null;
+                        }
                         toSend.myid = peer.id;
+                        toSend.branchid = source.branchid;
                         toSend.user = ctrl.profile.pk;
                         element.send(MiscService.stringify(toSend));
                     });
@@ -367,6 +372,7 @@
                 var obj = {};
                 if (ctrl.canAdd) {
                     ctrl.canAdd = !ctrl.canAdd;
+                    ctrl.waitingNode = currentNode;
                     if (currentNode.children) {
                         obj = {
                             "name": "Empty Branch",
@@ -381,16 +387,32 @@
                         currentNode.children = [];
                         currentNode.children.push(obj);
                     }
-                    var specialNode = {"name": obj.name, "body": obj.body, "parentid": currentNode.id, "action": 0};
+                    var specialNode =
+                    {
+                        "name": obj.name,
+                        "body": obj.body,
+                        "parentid": currentNode.id,
+                        "parentbranchid": currentNode.branchid,
+                        "action": 0,
+                        "branchid": currentNode.branchid
+                    };
                     ctrl.update(currentNode, true, true, 0, specialNode);
+                } else {
+                    console.log("canadd is false");
                 }
             };
 
             this.deleteBranchr = function (parent, branch, id) {
-                if (branch.id == id) {
+                console.log("branch id is " + branch.branchid);
+                console.log("id is " + id);
+
+                if (branch.branchid === id) {
                     for (var i = 0; i < parent.children.length; i++) {
-                        if (parent.children[i].id == id) {
+                        if (parent.children[i].branchid == id) {
                             parent.children.splice(i, 1);
+                            console.log("deleeeting");
+                            ctrl.update(parent, false, false, 1, null);
+                            ctrl.click(parent);
                         }
                     }
                     return 1;
@@ -401,6 +423,7 @@
                     return 0;
                 } else {
                     // Didn't find anything
+                    console.log("didn't find anything");
                     return 0;
                 }
             };
