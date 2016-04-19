@@ -13,7 +13,6 @@
         this.customAlertJumbo = function (string) {
             $("body").append('<div class="custom-alert-jumbo animated fadeInLeftBig">' + string + '</div>');
             setTimeout(function () {
-                //$(".custom-alert-jumbo").remove();
             }, 3000);
         };
 
@@ -46,6 +45,7 @@
             var obj = {};
             obj.name = branch.name;
             obj.body = branch.body;
+            obj.branchid = branch.branchid;
             if (branch.children) {
                 obj.children = [];
                 branch.children.forEach(function (d) {
@@ -62,7 +62,7 @@
         };
 
         this.addRemoteBranchr = function (branch, newBranch, id) {
-            if (branch.id == id) {
+            if (branch.branchid === id) {
                 if (branch.children) {
                     branch.children.push(newBranch);
                 } else {
@@ -82,12 +82,11 @@
         };
 
         this.findContactNoder = function (branch, id) {
-            if (branch.id == id) {
+            if (branch.branchid === id) {
                 return {"some": true, "obj": branch};
             } else if (branch.children) {
                 var countFail = 0;
                 var objFound = {};
-
                 branch.children.forEach(function (d) {
                     var ret = srvc.findContactNoder(d, id);
                     if (ret.some === true) {
@@ -117,6 +116,7 @@
                     // Add a branch
                     toSend.name = specialNode.name;
                     toSend.body = specialNode.body;
+                    toSend.parentbranchid = specialNode.parentbranchid;
                     toSend.parentid = id;
                     break;
                 case 1:
@@ -129,6 +129,7 @@
                     toSend.currentid = id;
                     break;
                 case 4:
+                    toSend.localid = specialNode.localid;
                     toSend.branchid = id;
                     break;
                 default:
