@@ -1,8 +1,8 @@
-(function () {
+(function() {
     "use strict";
 
     angular.module('storyTeller')
-        .controller('profileController', function (storyService, $location, $scope, $window) {
+        .controller('profileController', function(storyService, $location, $scope, $window) {
 
             var profile = this;
             profile.url = location.pathname;
@@ -43,26 +43,24 @@
                 duration = 750;
 
 
-            profile.showDropZone = function () {
+            profile.showDropZone = function() {
                 if (profile.uploadPic == false) {
                     profile.uploadPic = true;
-                }
-                else {
+                } else {
                     profile.uploadPic = false;
                 }
             };
 
-            profile.setGraph = function (i) {
+            profile.setGraph = function(i) {
                 profile.graphTab = i;
                 if (i == 0) {
                     if (profile.firstTime) {
-                        storyService.getGraphAnalytics(profile.uname, 30, function (err, data) {
+                        storyService.getGraphAnalytics(profile.uname, 30, function(err, data) {
                             if (err) {
                                 console.log("error in getting data")
-                            }
-                            else {
+                            } else {
                                 profile.graph0 = data;
-                                console.log(profile.graph0);
+                                //console.log(profile.graph0);
                                 profile.graphAnalytics = data;
                                 $('#barGraph').html('');
                                 profile.initBarGraph('#barGraph');
@@ -71,17 +69,16 @@
                         profile.firstTime = false;
                     } else {
                         profile.graphAnalytics = profile.graph0;
-                        console.log(profile.graph0);
+                        //console.log(profile.graph0);
                         $('#barGraph').html('');
                         profile.initBarGraph('#barGraph');
                     }
                 } else if (i == 1) {
                     if (profile.firstTime1) {
-                        storyService.getGraphAnalytics(profile.uname, 60, function (err, data) {
+                        storyService.getGraphAnalytics(profile.uname, 60, function(err, data) {
                             if (err) {
                                 console.log("error in getting data")
-                            }
-                            else {
+                            } else {
                                 profile.graph1 = data;
                                 profile.graphAnalytics = data;
                                 $('#barGraph').html('');
@@ -96,11 +93,10 @@
                     }
                 } else if (i == 2) {
                     if (profile.firstTime2) {
-                        storyService.getGraphAnalytics(profile.uname, 90, function (err, data) {
+                        storyService.getGraphAnalytics(profile.uname, 90, function(err, data) {
                             if (err) {
                                 console.log("error in getting data")
-                            }
-                            else {
+                            } else {
                                 profile.graph2 = data;
                                 profile.graphAnalytics = data;
                                 $('#barGraph').html('');
@@ -117,56 +113,89 @@
             };
 
             /************* CallBack Functions ***************/
-            profile.gI = function (err, data, stories) {
+            profile.gI = function(err, data, allstories) {
                 if (err) {
                     console.log("error in getting data");
-                }
-                else {
-                    stories.fields.userInfo = JSON.parse(data['u'])[0];
+                } else {
+                    var i = 0;
+                    var datalist = data;
+                    for (i = 0; i < datalist.length; i++) {
+                        var data = datalist[i];
+                        var story = allstories[i];
 
-                    if (data['rl'] === 'true') {
-                        stories.fields.isBookmarked = true;
-                    } else {
-                        stories.fields.isBookmarked = false;
+                        story.fields.userInfo = JSON.parse(data['u'])[0];
+
+                        if (data['rl'] === 'true') {
+                            story.fields.isBookmarked = true;
+                        } else {
+                            story.fields.isBookmarked = false;
+                        }
+
+                        story.fields.likes = JSON.parse(data['l']);
+
+                        if (data['liked'] === 'true') {
+                            story.fields.isLiked = true;
+                        } else {
+                            story.fields.isLiked = false;
+                        }
+
+                        story.fields.contributors = JSON.parse(data['c']);
+
+                        profile.stories.push(story);
                     }
+                }
+            };
 
-                    var liked = JSON.parse(data['l']);
-                    stories.fields.likes = liked.length;
-                    var isLiked = liked.reduce(
-                        function (pV, cV, cI, array) {
-                            if (pV) {
-                                return pV;
-                            } else {
-                                return (cV.fields.user === profile.me.pk);
-                            }
-                        }, false);
-                    stories.fields.isLiked = isLiked;
+            profile.gIM = function(err, data, allstories) {
+                if (err) {
+                    console.log("error in getting data");
+                } else {
+                    var i = 0;
+                    var datalist = data;
+                    for (i = 0; i < datalist.length; i++) {
+                        var data = datalist[i];
+                        var story = allstories[i];
 
-                    stories.fields.contributors = JSON.parse(data['c']).length;
+                        story.fields.userInfo = JSON.parse(data['u'])[0];
+
+                        if (data['rl'] === 'true') {
+                            story.fields.isBookmarked = true;
+                        } else {
+                            story.fields.isBookmarked = false;
+                        }
+
+                        story.fields.likes = JSON.parse(data['l']);
+
+                        if (data['liked'] === 'true') {
+                            story.fields.isLiked = true;
+                        } else {
+                            story.fields.isLiked = false;
+                        }
+
+                        story.fields.contributors = JSON.parse(data['c']);
+                    }
                 }
             };
             /**************************************************/
 
-            profile.set = function (i) {
+            profile.set = function(i) {
                 profile.currentTab = i;
                 if (i == 1 && profile.firstTime && !profile.isEmpty()) {
 
                     profile.setGraph(0);
 
-                    storyService.getUserByID(profile.storyAnalytics.contributor, function (err, data) {
+                    storyService.getUserByID(profile.storyAnalytics.contributor, function(err, data) {
                         if (err) {
                             console.log("error in getting data");
-                        }
-                        else {
+                        } else {
                             profile.contName = data;
                         }
                     });
 
-                    storyService.getUserByID(profile.storyAnalytics.fan, function (err, data) {
+                    storyService.getUserByID(profile.storyAnalytics.fan, function(err, data) {
                         if (err) {
                             console.log("error in getting data");
-                        }
-                        else {
+                        } else {
                             profile.fanName = data;
                         }
                     });
@@ -178,7 +207,7 @@
                 }
             };
 
-            profile.isSet = function (i) {
+            profile.isSet = function(i) {
                 if (profile.currentTab == i) {
                     return true;
                 } else {
@@ -186,7 +215,7 @@
                 }
             };
 
-            profile.isSetGraph = function (i) {
+            profile.isSetGraph = function(i) {
                 if (profile.graphTab == i) {
                     return true;
                 } else {
@@ -197,7 +226,7 @@
             var username = profile.url.substring(1, profile.url.indexOf("profile") - 1);
             profile.uname = username;
 
-            storyService.getUserByRequest(function (err, data) {
+            storyService.getUserByRequest(function(err, data) {
                 if (err) {
                     console.log("error in getting data");
                 } else {
@@ -205,107 +234,92 @@
                 }
             });
 
-            storyService.getUserByName(username, function (err, data) {
+            storyService.getUserByName(username, function(err, data) {
                 if (err) {
                     console.log("error in getting data");
-                }
-                else {
+                } else {
                     profile.user = data[0];
-                    storyService.getUserStories(profile.user.pk, 0, 10, function (err, data) {
+                    storyService.getUserStories(profile.user.pk, 0, 10, function(err, data) {
                         if (err) {
                             console.log("error in getting data");
-                        }
-                        else {
-                            var i = 0;
-                            console.log(data);
-                            for (i = 0; i < data.length; i++) {
-                                profile.stories.push(data[i]);
-
-                                storyService.getInfo(data[i], profile.gI);
+                        } else {
+                            if (data.length < 10) {
+                                profile.haveMore = false;
                             }
+
+                            var i = data.length - 1;
+                            storyService.getInfo(data[i].pk, data[0].pk, 3, data, profile.uname, profile.gI);
                         }
                     });
 
-                    storyService.getNumContributors(profile.user.pk, function (err, data) {
+                    storyService.getNumContributors(profile.user.pk, function(err, data) {
                         if (err) {
                             console.log("error in getting data");
-                        }
-                        else {
+                        } else {
                             profile.user.fields.contributions = data;
                         }
                     });
 
-                    storyService.getNumStories(profile.user.pk, function (err, data) {
+                    storyService.getNumStories(profile.user.pk, function(err, data) {
                         if (err) {
                             console.log("error in getting data");
-                        }
-                        else {
+                        } else {
                             profile.user.fields.stories = data;
                         }
                     });
                 }
             });
 
-            storyService.getStoryAnalytics(profile.uname, function (err, data) {
+            storyService.getStoryAnalytics(profile.uname, function(err, data) {
                 if (err) {
                     console.log("error in getting data");
-                }
-                else {
+                } else {
                     profile.storyAnalytics = data;
                     profile.set(0);
 
                 }
             });
 
-            storyService.getTotalLikes(profile.uname, function (err, data) {
+            storyService.getTotalLikes(profile.uname, function(err, data) {
                 if (err) {
                     console.log("error in getting data");
-                }
-                else {
+                } else {
                     profile.userLikes = data;
                 }
             });
 
-            storyService.getTotalContributors(profile.uname, function (err, data) {
+            storyService.getTotalContributors(profile.uname, function(err, data) {
                 if (err) {
                     console.log("error in getting data");
-                }
-                else {
+                } else {
                     profile.userCount = data;
                 }
             });
 
-            storyService.getTotalContributions(profile.uname, function (err, data) {
+            storyService.getTotalContributions(profile.uname, function(err, data) {
                 if (err) {
                     console.log("error in getting data");
-                }
-                else {
+                } else {
                     profile.userContStories = data;
-                    var i = 0;
-                    for (i = 0; i < data.length; i++) {
-                        storyService.getInfo(data[i], profile.gI);
-                    }
+                    var i = data.length - 1;
+                    storyService.getInfo(data[0].pk, data[i].pk, 5, data, profile.uname, profile.gIM);
                 }
             });
 
-            storyService.getLikedStories(profile.uname, function (err, data) {
+            storyService.getLikedStories(profile.uname, function(err, data) {
                 if (err) {
                     console.log("error in getting data");
-                }
-                else {
+                } else {
                     profile.likedList = data;
-                    var i = 0;
-                    for (i = 0; i < data.length; i++) {
-                        storyService.getInfo(data[i], profile.gI);
-                    }
+                    var i = data.length - 1;
+                    storyService.getInfo(data[0].pk, data[i].pk, 4, data, profile.uname, profile.gIM);
                 }
             });
 
-            storyService.getTotalReads(profile.uname, function (err, data) {
+            storyService.getTotalReads(profile.uname, function(err, data) {
                 if (err) {
                     console.log("error in getting data");
-                }
-                else {
+                } else {
                     profile.totalReads = data;
                 }
 
@@ -320,35 +334,31 @@
                     maxFiles: 1,
                     addRemoveLinks: true,
                     acceptedFiles: 'image/*',
-                    accept: function (file, done) {
+                    accept: function(file, done) {
                         profile.file = file;
                         done();
                     }
                 },
                 'eventHandlers': {
-                    'thumbnail': function (file, dataUrl) {
+                    'thumbnail': function(file, dataUrl) {
                         profile.currSource = dataUrl;
                     },
-                    'sending': function (file, xhr, formData) {
-                    },
-                    'success': function (file, response) {
-                    }
+                    'sending': function(file, xhr, formData) {},
+                    'success': function(file, response) {}
                 }
             };
 
-            profile.addImageDND = function () {
+            profile.addImageDND = function() {
                 profile.image.img_file = profile.file;
-                storyService.addImage(profile.image, function (err, data) {
+                storyService.addImage(profile.image, function(err, data) {
                     if (err) {
                         console.log("Image from DND failed");
-                    }
-                    else {
+                    } else {
                         if (data.result != 'false') {
                             profile.image = {};
                             profile.uploadPic = false;
                             $window.location.href = profile.url;
-                        }
-                        else {
+                        } else {
                             alert("Not Authorized");
                         }
                     }
@@ -356,44 +366,38 @@
             };
 
 
-            profile.getMoreStories = function () {
+            profile.getMoreStories = function() {
                 var last = profile.stories[profile.stories.length - 1];
-                storyService.getUserStories(profile.user.pk, last.pk, 10, function (err, data) {
+                storyService.getUserStories(profile.user.pk, last.pk, 10, function(err, data) {
                     if (err) {
                         console.log("error in getting data");
-                    }
-                    else {
-                        var i = 0;
-
+                    } else {
                         if (data.length < 10) {
                             profile.haveMore = false;
                         }
 
-                        for (i = 0; i < data.length; i++) {
-                            profile.stories.push(data[i]);
+                        var i = data.length - 1;
 
-                            storyService.getInfo(data[i], profile.gI);
-                        }
+                        storyService.getInfo(data[0].pk, data[i].pk, 3, data, profile.uname, profile.gI);
                     }
                 });
             };
 
-            profile.getStatus = function (data) {
+            profile.getStatus = function(data) {
                 if (data.is_complete) {
                     return "Complete";
                 } else {
                     if (data.is_open) {
                         return "Active";
-                    }
-                    else {
+                    } else {
                         return "Closed";
                     }
 
                 }
             };
 
-            profile.deleteStory = function (element) {
-                storyService.deleteStory(element.pk, function (err, data) {
+            profile.deleteStory = function(element) {
+                storyService.deleteStory(element.pk, function(err, data) {
                     if (err) {
                         console.log("error in getting data");
                     } else {
@@ -405,8 +409,8 @@
                 });
             };
 
-            profile.bookmark = function (data) {
-                storyService.addToReadLater(profile.me.pk, data, function (err, data, cstory) {
+            profile.bookmark = function(data) {
+                storyService.addToReadLater(profile.me.pk, data, function(err, data, cstory) {
                     if (err) {
                         console.log("error in getting data");
                     } else {
@@ -417,8 +421,8 @@
                 });
             };
 
-            profile.unbookmark = function (data) {
-                storyService.removeFromReadLater(profile.me.pk, data, function (err, data, cstory) {
+            profile.unbookmark = function(data) {
+                storyService.removeFromReadLater(profile.me.pk, data, function(err, data, cstory) {
                     if (err) {
                         console.log("error in getting data");
                     } else {
@@ -429,8 +433,8 @@
                 });
             };
 
-            profile.like = function (data) {
-                storyService.Like(profile.me.pk, data, function (err, data, cstory) {
+            profile.like = function(data) {
+                storyService.Like(profile.me.pk, data, function(err, data, cstory) {
                     if (err) {
                         console.log("error in getting data");
                     } else {
@@ -442,8 +446,8 @@
                 });
             };
 
-            profile.unlike = function (data) {
-                storyService.Unlike(profile.me.pk, data, function (err, data, cstory) {
+            profile.unlike = function(data) {
+                storyService.Unlike(profile.me.pk, data, function(err, data, cstory) {
                     if (err) {
                         console.log("error in getting data");
                     } else {
@@ -455,9 +459,9 @@
                 });
             };
 
-            profile.changeToWriting = function (story) {
-                console.log(story);
-                storyService.setIncomplete(story, function (err, data, story) {
+            profile.changeToWriting = function(story) {
+                //console.log(story);
+                storyService.setIncomplete(story, function(err, data, story) {
                     if (err) {
                         console.log(err);
                     } else {
@@ -466,11 +470,11 @@
                 });
             };
 
-            profile.initBarGraph = function (elemName) {
+            profile.initBarGraph = function(elemName) {
 
                 var bardata = [];
 
-                profile.graphAnalytics.forEach(function (d, i) {
+                profile.graphAnalytics.forEach(function(d, i) {
                     var e = {};
                     e.date = d.date;
                     e.total = d.total;
@@ -480,7 +484,7 @@
 
                 var domainData = [];
 
-                profile.graphAnalytics.forEach(function (d) {
+                profile.graphAnalytics.forEach(function(d) {
                     var e = "";
                     e = d.date;
                     domainData.push(e);
@@ -489,7 +493,12 @@
                 var w = d3.select(elemName).style("width");
                 var widthlen = w.length;
 
-                var margin = {top: 70, right: 70, bottom: 70, left: 70};
+                var margin = {
+                    top: 70,
+                    right: 70,
+                    bottom: 70,
+                    left: 70
+                };
 
                 var height = 600 - margin.top - margin.bottom,
                     width = parseInt(w.slice(0, widthlen - 2)) - margin.right - margin.left,
@@ -499,22 +508,21 @@
                 var tooltip = d3.select('body')
                     .append('div')
                     .classed('d3-tooltip', true)
-                    .style(
-                        {
-                            'position': 'absolute',
-                            'padding': '0 10px',
-                            'background': 'white',
-                            'opacity': 0
-                        });
+                    .style({
+                        'position': 'absolute',
+                        'padding': '0 10px',
+                        'background': 'white',
+                        'opacity': 0
+                    });
 
                 var yScale = d3.scale.linear()
-                    .domain([0, d3.max(bardata, function (d) {
+                    .domain([0, d3.max(bardata, function(d) {
                         return d.total;
                     })])
                     .range([0, height]);
 
                 var xScale = d3.scale.ordinal()
-                    .domain(bardata.map(function (d) {
+                    .domain(bardata.map(function(d) {
                         return d.date;
                     }))
                     .rangeBands([0, width], 0.1, 1);
@@ -531,13 +539,13 @@
                     .style('fill', "#fb5e58")
                     .attr('width', xScale.rangeBand())
                     .attr('height', 0)
-                    .attr('x', function (d, i) {
+                    .attr('x', function(d, i) {
                         return xScale(d.date);
                     })
                     .attr('y', height)
-                    .on('mouseover', function (d) {
+                    .on('mouseover', function(d) {
 
-                        setTimeout(function () {
+                        setTimeout(function() {
                             tooltip.transition()
                                 .style('opacity', 0);
                         }, 3000);
@@ -555,7 +563,7 @@
                             .transition().duration(100)
                             .style('opacity', 0.5);
                     })
-                    .on('mouseout', function (d) {
+                    .on('mouseout', function(d) {
                         d3.select(this)
                             .transition().duration(100)
                             .style('opacity', 1);
@@ -564,13 +572,13 @@
 
                     });
                 chart.transition()
-                    .attr('height', function (d) {
+                    .attr('height', function(d) {
                         return yScale(d.total);
                     })
-                    .attr('y', function (d) {
+                    .attr('y', function(d) {
                         return height - yScale(d.total);
                     })
-                    .delay(function (d, i) {
+                    .delay(function(d, i) {
                         return i * 10;
                     })
                     .duration(1000)
@@ -578,7 +586,7 @@
 
 
                 var guideScale = d3.scale.linear()
-                    .domain([0, d3.max(bardata, function (d) {
+                    .domain([0, d3.max(bardata, function(d) {
                         return d.total;
                     })])
                     .range([height, 0]);
@@ -600,9 +608,14 @@
                 guide
                     .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
                     .selectAll('path')
-                    .style({'fill': 'none', 'stroke': '#000'});
+                    .style({
+                        'fill': 'none',
+                        'stroke': '#000'
+                    });
                 guide.selectAll('line')
-                    .style({'stroke': '#000'});
+                    .style({
+                        'stroke': '#000'
+                    });
 
                 var hGuide = d3.select('svg').append('g');
 
@@ -611,41 +624,46 @@
                 hGuide
                     .attr('transform', 'translate(' + margin.left + ', ' + (height + margin.top) + ')')
                     .selectAll('path')
-                    .style({'fill': 'none', 'stroke': '#000'});
+                    .style({
+                        'fill': 'none',
+                        'stroke': '#000'
+                    });
                 hGuide.selectAll('line')
-                    .style({'stroke': '#000'});
+                    .style({
+                        'stroke': '#000'
+                    });
 
 
             };
 
-            this.update = function (sid, source, elem) {
+            this.update = function(sid, source, elem) {
 
-                console.log(source);
-                console.log(elem);
+                //console.log(source);
+                //console.log(elem);
 
                 // Compute the new tree layout.
                 var nodes = tree.nodes(root),
                     links = tree.links(nodes);
 
                 // Normalize for fixed-depth.
-                nodes.forEach(function (d) {
-                    profile.storyAnalytics.stories.forEach(function (d1) {
+                nodes.forEach(function(d) {
+                    profile.storyAnalytics.stories.forEach(function(d1) {
                         if (d1.sid === sid) {
                             var most = [];
                             var least = [];
                             least = d1["l_brach"];
-                            least.forEach(function (d2) {
+                            least.forEach(function(d2) {
                                 if (d.branchid == d2) {
-                                    console.log('light branch found');
-                                    console.log(d2);
+                                    //console.log('light branch found');
+                                    //console.log(d2);
                                     d.color = 'pink';
                                 }
                             });
                             most = d1["m_brach"];
-                            most.forEach(function (d2) {
+                            most.forEach(function(d2) {
                                 if (d.branchid == d2) {
-                                    console.log('heavy branch found');
-                                    console.log(d2);
+                                    //console.log('heavy branch found');
+                                    //console.log(d2);
                                     d.color = 'red';
                                 }
                             });
@@ -656,32 +674,32 @@
 
                 // Update the nodes…
                 var node = svg.selectAll("g.node")
-                    .data(nodes, function (d) {
+                    .data(nodes, function(d) {
                         return d.id || (d.id = ++i);
                     });
 
                 // Enter any new nodes at the parent's previous position.
                 var nodeEnter = node.enter().append("g")
                     .attr("class", "node")
-                    .attr("transform", function (d) {
+                    .attr("transform", function(d) {
                         return "translate(" + source.x0 + "," + source.y0 + ")";
                     });
 
                 nodeEnter.append("circle")
                     .attr("r", 1e-6)
-                    .style("fill", function (d) {
+                    .style("fill", function(d) {
                         return d.color;
                     });
 
                 nodeEnter.append("text")
-                    .attr("x", function (d) {
+                    .attr("x", function(d) {
                         return d.children || d._children ? -13 : 13;
                     })
                     .attr("dy", ".35em")
-                    .attr("text-anchor", function (d) {
+                    .attr("text-anchor", function(d) {
                         return d.children || d._children ? "end" : "start";
                     })
-                    .text(function (d) {
+                    .text(function(d) {
                         return d.name;
                     })
                     .style("fill-opacity", 1e-6);
@@ -689,26 +707,26 @@
                 // Transition nodes to their new position.
                 var nodeUpdate = node.transition()
                     .duration(duration)
-                    .attr("transform", function (d) {
+                    .attr("transform", function(d) {
                         return "translate(" + d.x + "," + d.y + ")";
                     });
 
                 nodeUpdate.select("circle")
                     .attr("r", 10)
-                    .style("fill", function (d) {
+                    .style("fill", function(d) {
                         return d.color;
                     });
 
                 nodeUpdate.select("text")
                     .style("fill-opacity", 1)
-                    .text(function (d) {
+                    .text(function(d) {
                         return d.name;
                     });
 
                 // Transition exiting nodes to the parent's new position.
                 var nodeExit = node.exit().transition()
                     .duration(duration)
-                    .attr("transform", function (d) {
+                    .attr("transform", function(d) {
                         return "translate(" + source.x + "," + source.y + ")";
                     })
                     .remove();
@@ -721,16 +739,22 @@
 
                 // Update the links…
                 var link = svg.selectAll("path.link")
-                    .data(links, function (d) {
+                    .data(links, function(d) {
                         return d.target.id;
                     });
 
                 // Enter any new links at the parent's previous position.
                 link.enter().insert("path", "g")
                     .attr("class", "link")
-                    .attr("d", function (d) {
-                        var o = {x: source.x0, y: source.y0};
-                        return diagonal({source: o, target: o});
+                    .attr("d", function(d) {
+                        var o = {
+                            x: source.x0,
+                            y: source.y0
+                        };
+                        return diagonal({
+                            source: o,
+                            target: o
+                        });
                     });
 
                 // Transition links to their new position.
@@ -741,21 +765,27 @@
                 // Transition exiting nodes to the parent's new position.
                 link.exit().transition()
                     .duration(duration)
-                    .attr("d", function (d) {
-                        var o = {x: source.x, y: source.y};
-                        return diagonal({source: o, target: o});
+                    .attr("d", function(d) {
+                        var o = {
+                            x: source.x,
+                            y: source.y
+                        };
+                        return diagonal({
+                            source: o,
+                            target: o
+                        });
                     })
                     .remove();
 
                 // Stash the old positions for transition.
-                nodes.forEach(function (d) {
+                nodes.forEach(function(d) {
                     d.x0 = d.x;
                     d.y0 = d.y;
                 });
 
             };
 
-            profile.findPos = function (obj) {
+            profile.findPos = function(obj) {
                 var curtop = 0;
                 if (obj.offsetParent) {
                     do {
@@ -765,22 +795,31 @@
                 }
             };
 
-            profile.click = function (sid, d, elem) {
+            profile.click = function(sid, d, elem) {
                 currentNode._children = null;
                 if (d.children) {
-                    d._children = [{"somev": "hello"}];
+                    d._children = [{
+                        "somev": "hello"
+                    }];
                 } else {
-                    d._children = [{"somev": "hello"}];
+                    d._children = [{
+                        "somev": "hello"
+                    }];
                 }
                 window.scroll(0, profile.findPos(d));
                 profile.update(sid, d, elem);
             };
 
 
-            profile.initTree = function (sid, treeData, elem) {
+            profile.initTree = function(sid, treeData, elem) {
                 // Source http://bl.ocks.org/d3noob/8375092
 
-                var margin = {top: 150, right: 80, bottom: 80, left: 80},
+                var margin = {
+                        top: 150,
+                        right: 80,
+                        bottom: 80,
+                        left: 80
+                    },
                     width = 900 - margin.right - margin.left,
                     height = 800 - margin.top - margin.bottom;
 
@@ -788,7 +827,7 @@
                     .size([width, height]);
 
                 diagonal = d3.svg.diagonal()
-                    .projection(function (d) {
+                    .projection(function(d) {
                         return [d.x, d.y];
                     });
 
@@ -810,24 +849,23 @@
                 d3.select(self.frameElement).style("height", "500px");
             };
 
-            $scope.revealTree = function (sid) {
+            $scope.revealTree = function(sid) {
                 $('.modal').modal('show');
-                $('.modal').on('hidden.bs.modal', function (e) {
+                $('.modal').on('hidden.bs.modal', function(e) {
                     $('.modal-content').html('');
                 });
-                storyService.getStory(sid, function (err, data) {
+                storyService.getStory(sid, function(err, data) {
                     if (err) {
                         console.log(err);
-                    }
-                    else {
+                    } else {
                         var treeData = [data];
-                        console.log(treeData);
+                        //console.log(treeData);
                         profile.initTree(sid, treeData, ".modal-content");
                     }
                 });
             };
 
-            profile.isEmpty = function () {
+            profile.isEmpty = function() {
                 if (profile.stories.length === 0) {
                     return true;
                 } else {

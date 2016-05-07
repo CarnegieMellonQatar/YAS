@@ -52,13 +52,13 @@
             };
 
             // Gets back the user objects that have contributed to a story
-            service.getInfo = function (story, callback) {
-                $http.get('/api/getInfo/' + story.pk + '/')
+            service.getInfo = function (gid, lid, both, stories, username, callback) {
+                $http.get('/api/getInfo/' + gid + '/' + lid + '/' + both + '/' + username + '/')
                     .success(function (data, status) {
-                        callback(null, data, story);
+                        callback(null, data, stories);
                     })
                     .error(function (error, status) {
-                        callback(error, null, story);
+                        callback(error, null, stories);
                     });
             };
 

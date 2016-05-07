@@ -254,24 +254,53 @@ def getUser(request, uid, cid):
     return HttpResponse(data, content_type="application/json")
 
 @login_required
-def getInfo(request,sid):
-    data = {}
-    story = Story.objects.get(id=sid)
-    contributors = Contributors.objects.filter(story=story)
-    rl = ReadLater.objects.filter(story=story, user=request.user)
-    likes = Likes.objects.filter(story=story)
-    user = story.user
-    datau = serializers.serialize('json', [user])
-    datal = serializers.serialize('json', likes)
-    datac = serializers.serialize('json', contributors)
-    if (len(rl) != 0):
-        data['rl'] = 'true'
+def getInfo(request,gid,lid,complete,username):
+    storiesComp = []
+    if(str(username) != "None"):
+        user = User.objects.get(username=str(username))
+    if(int(complete) == 5):
+        contributions = Contributors.objects.filter(user=user).values_list('story')
+        storiesComp = Story.objects.filter(id__in=contributions)
+    elif(int(complete) == 4):
+        likes = Likes.objects.filter(user=user).values_list('story')
+        storiesComp = Story.objects.filter(id__in=likes)
+    elif(int(complete) == 3):
+        storiesComp = Story.objects.filter(id__gte=gid, id__lte=lid, user=user)
+    elif(int(complete) == 2):
+        storiesComp = Story.objects.filter(is_complete=True).order_by('id')[:10]
+        storiesAct = Story.objects.filter(is_complete=False, is_open=True).order_by('id')[:10]
+        storiesComp = list(chain(storiesComp, storiesAct))
+    elif (int(complete) == 1):
+        storiesComp = Story.objects.filter(id__gte=gid, id__lte=lid, is_complete=True)
     else:
-        data['rl'] = 'false'
-    data['c'] = datac
-    data['l'] = datal
-    data['u'] = datau
-    return HttpResponse(json.dumps(data), content_type="application/json")
+        storiesComp = Story.objects.filter(id__gte=gid, id__lte=lid, is_complete=False, is_open=True)
+
+    datalist = []
+    for story in storiesComp:
+        data = {}
+        sid = story.id
+        story = Story.objects.get(id=sid)
+        contributors = Contributors.objects.filter(story=story)
+        rl = ReadLater.objects.filter(story=story, user=request.user)
+        likes = Likes.objects.filter(story=story)
+        liked = Likes.objects.filter(story=story, user=request.user)
+        user = story.user
+        datau = serializers.serialize('json', [user])
+        if (len(rl) != 0):
+            data['rl'] = 'true'
+        else:
+            data['rl'] = 'false'
+
+        if (len(liked ) != 0):
+            data['liked'] = 'true'
+        else:
+            data['liked'] = 'false'
+
+        data['c'] = len(contributors)
+        data['l'] = len(likes)
+        data['u'] = datau
+        datalist.append(data)
+    return HttpResponse(json.dumps(datalist), content_type="application/json")
 
 
 @login_required
