@@ -2,10 +2,12 @@
     "use strict";
 
     angular.module('storyTeller')
-        .controller('profileController', function (storyService, $location, $scope) {
+        .controller('profileController', function (storyService, $location, $scope, $window) {
 
             var profile = this;
             profile.url = location.pathname;
+            profile.profilePicText = "Change Profile Picture";
+            profile.uploadPic = false;
             profile.stories = [];
             profile.haveMore = true;
             profile.user = "";
@@ -15,6 +17,11 @@
             profile.contName = "";
             profile.fanName = "";
             profile.graphAnalytics = {};
+            profile.graph0 = {};
+            profile.graph1 = {};
+            profile.graph2 = {};
+            profile.graphAnalytics1 = {};
+            profile.graphAnalytics2 = {};
             profile.storyAnalytics = {};
 
             profile.totalReads = 0;
@@ -23,8 +30,91 @@
             profile.userContStories = [];
             profile.likedList = [];
 
+            profile.graphTab = 0;
+
             profile.firstTime = true;
+            profile.firstTime1 = true;
+            profile.firstTime2 = true;
             profile.currentTab = 0;
+
+            var root, currentNode, tree, diagonal, svg;
+
+            var i = 0,
+                duration = 750;
+
+
+            profile.showDropZone = function () {
+                if (profile.uploadPic == false) {
+                    profile.uploadPic = true;
+                }
+                else {
+                    profile.uploadPic = false;
+                }
+            };
+
+            profile.setGraph = function (i) {
+                profile.graphTab = i;
+                if (i == 0) {
+                    if (profile.firstTime) {
+                        storyService.getGraphAnalytics(profile.uname, 30, function (err, data) {
+                            if (err) {
+                                console.log("error in getting data")
+                            }
+                            else {
+                                profile.graph0 = data;
+                                console.log(profile.graph0);
+                                profile.graphAnalytics = data;
+                                $('#barGraph').html('');
+                                profile.initBarGraph('#barGraph');
+                            }
+                        });
+                        profile.firstTime = false;
+                    } else {
+                        profile.graphAnalytics = profile.graph0;
+                        console.log(profile.graph0);
+                        $('#barGraph').html('');
+                        profile.initBarGraph('#barGraph');
+                    }
+                } else if (i == 1) {
+                    if (profile.firstTime1) {
+                        storyService.getGraphAnalytics(profile.uname, 60, function (err, data) {
+                            if (err) {
+                                console.log("error in getting data")
+                            }
+                            else {
+                                profile.graph1 = data;
+                                profile.graphAnalytics = data;
+                                $('#barGraph').html('');
+                                profile.initBarGraph('#barGraph');
+                            }
+                        });
+                        profile.firstTime1 = false;
+                    } else {
+                        profile.graphAnalytics = profile.graph1;
+                        $('#barGraph').html('');
+                        profile.initBarGraph('#barGraph');
+                    }
+                } else if (i == 2) {
+                    if (profile.firstTime2) {
+                        storyService.getGraphAnalytics(profile.uname, 90, function (err, data) {
+                            if (err) {
+                                console.log("error in getting data")
+                            }
+                            else {
+                                profile.graph2 = data;
+                                profile.graphAnalytics = data;
+                                $('#barGraph').html('');
+                                profile.initBarGraph('#barGraph');
+                            }
+                        });
+                        profile.firstTime2 = false;
+                    } else {
+                        profile.graphAnalytics = profile.graph2;
+                        $('#barGraph').html('');
+                        profile.initBarGraph('#barGraph');
+                    }
+                }
+            };
 
             /************* CallBack Functions ***************/
             profile.gI = function (err, data, stories) {
@@ -59,16 +149,9 @@
 
             profile.set = function (i) {
                 profile.currentTab = i;
-                if (i == 1 && profile.firstTime) {
-                    storyService.getGraphAnalytics(profile.uname, 30, function (err, data) {
-                        if (err) {
-                            console.log("error in getting data");
-                        }
-                        else {
-                            profile.graphAnalytics = data;
-                            profile.initBarGraph('#barGraph', profile.graphAnalytics);
-                        }
-                    });
+                if (i == 1 && profile.firstTime && !profile.isEmpty()) {
+
+                    profile.setGraph(0);
 
                     storyService.getUserByID(profile.storyAnalytics.contributor, function (err, data) {
                         if (err) {
@@ -88,12 +171,23 @@
                         }
                     });
 
-                    profile.firstTime = false;
+                    //profile.firstTime = false;
+                } else if (i == 1 && !profile.firstTime && !profile.isEmpty()) {
+                    profile.firstTime = true;
+                    profile.setGraph(0);
                 }
             };
 
             profile.isSet = function (i) {
                 if (profile.currentTab == i) {
+                    return true;
+                } else {
+                    return false;
+                }
+            };
+
+            profile.isSetGraph = function (i) {
+                if (profile.graphTab == i) {
                     return true;
                 } else {
                     return false;
@@ -123,11 +217,12 @@
                         }
                         else {
                             var i = 0;
+                            console.log(data);
                             for (i = 0; i < data.length; i++) {
                                 profile.stories.push(data[i]);
 
-                                storyService.getInfo(data[i],profile.gI);
-                            };
+                                storyService.getInfo(data[i], profile.gI);
+                            }
                         }
                     });
 
@@ -188,7 +283,7 @@
                     profile.userContStories = data;
                     var i = 0;
                     for (i = 0; i < data.length; i++) {
-                        storyService.getInfo(data[i],profile.gI);
+                        storyService.getInfo(data[i], profile.gI);
                     }
                 }
             });
@@ -201,7 +296,7 @@
                     profile.likedList = data;
                     var i = 0;
                     for (i = 0; i < data.length; i++) {
-                        storyService.getInfo(data[i],profile.gI);
+                        storyService.getInfo(data[i], profile.gI);
                     }
                 }
             });
@@ -250,7 +345,8 @@
                     else {
                         if (data.result != 'false') {
                             profile.image = {};
-                            $scope.add_image_form2.$setPristine();
+                            profile.uploadPic = false;
+                            $window.location.href = profile.url;
                         }
                         else {
                             alert("Not Authorized");
@@ -276,7 +372,7 @@
                         for (i = 0; i < data.length; i++) {
                             profile.stories.push(data[i]);
 
-                            storyService.getInfo(data[i],profile.gI);
+                            storyService.getInfo(data[i], profile.gI);
                         }
                     }
                 });
@@ -359,13 +455,20 @@
                 });
             };
 
+            profile.changeToWriting = function (story) {
+                console.log(story);
+                storyService.setIncomplete(story, function (err, data, story) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        location.pathname = "/" + story.pk + "/story";
+                    }
+                });
+            };
+
             profile.initBarGraph = function (elemName) {
 
                 var bardata = [];
-
-                //for (var i = 0; i < 30; i++) {
-                //    bardata.push(Math.random() * 100);
-                //}
 
                 profile.graphAnalytics.forEach(function (d, i) {
                     var e = {};
@@ -513,6 +616,223 @@
                     .style({'stroke': '#000'});
 
 
+            };
+
+            this.update = function (sid, source, elem) {
+
+                console.log(source);
+                console.log(elem);
+
+                // Compute the new tree layout.
+                var nodes = tree.nodes(root),
+                    links = tree.links(nodes);
+
+                // Normalize for fixed-depth.
+                nodes.forEach(function (d) {
+                    profile.storyAnalytics.stories.forEach(function (d1) {
+                        if (d1.sid === sid) {
+                            var most = [];
+                            var least = [];
+                            least = d1["l_brach"];
+                            least.forEach(function (d2) {
+                                if (d.branchid == d2) {
+                                    console.log('light branch found');
+                                    console.log(d2);
+                                    d.color = 'pink';
+                                }
+                            });
+                            most = d1["m_brach"];
+                            most.forEach(function (d2) {
+                                if (d.branchid == d2) {
+                                    console.log('heavy branch found');
+                                    console.log(d2);
+                                    d.color = 'red';
+                                }
+                            });
+                        }
+                    });
+                    d.y = d.depth * 90;
+                });
+
+                // Update the nodes…
+                var node = svg.selectAll("g.node")
+                    .data(nodes, function (d) {
+                        return d.id || (d.id = ++i);
+                    });
+
+                // Enter any new nodes at the parent's previous position.
+                var nodeEnter = node.enter().append("g")
+                    .attr("class", "node")
+                    .attr("transform", function (d) {
+                        return "translate(" + source.x0 + "," + source.y0 + ")";
+                    });
+
+                nodeEnter.append("circle")
+                    .attr("r", 1e-6)
+                    .style("fill", function (d) {
+                        return d.color;
+                    });
+
+                nodeEnter.append("text")
+                    .attr("x", function (d) {
+                        return d.children || d._children ? -13 : 13;
+                    })
+                    .attr("dy", ".35em")
+                    .attr("text-anchor", function (d) {
+                        return d.children || d._children ? "end" : "start";
+                    })
+                    .text(function (d) {
+                        return d.name;
+                    })
+                    .style("fill-opacity", 1e-6);
+
+                // Transition nodes to their new position.
+                var nodeUpdate = node.transition()
+                    .duration(duration)
+                    .attr("transform", function (d) {
+                        return "translate(" + d.x + "," + d.y + ")";
+                    });
+
+                nodeUpdate.select("circle")
+                    .attr("r", 10)
+                    .style("fill", function (d) {
+                        return d.color;
+                    });
+
+                nodeUpdate.select("text")
+                    .style("fill-opacity", 1)
+                    .text(function (d) {
+                        return d.name;
+                    });
+
+                // Transition exiting nodes to the parent's new position.
+                var nodeExit = node.exit().transition()
+                    .duration(duration)
+                    .attr("transform", function (d) {
+                        return "translate(" + source.x + "," + source.y + ")";
+                    })
+                    .remove();
+
+                nodeExit.select("circle")
+                    .attr("r", 1e-6);
+
+                nodeExit.select("text")
+                    .style("fill-opacity", 1e-6);
+
+                // Update the links…
+                var link = svg.selectAll("path.link")
+                    .data(links, function (d) {
+                        return d.target.id;
+                    });
+
+                // Enter any new links at the parent's previous position.
+                link.enter().insert("path", "g")
+                    .attr("class", "link")
+                    .attr("d", function (d) {
+                        var o = {x: source.x0, y: source.y0};
+                        return diagonal({source: o, target: o});
+                    });
+
+                // Transition links to their new position.
+                link.transition()
+                    .duration(duration)
+                    .attr("d", diagonal);
+
+                // Transition exiting nodes to the parent's new position.
+                link.exit().transition()
+                    .duration(duration)
+                    .attr("d", function (d) {
+                        var o = {x: source.x, y: source.y};
+                        return diagonal({source: o, target: o});
+                    })
+                    .remove();
+
+                // Stash the old positions for transition.
+                nodes.forEach(function (d) {
+                    d.x0 = d.x;
+                    d.y0 = d.y;
+                });
+
+            };
+
+            profile.findPos = function (obj) {
+                var curtop = 0;
+                if (obj.offsetParent) {
+                    do {
+                        curtop += obj.offsetTop;
+                    } while (obj = obj.offsetParent);
+                    return [curtop];
+                }
+            };
+
+            profile.click = function (sid, d, elem) {
+                currentNode._children = null;
+                if (d.children) {
+                    d._children = [{"somev": "hello"}];
+                } else {
+                    d._children = [{"somev": "hello"}];
+                }
+                window.scroll(0, profile.findPos(d));
+                profile.update(sid, d, elem);
+            };
+
+
+            profile.initTree = function (sid, treeData, elem) {
+                // Source http://bl.ocks.org/d3noob/8375092
+
+                var margin = {top: 150, right: 80, bottom: 80, left: 80},
+                    width = 900 - margin.right - margin.left,
+                    height = 800 - margin.top - margin.bottom;
+
+                tree = d3.layout.tree()
+                    .size([width, height]);
+
+                diagonal = d3.svg.diagonal()
+                    .projection(function (d) {
+                        return [d.x, d.y];
+                    });
+
+                svg = d3.select(elem).append("svg")
+                    .attr("width", width + margin.right + margin.left)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                root = treeData[0];
+                root.x0 = height / 2;
+                root.y0 = 0;
+                currentNode = root;
+
+                profile.click(sid, root, elem);
+                profile.update(sid, root, elem);
+
+                // TODO: Not certain what this is, figure it out
+                d3.select(self.frameElement).style("height", "500px");
+            };
+
+            $scope.revealTree = function (sid) {
+                $('.modal').modal('show');
+                $('.modal').on('hidden.bs.modal', function (e) {
+                    $('.modal-content').html('');
+                });
+                storyService.getStory(sid, function (err, data) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        var treeData = [data];
+                        console.log(treeData);
+                        profile.initTree(sid, treeData, ".modal-content");
+                    }
+                });
+            };
+
+            profile.isEmpty = function () {
+                if (profile.stories.length === 0) {
+                    return true;
+                } else {
+                    return false;
+                }
             };
 
 

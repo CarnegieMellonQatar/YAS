@@ -8,6 +8,40 @@
   stroke-width: 3px;
 }
 
+.modal-lg {
+  position: relative;
+}
+
+.legend-box {
+  position: absolute;
+  z-index: 10;
+  top: 5%;
+  left: 5%;
+  background: $lightgray;
+  width: 150px;
+  height: 100px;
+}
+
+.legend-entry {
+  margin-top: 10px;
+}
+
+.small-legend-text {
+  font-weight: 100;
+}
+
+.red-box {
+  width: 10px;
+  height: 10px;
+  background: $fail;
+}
+
+.pink-box {
+  width: 10px;
+  height: 10px;
+  background: #fba6a8;
+}
+
 .node text {
   font: 12px sans-serif;
 }

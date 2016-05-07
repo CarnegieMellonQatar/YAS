@@ -250,13 +250,13 @@
             };
 
             // Set a story to be incomplete
-            service.setIncomplete = function (sid, callback) {
-                $http.post('/api/setIncComplete/' + sid + '/')
+            service.setIncomplete = function (story, callback) {
+                $http.post('/api/setIncomplete/' + story.pk + '/')
                     .success(function (data, status) {
-                        callback(null, data);
+                        callback(null, data, story);
                     })
                     .error(function (error, status) {
-                        callback(error, null);
+                        callback(error, null, story);
                     });
             };
 

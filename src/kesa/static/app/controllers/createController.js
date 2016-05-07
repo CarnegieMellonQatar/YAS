@@ -100,28 +100,35 @@
             this.applyChanges = function (response) {
                 switch (response.action) {
                     case 0:
-                        // Add a branch
-                        var newBranch =
-                        {
-                            "name": response.name,
-                            "body": response.body
-                        };
-                        MiscService.addRemoteBranchr(root, newBranch, response.branchid);
+
+                        console.log(response);
                         var contact = MiscService.findContactNoder(root, response.branchid);
+                        console.log(contact);
 
                         if (contact.some) {
                             ctrl.update(contact.obj, false, false);
+                            // Add a branch
+                            var newBranch =
+                            {
+                                "name": response.name,
+                                "body": response.body
+                            };
+                            MiscService.addRemoteBranchr(root, newBranch, response.branchid);
 
-                            storyService.addToStory(ctrl.createID, contact.obj.branchid, response, function (err, data, contact) {
+                            console.log(response.branchid);
+                            console.log(root);
+
+                            storyService.addToStory(ctrl.createID, contact.obj.branchid, response, function (err, data, contact1) {
                                 if (err) {
                                     console.log("error in getting data");
                                 } else {
-                                    currentNode.children[currentNode.children.length - 1].branchid = parseInt(data["result"]);
-                                    var toSend = MiscService.createPacket(4, null, data["result"]);
+                                    console.log(parseInt(data["result"]));
+                                    contact.obj.children[contact.obj.children.length - 1].branchid = parseInt(data["result"]);
+                                    var toSend = MiscService.createPacket(4, {"localid": 3}, data["result"]);
                                     toSend.myid = peer.id;
-                                    toSend.parentid = contact.parentid;
+                                    toSend.parentid = contact1.parentid;
 
-                                    contact.peer.send(MiscService.stringify(toSend));
+                                    contact1.peer.send(MiscService.stringify(toSend));
 
                                     storyService.addContribution(response.user, ctrl.createID, function (err, data) {
                                         if (err) {
@@ -136,12 +143,14 @@
 
                         break;
                     case 2:
+                        console.log(response.branchid);
                         // Edit a branch
                         contact = MiscService.findContactNoder(root, response.branchid);
-                        contact.obj.name = response.name;
-                        contact.obj.body = response.body;
 
                         if (contact.some) {
+                            contact.obj.name = response.name;
+                            contact.obj.body = response.body;
+                            console.log(contact.obj);
                             storyService.editStory(ctrl.createID, contact.obj.branchid, contact.obj, response, function (err, data, response) {
                                 if (err) {
                                     console.log("error in getting data");
@@ -235,6 +244,7 @@
 
             this.update = function (source, sendToPeers, changeCurrentNode, action, specialNode) {
 
+                console.log(root);
                 var cont = d3.select(".story-container");
 
                 if (closed) {
@@ -428,7 +438,7 @@
                 if (sendToPeers) {
                     conn.forEach(function (element) {
                         var toSend = MiscService.createPacket(action, specialNode, source.id);
-                        toSend.branchid = source.branchid;
+                        toSend.branchid = specialNode.branchid;
                         element.send(MiscService.stringify(toSend));
                     });
                 }
@@ -463,14 +473,22 @@
                     currentNode.children = [];
                     currentNode.children.push(obj);
                 }
-                var specialNode = {"name": obj.name, "body": obj.body, "parentid": currentNode.id, "action": 0};
-                ctrl.update(currentNode, true, true, 0, specialNode);
 
                 storyService.addToStory(ctrl.createID, currentNode.branchid, null, function (err, data, contact) {
                     if (err) {
                         console.log("error in getting data");
                     } else {
                         currentNode.children[currentNode.children.length - 1].branchid = parseInt(data["result"]);
+                        console.log(parseInt(data["result"]));
+                        var specialNode =
+                        {
+                            "name": obj.name,
+                            "body": obj.body,
+                            "parentbranchid": currentNode.branchid,
+                            "action": 0,
+                            "branchid": parseInt(data["result"])
+                        };
+                        ctrl.update(currentNode, true, true, 0, specialNode);
                     }
                 });
             };
@@ -504,7 +522,7 @@
                         } else {
                             if (data["result"] === 'true') {
                                 ctrl.deleteBranchr(null, root, currentNode.id);
-                                ctrl.update(currentNode, true, false, 1, null);
+                                ctrl.update(currentNode, true, false, 1, {"branchid": currentNode.branchid});
                                 ctrl.click(currentNode.parent);
                             }
                         }
@@ -525,7 +543,8 @@
                     "name": currentNode.name,
                     "body": currentNode.body,
                     "currentid": currentNode.id,
-                    "action": 2
+                    "action": 2,
+                    "branchid": currentNode.branchid
                 };
                 editMode = false;
 

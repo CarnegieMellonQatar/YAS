@@ -13,7 +13,6 @@
         this.customAlertJumbo = function (string) {
             $("body").append('<div class="custom-alert-jumbo animated fadeInLeftBig">' + string + '</div>');
             setTimeout(function () {
-                //$(".custom-alert-jumbo").remove();
             }, 3000);
         };
 
@@ -117,6 +116,7 @@
                     // Add a branch
                     toSend.name = specialNode.name;
                     toSend.body = specialNode.body;
+                    toSend.parentbranchid = specialNode.parentbranchid;
                     toSend.parentid = id;
                     break;
                 case 1:
@@ -129,6 +129,7 @@
                     toSend.currentid = id;
                     break;
                 case 4:
+                    toSend.localid = specialNode.localid;
                     toSend.branchid = id;
                     break;
                 default:

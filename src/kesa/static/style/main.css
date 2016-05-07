@@ -93,7 +93,7 @@ hr.med {
 
   .container {
     width: 100%; } }
-.btn-classic, .story-active-switch-button, .story-active-switch-button:hover, .story-nav-add, .story-nav-add:hover, .story-join, .story-join:hover, .start-reading-button, .start-reading-button:hover, .story-choice-button, .story-choice-button:hover, .story-show-more, .profile-delete-story-button, .profile-delete-story-button:hover {
+.btn-classic, .story-active-switch-button, .story-active-switch-button:hover, .story-nav-add, .story-nav-add:hover, .story-join, .story-join:hover, .start-reading-button, .start-reading-button:hover, .story-choice-button, .story-choice-button:hover, .story-show-more, .profile-delete-story-button, .profile-delete-story-button:hover, .start-writing-button {
   text-align: center;
   display: inline-block;
   padding: 1.2em 1.4em;
@@ -118,6 +118,34 @@ hr.med {
   fill: white;
   stroke: #fb5e58;
   stroke-width: 3px; }
+
+.modal-lg {
+  position: relative; }
+
+.legend-box {
+  position: absolute;
+  z-index: 10;
+  top: 5%;
+  left: 5%;
+  background: #F1F1F1;
+  width: 150px;
+  height: 100px; }
+
+.legend-entry {
+  margin-top: 10px; }
+
+.small-legend-text {
+  font-weight: 100; }
+
+.red-box {
+  width: 10px;
+  height: 10px;
+  background: #D11C24; }
+
+.pink-box {
+  width: 10px;
+  height: 10px;
+  background: #fba6a8; }
 
 .node text {
   font: 12px sans-serif; }
@@ -658,7 +686,7 @@ header .header-content .header-content-inner p {
 .user-container {
   margin: 50px auto;
   width: 80%;
-  height: 300px;
+  height: 350px;
   background: white;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   border: 1px solid rgba(0, 0, 0, 0.09);
@@ -713,6 +741,18 @@ header .header-content .header-content-inner p {
   width: 90%;
   text-align: center; }
 
+.graph-tab-container {
+  margin-left: 100px;
+  width: 90%;
+  text-align: center; }
+
+.graph-tab {
+  font-size: 24px;
+  font-weight: 100;
+  border-bottom: 4px solid transparent;
+  cursor: pointer;
+  padding-bottom: 10px; }
+
 .dashboard-tab {
   font-size: 24px;
   font-weight: 100;
@@ -735,7 +775,8 @@ header .header-content .header-content-inner p {
   margin: auto;
   background: transparent;
   width: 80%;
-  overflow-y: scroll; }
+  overflow-y: scroll;
+  position: relative; }
 
 .profile-analytics {
   margin: auto;
@@ -775,5 +816,43 @@ header .header-content .header-content-inner p {
   color: #2D6CA5;
   font-weight: 200;
   font-size: 32px; }
+
+.analytics-tree {
+  position: absolute;
+  bottom: 5px;
+  cursor: pointer;
+  right: 13%; }
+
+.modal-content {
+  width: 900px;
+  overflow-y: scroll; }
+
+.pic-container {
+  position: relative; }
+
+.dz {
+  background: transparent;
+  height: 200px;
+  width: 200px;
+  border-radius: 50%;
+  position: absolute;
+  top: 25px;
+  left: 25px; }
+
+.pp-button {
+  margin-left: 50px;
+  cursor: pointer; }
+
+.add-pp-button {
+  margin-left: 65px; }
+
+.start-writing-button {
+  background: #FF4C2E;
+  color: white; }
+
+.start-writing-button:hover {
+  background: white;
+  color: #FF4C2E;
+  border: 2px solid #FF4C2E; }
 
 /*# sourceMappingURL=main.css.map */
