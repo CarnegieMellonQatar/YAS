@@ -214,8 +214,13 @@
   position: relative;
 }
 
+.heavy-message {
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
 .dz  {
-  background: transparent;
+  background: rgba(221, 221, 221, 0.64);
   height: 200px;
   width: 200px;
   border-radius: 50%;
