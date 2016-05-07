@@ -172,7 +172,14 @@
             // http://stackoverflow.com/questions/9098901/how-to-disable-repetitive-keydown-in-jquery
             // http://stackoverflow.com/questions/2249203/check-if-the-spacebar-is-being-pressed-and-the-mouse-is-moving-at-the-same-time
             $(function () {
-                $(document).keyup(function (evt) {
+                $(document).mouseup(function (evt) {
+                    hold = false;
+                }).mousedown(function (evt) {
+                    if (hold === false) { // first press
+                        $scope.$broadcast("spacePressed");
+                        hold = true;
+                    }
+                }).keyup(function (evt) {
                     if (evt.keyCode === 32) {
                         hold = false;
                     }

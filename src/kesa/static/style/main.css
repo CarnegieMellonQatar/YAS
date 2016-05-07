@@ -195,7 +195,6 @@ hr.med {
   border: 2px solid #fb5e58; }
 
 .delete-branch-button {
-  width: 42.375%;
   transition: all 0.2s;
   cursor: pointer;
   border-radius: .25em;
@@ -215,7 +214,6 @@ hr.med {
   border: 2px solid #D11C24; }
 
 .edit-branch-button {
-  width: 42.375%;
   border-radius: .25em;
   border: 2px solid transparent;
   transition: all 0.2s;
@@ -266,9 +264,7 @@ hr.med {
   transition: all 0.5s; }
 
 .tree-container {
-  transition: all 0.5s;
-  overflow-x: auto;
-  overflow-y: auto; }
+  transition: all 0.5s; }
 
 .story-title {
   margin: 20px;
@@ -276,8 +272,8 @@ hr.med {
 
 .close-story-button {
   position: absolute;
-  top: 20px;
-  right: 30px;
+  top: 10px;
+  right: 15px;
   cursor: pointer;
   font-weight: 700; }
 
@@ -296,17 +292,28 @@ textarea, .textareaClone {
   -moz-box-sizing: border-box;
   -ms-box-sizing: border-box;
   box-sizing: border-box;
-  width: 100%; }
+  width: 100%;
+  height: 500px; }
 
 .title-edit {
   padding-bottom: 0;
   color: #fb5e58;
   font-size: 32px;
-  font-weight: 700; }
+  font-weight: 700;
+  width: 350px;
+  max-width: 450px;
+  height: 75px;
+  max-height: 150px;
+  margin-right: 20px; }
 
 .body-edit {
   text-align: justify;
-  padding-top: 0; }
+  padding-top: 0;
+  width: 350px;
+  max-width: 450px;
+  max-height: 350px;
+  margin-bottom: 20px;
+  margin-right: 20px; }
 
 #next_page {
   display: none; }
@@ -329,6 +336,33 @@ textarea, .textareaClone {
   text-align: center;
   color: #FF4C2E;
   border: 2px solid #FF4C2E; }
+
+.publish-branch-button {
+  margin-top: 70px;
+  transition: all 0.2s;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: .25em;
+  border: 2px solid transparent;
+  background-color: #2D6CA5;
+  text-align: center;
+  color: white; }
+
+.publish-branch-button:hover {
+  padding: 10px;
+  background-color: white;
+  text-align: center;
+  color: #2D6CA5;
+  border: 2px solid #2D6CA5; }
+
+.fa-plus:hover {
+  opacity: 0.6; }
+
+.fa-times:hover {
+  opacity: 0.6; }
+
+.fa-check:hover {
+  opacity: 0.6; }
 
 .navbar-default {
   border-color: transparent;
@@ -830,8 +864,12 @@ header .header-content .header-content-inner p {
 .pic-container {
   position: relative; }
 
+.heavy-message {
+  font-weight: 700;
+  text-transform: uppercase; }
+
 .dz {
-  background: transparent;
+  background: rgba(221, 221, 221, 0.64);
   height: 200px;
   width: 200px;
   border-radius: 50%;

@@ -413,7 +413,6 @@ def getImage(request, username):
 
 # ##### POST methods #####
 
-@csrf_exempt
 def sign_up(request):
     user = User.objects.create_user(request.POST['userName'], '', request.POST['password'])
     user.first_name = request.POST['firstName']
@@ -424,7 +423,6 @@ def sign_up(request):
 
 
 @login_required
-@csrf_exempt
 def addImage(request):
     data = {}
     user = User.objects.get(id=request.user.id)
@@ -447,7 +445,6 @@ def addImage(request):
 
 
 @login_required
-@csrf_exempt
 def addToStory(request, sid, bid):
     data = {}
     s = Story.objects.get(id=sid)
@@ -468,7 +465,6 @@ def addToStory(request, sid, bid):
 
 
 @login_required
-@csrf_exempt
 def editStory(request, sid, bid):
     data = {}
     p = Graph.objects.get(id=bid)
@@ -483,7 +479,6 @@ def editStory(request, sid, bid):
 
 
 @login_required
-@csrf_exempt
 def setOpen(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
@@ -497,7 +492,6 @@ def setOpen(request, sid):
 
 
 @login_required
-@csrf_exempt
 def setClosed(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
@@ -511,7 +505,6 @@ def setClosed(request, sid):
 
 
 @login_required
-@csrf_exempt
 def setComplete(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
@@ -525,7 +518,6 @@ def setComplete(request, sid):
 
 
 @login_required
-@csrf_exempt
 def setIncomplete(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
@@ -539,7 +531,6 @@ def setIncomplete(request, sid):
 
 
 @login_required
-@csrf_exempt
 def like(request, uid, sid):
     data = {}
     if request.user.id == int(uid):
@@ -559,7 +550,6 @@ def like(request, uid, sid):
 
 
 @login_required
-@csrf_exempt
 def unlike(request, uid, sid):
     data = {}
     if request.user.id == int(uid):
@@ -577,7 +567,6 @@ def unlike(request, uid, sid):
 
 
 @login_required
-@csrf_exempt
 def deleteBranch(request, sid, bid):
     story = Story.objects.get(id=sid)
     branch = Graph.objects.get(id=bid)
@@ -591,7 +580,6 @@ def deleteBranch(request, sid, bid):
 
 
 @login_required
-@csrf_exempt
 def deleteStory(request, sid):
     story = Story.objects.get(id=sid)
     data = {}
@@ -606,7 +594,6 @@ def deleteStory(request, sid):
 
 
 @login_required
-@csrf_exempt
 def addSReads(request, sid):
     data = {}
     s = Story.objects.get(id=sid)
@@ -618,7 +605,6 @@ def addSReads(request, sid):
 
 
 @login_required
-@csrf_exempt
 def addBReads(request, bid):
     data = {}
     b = Graph.objects.get(id=bid)
@@ -630,7 +616,6 @@ def addBReads(request, bid):
 
 
 @login_required
-@csrf_exempt
 def createStory(request, uid):
     response = None
     if request.user.id == int(uid):
@@ -652,7 +637,6 @@ def createStory(request, uid):
 
 
 @login_required
-@csrf_exempt
 def addContribution(request, uid, sid):
     response = None
     data = {}
@@ -674,7 +658,6 @@ def addContribution(request, uid, sid):
 
 
 @login_required
-@csrf_exempt
 def getGraphAnalytics(request, username, numDays):
     data = {}
     if request.user.username == str(username):
@@ -691,7 +674,6 @@ def getGraphAnalytics(request, username, numDays):
 
 
 @login_required
-@csrf_exempt
 def addToReadLater(request, uid, sid):
     data = {}
     if request.user.id == int(uid):
@@ -710,7 +692,6 @@ def addToReadLater(request, uid, sid):
 
 
 @login_required
-@csrf_exempt
 def getGenericAnalytics(request, username):
     data = {}
     if request.user.username == str(username):
@@ -741,7 +722,6 @@ def getGenericAnalytics(request, username):
 
 
 @login_required
-@csrf_exempt
 def totalLikes(request, username):
     user = User.objects.get(username=str(username))
     stories = Story.objects.filter(user=user)
@@ -752,7 +732,6 @@ def totalLikes(request, username):
 
 
 @login_required
-@csrf_exempt
 def totalReads(request, username):
     user = User.objects.get(username=str(username))
     stories = Story.objects.filter(user=user).values_list('read')
@@ -763,7 +742,6 @@ def totalReads(request, username):
 
 
 @login_required
-@csrf_exempt
 def totalContributors(request, username):
     user = User.objects.get(username=str(username))
     stories = Story.objects.filter(user=user)
@@ -774,7 +752,6 @@ def totalContributors(request, username):
 
 
 @login_required
-@csrf_exempt
 def likedStories(request, username):
     user = User.objects.get(username=str(username))
     likes = Likes.objects.filter(user=user).values_list('story')
@@ -785,7 +762,6 @@ def likedStories(request, username):
 
 
 @login_required
-@csrf_exempt
 def contributedStories(request, username):
     user = User.objects.get(username=str(username))
     contributions = Contributors.objects.filter(user=user).values_list('story')
@@ -796,7 +772,6 @@ def contributedStories(request, username):
 
 
 @login_required
-@csrf_exempt
 def removeFromReadLater(request, uid, sid):
     data = {}
     if request.user.id == int(uid):
