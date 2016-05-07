@@ -12,7 +12,7 @@
             ctrl.is_complete = false;
             var treeData = null;
 
-            var root, currentNode, tree, diagonal, svg;
+            var root, currentNode, tree, diagonal, scale, zoomListener, svg;
 
             var peer = null;
             var conn = [];
@@ -21,9 +21,26 @@
             var closed = false;
             var editMode = false;
 
-
             var i = 0,
                 duration = 750;
+
+            var tooltip = d3.select('body')
+                .append('div')
+                .classed({'d3-tooltip': true})
+                .style(
+                    {
+                        'position': 'absolute',
+                        'padding': '0 10px',
+                        'max-width': '500px',
+                        'max-height': '500px',
+                        'background': '#F1F1F1',
+                        'opacity': 0
+                    });
+
+            function zoom() {
+                ctrl.clearTooltip();
+                svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+            }
 
             storyService.getStory(id, function (err, data) {
                 if (err) {
@@ -38,6 +55,9 @@
                             console.log("error in getting data");
                         }
                     });
+
+                    zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
+                    scale = zoomListener.scale();
 
                     // Source http://bl.ocks.org/d3noob/8375092
                     if (treeData === undefined || treeData === null || treeData[0] === "undefined" ||
@@ -62,9 +82,9 @@
 
                     d3.select(".tree-container").style("height", screen.height + "px");
 
-                    var margin = {top: 20, right: 120, bottom: 20, left: -20},
+                    var margin = {top: 20, right: 120, bottom: 120, left: -20},
                         width = parseInt(w.slice(0, widthlen - 2)) - margin.right - margin.left,
-                        height = 3000 - margin.top - margin.bottom;
+                        height = $(document).height() - margin.top - margin.bottom;
 
 
                     tree = d3.layout.tree()
@@ -78,8 +98,11 @@
                     svg = d3.select(".tree-container").append("svg")
                         .attr("width", width + margin.right + margin.left)
                         .attr("height", height + margin.top + margin.bottom)
+                        .call(zoomListener)
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                    //svgGroup = svg.append("g");
 
                     root = treeData[0];
                     root.x0 = height / 2;
@@ -87,7 +110,7 @@
                     currentNode = root;
                     ctrl.title = root.title;
 
-                    ctrl.click(root);
+                    //ctrl.click(root);
                     ctrl.update(root, true, true);
 
                     // TODO: Not certain what this is, figure it out
@@ -214,6 +237,7 @@
 
                     var currentIndex = index;
                     conn[currentIndex].on('data', function (data) {
+                        console.log(data);
                         var response = JSON.parse(data);
                         conn.filter(function (element) {
                             return element.peer === response.myid;
@@ -223,11 +247,14 @@
                         ctrl.applyChanges(response);
 
                         // Pass on the information to all other peers
-                        conn.forEach(function (element) {
-                            if (element.peer !== response.myid) {
-                                element.send(data);
-                            }
-                        });
+                        if (response.action !== 3) {
+
+                            conn.forEach(function (element) {
+                                if (element.peer !== response.myid) {
+                                    element.send(data);
+                                }
+                            });
+                        }
                     });
 
 
@@ -244,16 +271,16 @@
 
             this.update = function (source, sendToPeers, changeCurrentNode, action, specialNode) {
 
-                console.log(root);
-                var cont = d3.select(".story-container");
+                //console.log(root);
+                //var cont = d3.select(".story-container");
 
-                if (closed) {
-                    cont.classed("col-xs-4", true)
-                        .classed("animated", true)
-                        .classed("fadeInRightBig", true);
-                }
+                //if (closed) {
+                //    cont.classed("col-xs-4", true)
+                //        .classed("animated", true)
+                //        .classed("fadeInRightBig", true);
+                //}
 
-                d3.select(".tree-container").classed("col-xs-7", true);
+                //d3.select(".tree-container").classed("col-xs-7", true);
 
                 // Compute the new tree layout.
                 var nodes = tree.nodes(root),
@@ -364,73 +391,78 @@
                     d.y0 = d.y;
                 });
 
+                //if (changeCurrentNode) {
+                //
+                //    cont.html("");
+                //
+                //    cont.append("div")
+                //        .classed("close-story-button", true)
+                //        .text("x")
+                //        .on("click", ctrl.removeSide);
+                //
+                //    if (editMode === true) {
+                //        cont.append("textarea")
+                //            .classed("expanding", true)
+                //            .classed("title-edit", true)
+                //            .text(source.name);
+                //
+                //        cont.append("textarea")
+                //            .classed("expanding", true)
+                //            .classed("body-edit", true)
+                //            .text(source.body);
+                //
+                //        cont.append("div")
+                //            .classed("save-branch-button", true)
+                //            .classed("col-xs-5", true)
+                //            .text("save")
+                //            .on("click", ctrl.saveBranch);
+                //
+                //        cont.append("div")
+                //            .classed("edit-branch-button", true)
+                //            .classed("col-xs-5", true)
+                //            .text("cancel")
+                //            .on("click", ctrl.editBranch);
+                //
+                //        ctrl.addTextArea();
+                //
+                //    } else {
+                //        cont.append("div")
+                //            .classed("story-section-title", true)
+                //            .text(source.name);
+                //
+                //        cont.append("div")
+                //            .classed("story-section-body", true)
+                //            .text(source.body);
+                //        cont.append("div")
+                //            .classed("add-branch-button", true)
+                //            .text("add branch")
+                //            .on("click", ctrl.addBranch);
+                //
+                //        cont.append("div")
+                //            .classed("delete-branch-button", true)
+                //            .classed("col-xs-5", true)
+                //            .text("delete branch")
+                //            .on("click", ctrl.deleteBranch);
+                //
+                //        cont.append("div")
+                //            .classed("edit-branch-button", true)
+                //            .classed("col-xs-5", true)
+                //            .text("edit branch")
+                //            .on("click", ctrl.editBranch);
+                //
+                //        cont.append("div")
+                //            .classed("edit-branch-button", true)
+                //            .classed("col-xs-5", true)
+                //            .text("Publish Story")
+                //            .on("click", ctrl.Publish);
+                //    }
+                //
+                //
+                //    currentNode = source;
+                //    closed = false;
+                //}
+
                 if (changeCurrentNode) {
-
-                    cont.html("");
-
-                    cont.append("div")
-                        .classed("close-story-button", true)
-                        .text("x")
-                        .on("click", ctrl.removeSide);
-
-                    if (editMode === true) {
-                        cont.append("textarea")
-                            .classed("expanding", true)
-                            .classed("title-edit", true)
-                            .text(source.name);
-
-                        cont.append("textarea")
-                            .classed("expanding", true)
-                            .classed("body-edit", true)
-                            .text(source.body);
-
-                        cont.append("div")
-                            .classed("save-branch-button", true)
-                            .classed("col-xs-5", true)
-                            .text("save")
-                            .on("click", ctrl.saveBranch);
-
-                        cont.append("div")
-                            .classed("edit-branch-button", true)
-                            .classed("col-xs-5", true)
-                            .text("cancel")
-                            .on("click", ctrl.editBranch);
-
-                        ctrl.addTextArea();
-
-                    } else {
-                        cont.append("div")
-                            .classed("story-section-title", true)
-                            .text(source.name);
-
-                        cont.append("div")
-                            .classed("story-section-body", true)
-                            .text(source.body);
-                        cont.append("div")
-                            .classed("add-branch-button", true)
-                            .text("add branch")
-                            .on("click", ctrl.addBranch);
-
-                        cont.append("div")
-                            .classed("delete-branch-button", true)
-                            .classed("col-xs-5", true)
-                            .text("delete branch")
-                            .on("click", ctrl.deleteBranch);
-
-                        cont.append("div")
-                            .classed("edit-branch-button", true)
-                            .classed("col-xs-5", true)
-                            .text("edit branch")
-                            .on("click", ctrl.editBranch);
-
-                        cont.append("div")
-                            .classed("edit-branch-button", true)
-                            .classed("col-xs-5", true)
-                            .text("Publish Story")
-                            .on("click", ctrl.Publish);
-                    }
-
-
                     currentNode = source;
                     closed = false;
                 }
@@ -446,12 +478,45 @@
 
             // Toggle children on click.
             this.click = function (d) {
+
+                ctrl.clearTooltip();
+
                 currentNode._children = null;
                 if (d.children) {
                     d._children = [{"somev": "hello"}];
                 } else {
                     d._children = [{"somev": "hello"}];
                 }
+
+                tooltip.html('');
+                ctrl.addTooltipButtons();
+
+                tooltip.append('div')
+                    .append("textarea")
+                    .classed("expanding", true)
+                    .classed("title-edit", true)
+                    .text(d.name);
+
+                tooltip.append('div')
+                    .append("textarea")
+                    .classed("expanding", true)
+                    .classed("body-edit", true)
+                    .text(d.body);
+
+                //ctrl.addTextArea();
+
+                tooltip.transition()
+                    .style('opacity', 0.9);
+
+                tooltip.style({
+                    'left': (d3.event.pageX) + 'px',
+                    'top': (d3.event.pageY) + 'px'
+                });
+
+                //d3.select(this)
+                //    .transition().duration(100)
+                //    .style('opacity', 0.5);
+
                 window.scroll(0, ctrl.findPos(d));
                 ctrl.update(d, false, true, -1, null);
             };
@@ -523,11 +588,27 @@
                             if (data["result"] === 'true') {
                                 ctrl.deleteBranchr(null, root, currentNode.id);
                                 ctrl.update(currentNode, true, false, 1, {"branchid": currentNode.branchid});
-                                ctrl.click(currentNode.parent);
+                                ctrl.clearTooltip();
                             }
                         }
                     });
                 }
+            };
+
+            this.clearTooltip = function () {
+                tooltip.remove();
+                tooltip = d3.select('body')
+                    .append('div')
+                    .classed({'d3-tooltip': true})
+                    .style(
+                        {
+                            'position': 'absolute',
+                            'padding': '0 10px',
+                            'max-width': '500px',
+                            'max-height': '500px',
+                            'background': '#F1F1F1',
+                            'opacity': 0
+                        });
             };
 
             this.editBranch = function () {
@@ -580,6 +661,51 @@
                 d3.select(".tree-container").classed("col-xs-7", false);
             };
 
+            this.addTooltipButtons = function () {
+                tooltip.append('i')
+                    .classed({
+                        'fa': true,
+                        'fa-plus': true,
+                        'fa-2x': true,
+                        'col-xs-4': true
+                    })
+                    .style({'color': "#b0c905", 'transition': 'all 0.25s', 'cursor': 'pointer', 'margin-top': '20px', 'text-align': 'center'})
+                    .on('click', function () {
+                        ctrl.addBranch();
+                    });
+
+                tooltip.append('i')
+                    .classed({
+                        'fa': true,
+                        'fa-times': true,
+                        'fa-2x': true,
+                        'col-xs-4': true
+                    })
+                    .style({'color': "#D11C24", 'transition': 'all 0.25s', 'cursor': 'pointer', 'margin-top': '20px', 'text-align': 'center'})
+                    .on('click', function () {
+                        ctrl.deleteBranch();
+                    });
+
+                tooltip.append('i')
+                    .classed({
+                        'fa': true,
+                        'fa-check': true,
+                        'fa-2x': true,
+                        'col-xs-4': true
+                    })
+                    .style({'color': "#FF4C2E", 'transition': 'all 0.25s', 'cursor': 'pointer', 'margin-top': '20px', 'text-align': 'center'})
+                    .on('click', function () {
+                        ctrl.saveBranch();
+                    });
+
+                tooltip.append("div")
+                    .classed("close-story-button", true)
+                    .text("x")
+                    .on("click", function() {
+                        ctrl.clearTooltip();
+                    });
+            };
+
             //Source - http://jsfiddle.net/bgrins/UA7ty/
             this.addTextArea = function () {
 
@@ -593,7 +719,6 @@
 
                 var textareaCSS = {
                     overflow: "hidden",
-                    position: "absolute",
                     top: "0",
                     left: "0",
                     height: "100%",
@@ -606,6 +731,7 @@
                 };
 
                 var containerCSS = {
+                    'margin-top': '55px',
                     position: "relative"
                 };
 
@@ -662,7 +788,7 @@
 
             };
 
-            this.Publish = function () {
+            this.publish = function () {
                 storyService.setComplete(ctrl.createID, function (err, data) {
                     if (err) {
                         console.log("error in getting data");

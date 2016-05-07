@@ -2,10 +2,11 @@
 
 {% block content %}
 <div class="writing" ng-controller="createController as cc" ng-cloak>
-    <h2 class="story-title">{$ cc.title $}</h2>
+    <h2 class="story-title col-xs-9">{$ cc.title $}</h2>
+    <div ng-click='cc.publish()' class="publish-branch-button col-xs-2"> Publish story </div>
     <div class="row">
-        <section class="tree-container col-xs-7"></section>
-        <section class="story-container col-xs-4"></section>
+        <section class="tree-container col-xs-12"></section>
+        <!--<section class="story-container col-xs-4"></section>-->
     </div>
 </div>
 

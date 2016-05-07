@@ -98,7 +98,6 @@
 }
 
 .delete-branch-button {
-  width: 42.375%;
   transition: all 0.2s;
   cursor: pointer;
   border-radius: .25em;
@@ -121,7 +120,6 @@
 }
 
 .edit-branch-button {
-  width: 42.375%;
   border-radius: .25em;
   border: 2px solid transparent;
   transition: all 0.2s;
@@ -179,8 +177,8 @@
 
 .tree-container {
   transition: all 0.5s;
-  overflow-x: auto;
-  overflow-y: auto;
+  //overflow-x: auto;
+  //overflow-y: auto;
 }
 
 .story-title {
@@ -190,8 +188,8 @@
 
 .close-story-button {
   position: absolute;
-  top: 20px;
-  right: 30px;
+  top: 10px;
+  right: 15px;
   cursor: pointer;
   font-weight: 700;
 }
@@ -214,6 +212,7 @@ textarea, .textareaClone {
   -ms-box-sizing: border-box;
   box-sizing: border-box;
   width: 100%;
+  height: 500px;
 }
 
 .title-edit {
@@ -221,11 +220,21 @@ textarea, .textareaClone {
   color: $primary-light-color;
   font-size: 32px;
   font-weight: 700;
+  width: 350px;
+  max-width: 450px;
+  height: 75px;
+  max-height: 150px;
+  margin-right: 20px;
 }
 
 .body-edit {
   text-align: justify;
   padding-top: 0;
+  width: 350px;
+  max-width: 450px;
+  max-height: 350px;
+  margin-bottom: 20px;
+  margin-right: 20px;
 }
 
 #next_page {
@@ -251,4 +260,36 @@ textarea, .textareaClone {
   text-align: center;
   color: $secondary-light-color;
   border: 2px solid $secondary-light-color;
+}
+
+.publish-branch-button {
+  margin-top: 70px;
+  transition: all 0.2s;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: .25em;
+  border: 2px solid transparent;
+  background-color: $primary-dark-color;
+  text-align: center;
+  color: white;
+}
+
+.publish-branch-button:hover {
+  padding: 10px;
+  background-color: white;
+  text-align: center;
+  color: $primary-dark-color;
+  border: 2px solid $primary-dark-color;
+}
+
+.fa-plus:hover {
+  opacity: 0.6;
+}
+
+.fa-times:hover {
+  opacity: 0.6;
+}
+
+.fa-check:hover {
+  opacity: 0.6;
 }
