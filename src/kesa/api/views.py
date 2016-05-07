@@ -256,8 +256,10 @@ def getUser(request, uid, cid):
 @login_required
 def getInfo(request,gid,lid,complete,username):
     storiesComp = []
+
     if(str(username) != "None"):
         user = User.objects.get(username=str(username))
+
     if(int(complete) == 5):
         contributions = Contributors.objects.filter(user=user).values_list('story')
         storiesComp = Story.objects.filter(id__in=contributions)
