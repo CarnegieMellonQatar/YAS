@@ -13,7 +13,10 @@
                     <div class="dnd" id="draganddrop" ng-init="pc.createDragNDropZone()" ng-if="pc.uploadPic">
                         <form class="complex_form" id="add_image_form2" name="add_image_form2"
                               ng-submit="pc.addImageDND()">
-                            <div dropzone="dropzoneConfig" class="dropzone dz"></div>
+                            <div dropzone="dropzoneConfig" class="dropzone dz">
+                                <div class="dz-message" data-dz-message><span class="heavy-message">Drop or click to upload</span>
+                                </div>
+                            </div>
                             <input type="submit" class="btn add-pp-button" value="Add The Image"
                                    ng-if="pc.uploadPic"/>
                         </form>
