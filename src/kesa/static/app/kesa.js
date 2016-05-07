@@ -22,8 +22,8 @@
         /*
         code taken from:
             http://stackoverflow.com/questions/28219338/dropzone-js-rejected-files-in-file-previews
-        */ 
-        
+        */
+
         dropzone.on('error', function(file){
             if (!file.accepted){
                 alert("Invalid File");
@@ -39,6 +39,10 @@
              $interpolateProvider.startSymbol('{$');
              $interpolateProvider.endSymbol('$}');
          })
+         .config(function($httpProvider) {
+            $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+            $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+         })
          .run(function () {
             $(".story-reader-container").keydown(function (e) {
                 if (e.which == 32) {
@@ -47,4 +51,3 @@
             });
         });
  })();
-
